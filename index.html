@@ -188,13 +188,13 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
       <div class="bar">
         <div class="who"><b id="h-prev">Lá số mẫu</b><span id="whoSub">Ví dụ minh họa – nhập thông tin của bạn bên trái</span></div>
         <div class="mode" role="group" aria-label="Kiểu hiển thị">
-          <button type="button" id="mMau" aria-pressed="true">Màu</button>
-          <button type="button" id="mBw" aria-pressed="false">Đen trắng</button>
+          <button type="button" id="mBw" aria-pressed="true">Đen trắng</button>
+          <button type="button" id="mMau" aria-pressed="false">Màu</button>
         </div>
       </div>
       <div class="actions" style="margin-bottom:12px">
-        <button class="btn primary" type="button" id="dlMau">Tải PNG màu</button>
-        <button class="btn ghost" type="button" id="dlBw">Tải PNG đen trắng</button>
+        <button class="btn primary" type="button" id="dlBw">Tải PNG đen trắng</button>
+        <button class="btn ghost" type="button" id="dlMau">Tải PNG màu</button>
         <button class="btn ghost" type="button" id="cpLink" title="Sao chép đường link mở đúng lá số này">Chép link lá số</button>
       </div>
       <div class="sheet"><canvas id="cv" width="1810" height="2560" aria-label="Hình lá số Tử Vi"></canvas></div>
@@ -1047,7 +1047,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
   var $ = function (id) { return document.getElementById(id); };
   var IN_CLAUDE = !!(window.claude && typeof window.claude.use === 'function');
   var LS_KEY = 'phuocloc.history.v1';
-  var state = { chart: null, mode: 'mau', src: 'local', shared: [], server: [], adminKey: '', api: false, db: null, dl: null };
+  var state = { chart: null, mode: 'bw', src: 'local', shared: [], server: [], adminKey: '', api: false, db: null, dl: null };
 
   /* ---------- tiện ích ---------- */
   function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -1237,7 +1237,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     if (state.src === 'server' && !state.adminKey) { hb.innerHTML = '<tr><td colspan="6" class="empty">Nhập mật khẩu quản trị để xem lá số khách đã tải trên phuocloc.vn.</td></tr>'; return; }
     if (!list.length) {
       hb.innerHTML = '<tr><td colspan="6" class="empty">' + (q ? 'Không có lá số nào khớp “' + esc($('q').value) + '”.' :
-        'Chưa có lá số nào. Lập lá số rồi bấm “Tải PNG màu” hoặc “Tải PNG đen trắng” – lá số sẽ hiện ở đây.') + '</td></tr>';
+        'Chưa có lá số nào. Lập lá số rồi bấm “Tải PNG đen trắng” hoặc “Tải PNG màu” – lá số sẽ hiện ở đây.') + '</td></tr>';
       return;
     }
     hb.innerHTML = list.slice(0, 500).map(function (e) {
