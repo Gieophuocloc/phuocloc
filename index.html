@@ -104,6 +104,16 @@ td .sub{color:var(--ink-3);font-size:12.5px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:8px;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.18);z-index:9}
 .admin{display:grid;gap:10px;grid-template-columns:minmax(0,1fr) auto;max-width:460px;margin-bottom:12px}
 footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12.5px;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+.sheet-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;display:flex;align-items:flex-end;justify-content:center;padding:12px}
+@media (min-width:700px){.sheet-ov{align-items:center}}
+.sheet-box{background:var(--card);color:var(--ink);border-radius:14px;max-width:520px;width:100%;max-height:calc(100vh - 24px);overflow:auto;padding:16px;display:grid;gap:12px}
+.sheet-hd{display:flex;gap:10px;align-items:center;justify-content:space-between}.sheet-hd b{overflow-wrap:anywhere;font-size:14px}
+.sheet-img{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff;-webkit-touch-callout:default}
+.sheet-pdf{padding:22px;text-align:center;border:1px dashed var(--line-2);border-radius:8px;font-weight:600}
+.sheet-hint{margin:0;font-size:14px;color:var(--ink-2)}.sheet-hint.small{font-size:12.5px}
+.sheet-act{display:flex;gap:8px;flex-wrap:wrap}.sheet-act .btn{flex:1 1 140px;text-decoration:none}
+.inapp{background:#fff4d6;color:#4a3b10;font-size:13.5px;padding:10px 40px 10px 14px;position:relative;line-height:1.45}
+.inapp button{position:absolute;right:8px;top:6px;border:0;background:transparent;font-size:16px;cursor:pointer;color:inherit}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -1886,10 +1896,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
           throw e;
         });
       }
-      var url = URL.createObjectURL(blob), a = document.createElement('a');
-      a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-      return true;
+      return saveFile(blob, name);
     }).then(function (ok) {
       if (!ok) return;
       record(chart, mode);
@@ -1897,6 +1904,51 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     }).catch(function () { toast('Không tải được ảnh. Vui lòng thử lại.'); });
   }
 
+
+  /* ---------- lưu file trên mọi thiết bị (Zalo, iPhone, iPad, Android, máy tính) ---------- */
+  var UA = navigator.userAgent || '';
+  var IN_APP = /Zalo|FBAN|FBAV|FB_IAB|Instagram|Line\/|MicroMessenger|TikTok|musical_ly|; wv\)/i.test(UA);
+  var IS_ZALO = /Zalo/i.test(UA);
+  var IS_IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  function plainDownload(blob, name) {
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+  }
+  function saveFile(blob, name) {
+    if (!IN_APP && !IS_IOS) { plainDownload(blob, name); return Promise.resolve(true); }
+    showSaveSheet(blob, name);
+    return Promise.resolve(true);
+  }
+  function showSaveSheet(blob, name) {
+    var old = document.getElementById('saveSheet'); if (old) old.remove();
+    var isImg = /^image\//.test(blob.type), url = URL.createObjectURL(blob);
+    var file = null; try { file = new File([blob], name, { type: blob.type }); } catch (e) { }
+    var canShare = !!(file && navigator.canShare && navigator.share && navigator.canShare({ files: [file] }));
+    var wrap = document.createElement('div'); wrap.id = 'saveSheet'; wrap.className = 'sheet-ov'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
+    var orShare = canShare ? ', hoặc bấm <b>Lưu / Chia sẻ</b>' : '';
+    var hint = isImg
+      ? (IS_IOS ? 'Nhấn giữ vào ảnh → chọn <b>Lưu vào Ảnh</b>' + orShare + '.' : 'Nhấn giữ vào ảnh → <b>Tải hình ảnh</b>' + orShare + '.')
+      : (canShare ? 'Bấm <b>Lưu / Chia sẻ</b> → chọn <b>Lưu vào Tệp</b> (iPhone/iPad) hoặc ứng dụng để lưu; hoặc bấm <b>Mở PDF</b>.' : 'Bấm <b>Mở PDF</b> để xem, rồi dùng nút chia sẻ/tải của trình duyệt để lưu.');
+    wrap.innerHTML = '<div class="sheet-box"><div class="sheet-hd"><b>' + esc(name) + '</b><button type="button" class="btn ghost small" data-x>Đóng</button></div>' +
+      (isImg ? '<img class="sheet-img" alt="' + esc(name) + '" src="' + url + '">' : '<div class="sheet-pdf">📄 Bản luận giải PDF đã sẵn sàng</div>') +
+      '<p class="sheet-hint">' + hint + '</p><div class="sheet-act">' +
+      (canShare ? '<button type="button" class="btn primary" data-share>Lưu / Chia sẻ</button>' : '') +
+      '<a class="btn ' + (canShare ? 'ghost' : 'primary') + '" href="' + url + '" download="' + esc(name) + '" target="_blank" rel="noopener">' + (isImg ? 'Tải ảnh' : 'Mở PDF') + '</a></div>' +
+      (IN_APP ? '<p class="sheet-hint small">Nếu vẫn không lưu được trong ' + (IS_ZALO ? 'Zalo' : 'ứng dụng này') + ': bấm <b>•••</b> (góc trên phải) → <b>Mở bằng trình duyệt</b>, rồi tải lại.</p>' : '') + '</div>';
+    document.body.appendChild(wrap);
+    function close() { wrap.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000); }
+    wrap.addEventListener('click', function (ev) {
+      if (ev.target === wrap || ev.target.closest('[data-x]')) close();
+      if (ev.target.closest('[data-share]')) navigator.share({ files: [file], title: name }).catch(function () { });
+    });
+  }
+  if (IN_APP) {
+    var bar = document.createElement('div'); bar.className = 'inapp';
+    bar.innerHTML = 'Bạn đang mở trong ' + (IS_ZALO ? 'Zalo' : 'ứng dụng') + '. Để tải ảnh/PDF dễ nhất: bấm <b>•••</b> góc trên phải → <b>Mở bằng trình duyệt</b>. <button type="button" aria-label="Ẩn">✕</button>';
+    bar.querySelector('button').onclick = function () { bar.remove(); };
+    document.body.insertBefore(bar, document.body.firstChild);
+  }
   /* ---------- lịch sử ---------- */
   function keyOf(i) {
     return fold([i.name, i.gender, i.calendar, i.day, i.month, i.year, i.leap ? 1 : 0, i.hour, i.minute].join('-')).replace(/\s+/g, '_').replace(/[^a-z0-9_-]/g, '');
@@ -2044,10 +2096,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
       return new Promise(function (res) { setTimeout(function () { var d = new Date(); res(window.LuanGiai.makePdf(chart, { mode: 'bw', info: Object.assign(readInfo(), { ngayLap: pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() }) })); }, 30); });
     }).then(function (blob) {
       if (state.dl) return state.dl.save({ filename: name, data: blob }).then(function () { return true; }, function (e) { if (e && e.code === 'declined') return false; throw e; });
-      var url = URL.createObjectURL(blob), a = document.createElement('a');
-      a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-      return true;
+      return saveFile(blob, name);
     }).then(function (ok) { if (ok) { record(chart, 'pdf'); toast('Đã tải ' + name); } })
       .catch(function () { toast('Không tạo được PDF. Vui lòng thử lại.'); })
       .then(function () { btn.disabled = false; btn.textContent = old; });
