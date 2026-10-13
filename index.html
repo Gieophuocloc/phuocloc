@@ -7,7 +7,7 @@
 <meta name="description" content="Lập lá số Tử Vi miễn phí, tải ảnh PNG màu và đen trắng – phuocloc.vn">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,600;1,600;1,700&family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,600;1,600;1,700&family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap">
 <style>
 /* Bố cục: thanh thương hiệu → (biểu mẫu | lá số) → lịch sử tải. Màu lấy từ lá số mẫu: mực đen, vàng đồng, xanh ngọc, giấy dó. */
 :root{
@@ -195,6 +195,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
       <div class="actions" style="margin-bottom:12px">
         <button class="btn primary" type="button" id="dlBw">Tải PNG đen trắng</button>
         <button class="btn ghost" type="button" id="dlMau">Tải PNG màu</button>
+        <button class="btn gold" type="button" id="dlPdf">Tải luận giải PDF</button>
         <button class="btn ghost" type="button" id="cpLink" title="Sao chép đường link mở đúng lá số này">Chép link lá số</button>
       </div>
       <div class="sheet"><canvas id="cv" width="1810" height="2560" aria-label="Hình lá số Tử Vi"></canvas></div>
@@ -1041,6 +1042,719 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
 
 </script>
 <script>
+/*!
+ * Phước Lộc – Luận giải Tử Vi theo 6 Chữ Vàng (Khỏe · Tiền · Tài · Tình · Tu · An)
+ * Theo mẫu Cộng Đồng Tâm Không. Phân tích lá số (TuVi.lapLaSo) → bản luận giải → PDF (A4).
+ */
+(function (root) {
+  'use strict';
+  var T = root.TuVi || (typeof require !== 'undefined' ? require('./tuvi-engine.js') : null);
+
+  function mod(a, n) { return ((a % n) + n) % n; }
+
+  /* ===================== DỮ LIỆU DIỄN GIẢI ===================== */
+  var NAP_AM_HINH = {
+    'Hải Trung Kim': 'vàng trong biển', 'Lư Trung Hỏa': 'lửa trong lò', 'Đại Lâm Mộc': 'cây rừng lớn', 'Lộ Bàng Thổ': 'đất ven đường',
+    'Kiếm Phong Kim': 'vàng mũi kiếm', 'Sơn Đầu Hỏa': 'lửa trên núi', 'Giản Hạ Thủy': 'nước dưới khe', 'Thành Đầu Thổ': 'đất trên thành',
+    'Bạch Lạp Kim': 'vàng chân đèn', 'Dương Liễu Mộc': 'cây dương liễu', 'Tuyền Trung Thủy': 'nước trong suối', 'Ốc Thượng Thổ': 'đất trên mái nhà',
+    'Tích Lịch Hỏa': 'lửa sấm sét', 'Tùng Bách Mộc': 'cây tùng bách', 'Trường Lưu Thủy': 'nước chảy dài', 'Sa Trung Kim': 'vàng trong cát',
+    'Sơn Hạ Hỏa': 'lửa dưới núi', 'Bình Địa Mộc': 'cây đồng bằng', 'Bích Thượng Thổ': 'đất trên vách', 'Kim Bạch Kim': 'vàng bạch kim',
+    'Phú Đăng Hỏa': 'lửa đèn dầu', 'Thiên Hà Thủy': 'nước trên trời', 'Đại Trạch Thổ': 'đất đầm lớn', 'Thoa Xuyến Kim': 'vàng trang sức',
+    'Tang Đố Mộc': 'cây dâu', 'Đại Khê Thủy': 'nước khe lớn', 'Sa Trung Thổ': 'đất trong cát', 'Thiên Thượng Hỏa': 'lửa trên trời',
+    'Thạch Lựu Mộc': 'cây thạch lựu', 'Đại Hải Thủy': 'nước biển lớn'
+  };
+  var QUAN_HE = {
+    'Mệnh khắc Cục': 'Hay áp đặt lên môi trường, muốn người khác, con cái, công việc theo ý mình. Lời khuyên: tôn trọng hoàn cảnh và người khác.',
+    'Cục khắc Mệnh': 'Hoàn cảnh khắc bản thân: gặp nhiều nghịch cảnh — đó là bài học để vượt qua và trưởng thành.',
+    'Cục Mệnh bình hòa': 'Mệnh và Cục cùng hành: bản thân và hoàn cảnh hòa hợp, ít mâu thuẫn.',
+    'Cục sinh Mệnh': 'Hoàn cảnh nâng đỡ bản thân: được gia đình, môi trường hỗ trợ — hãy biết ơn và đền đáp.',
+    'Mệnh sinh Cục': 'Bản thân nuôi dưỡng hoàn cảnh: hay hy sinh, lo cho gia đình, công việc — nhớ giữ sức và biết nhận lại.'
+  };
+  var THAN_CU = {
+    'Thân Mệnh đồng cung': 'Nửa đời sau tập trung vào bản thân, tự lực, tự quyết.',
+    'Thân cư Tài Bạch': 'Nửa đời sau tập trung vào tiền bạc, tài chính.',
+    'Thân cư Quan Lộc': 'Nửa đời sau tập trung vào công việc, sự nghiệp.',
+    'Thân cư Phu Thê': 'Nửa đời sau tập trung vào hôn nhân, người bạn đời.',
+    'Thân cư Thiên Di': 'Nửa đời sau tập trung vào giao tiếp, đi xa, hoạt động bên ngoài.',
+    'Thân cư Phúc Đức': 'Nửa đời sau tập trung vào phúc đức, dòng họ, đời sống tâm linh.'
+  };
+  var CHINH_Y = {
+    'Tử Vi': 'vua, quyền lực', 'Thiên Cơ': 'mưu trí, linh hoạt', 'Thái Dương': 'ánh sáng, cho đi, danh tiếng', 'Vũ Khúc': 'tài chính, tiền bạc',
+    'Thiên Đồng': 'phúc thiện, hưởng thụ', 'Liêm Trinh': 'nguyên tắc, kỷ luật, chuẩn mực', 'Thiên Phủ': 'kho tàng, quản lý, giữ của',
+    'Thái Âm': 'dịu dàng, tích lũy, điền sản', 'Tham Lang': 'tham vọng', 'Cự Môn': 'ngôn từ, lời nói', 'Thiên Tướng': 'tướng quân, quan võ',
+    'Thiên Lương': 'che chở, cứu giúp', 'Thất Sát': 'dũng mãnh, quyết đoán', 'Phá Quân': 'khai phá, đập cũ xây mới'
+  };
+  var THI_TRUONG = {
+    'Mệnh': 'chính mình và những người giống mình', 'Phụ Mẫu': 'người lớn tuổi, cấp trên, thầy cô, cơ quan nhà nước',
+    'Phúc Đức': 'dòng họ, người tu tập, cộng đồng tâm linh', 'Điền Trạch': 'gia đình, hộ gia đình, người mua bán nhà đất',
+    'Quan Lộc': 'doanh nghiệp, đối tác, đồng nghiệp trong công việc', 'Nô Bộc': 'bạn bè, nhân viên, cộng đồng đông người',
+    'Thiên Di': 'người ở xa, bên ngoài, khách vãng lai, thị trường mới', 'Tật Ách': 'người đang gặp khó khăn, bệnh tật, cần chữa lành',
+    'Tài Bạch': 'người có tiền, nhà đầu tư, khách hàng có tài chính', 'Tử Tức': 'trẻ em, thế hệ sau, học trò',
+    'Phu Thê': 'các cặp đôi, vợ chồng, người tìm bạn đời', 'Huynh Đệ': 'anh chị em, bạn đồng trang lứa, người thân cận'
+  };
+  var NHOM = [
+    { ten: 'Nhóm 1 — Đế Tinh', ngan: 'Đế Tinh', sao: ['Tử Vi', 'Thiên Phủ', 'Vũ Khúc', 'Thiên Tướng', 'Liêm Trinh'], viec: 'lãnh đạo, làm chủ' },
+    { ten: 'Nhóm 2 — Mưu Tinh', ngan: 'Mưu Tinh', sao: ['Thiên Cơ', 'Thiên Đồng', 'Thái Âm', 'Thiên Lương'], viec: 'quân sư, tư vấn, cố vấn, chiến lược gia, chuyên gia' },
+    { ten: 'Nhóm 3 — Chiến Tinh', ngan: 'Chiến Tinh', sao: ['Thất Sát', 'Phá Quân', 'Tham Lang'], viec: 'bán hàng, marketing, mở rộng thị trường, mở mối quan hệ, ngoại giao' },
+    { ten: 'Nhóm 4 — Biện Tinh', ngan: 'Biện Tinh', sao: ['Cự Môn', 'Thái Dương'], viec: 'hùng biện, tranh luận (luật sư), giảng dạy, giao tiếp' }
+  ];
+  var CAP_NHOM = {
+    '1+2': 'lãnh đạo kết hợp hoạch định chiến lược, quản trị.', '1+3': 'làm chủ, lãnh đạo kết hợp mở rộng thị trường.',
+    '1+4': 'lãnh đạo kết hợp truyền thông, đào tạo.', '2+3': 'cố vấn chiến lược kết hợp kinh doanh, phát triển thị trường.',
+    '2+4': 'chuyên gia, cố vấn kết hợp giảng dạy, truyền thông.', '3+4': 'kinh doanh, bán hàng kết hợp đàm phán, truyền thông.'
+  };
+  var TRONG_TAM = {
+    'Mệnh': 'Nghĩa với người giúp mình tu tập tạo phước', 'Phụ Mẫu': 'Hiếu với cha mẹ', 'Phúc Đức': 'Lễ với Đại Bảo Tháp Mandala Tây Thiên',
+    'Điền Trạch': 'Tạo phước qua cứu độ chúng sinh', 'Quan Lộc': 'Nghĩa với người giúp đỡ mình', 'Nô Bộc': 'Nghĩa với người giúp đỡ mình',
+    'Thiên Di': 'Tạo phước qua cứu độ chúng sinh', 'Tật Ách': 'Lễ với Đại Bảo Tháp Mandala Tây Thiên', 'Tài Bạch': 'Tạo phước qua giúp đỡ người khác',
+    'Tử Tức': 'Tạo phước qua giúp đỡ người khác', 'Phu Thê': 'Nghĩa với người giúp đỡ mình', 'Huynh Đệ': 'Tạo phước qua giúp đỡ người khác'
+  };
+  var HAT_GIONG = [
+    ['Hiếu với cha mẹ', 'Thăm hỏi, gọi điện cha mẹ mỗi tuần; biếu quà, biếu tiền; lắng nghe, làm cha mẹ an lòng. Cha mẹ đã khuất: tưởng niệm, hồi hướng công đức.'],
+    ['Lễ với Đại Bảo Tháp Mandala Tây Thiên', 'Đảnh lễ, chiêm bái, cúng dường, làm công quả; khi chưa đến được thì hướng tâm đảnh lễ hằng ngày.'],
+    ['Nghĩa với người giúp đỡ mình', 'Ghi nhớ ân nhân, nói lời cảm ơn, đáp nghĩa bằng việc làm cụ thể; giữ chữ tín với đối tác, đồng nghiệp.'],
+    ['Nghĩa với người giúp mình tu tập tạo phước', 'Kính trọng thầy cô, người dẫn dắt; thực hành đúng lời dạy; đóng góp cho cộng đồng tu tập.'],
+    ['Tạo phước qua cứu độ chúng sinh', 'Đọc bài cứu độ chúng sinh cho các nơi mình đến giao dịch (quán cơm, cà phê, ngân hàng…); phóng sinh.'],
+    ['Tạo phước qua giúp đỡ người khác', 'Giúp việc, chia sẻ, bố thí; đọc lá số Tử Vi về tiền, công việc cho người khác.']
+  ];
+  var BAI_TU = ['Xóa nợ cầu siêu', 'Trả nợ', 'Biếu tiền', 'Sám hối', 'Tăng năng lượng cho đất / Sái tịnh', 'Giải nghiệp dòng họ',
+    'Phóng sinh con vật oan gia', 'Cứu độ chúng sinh', 'Đọc lá số Tử Vi về tiền, công việc cho người khác'];
+
+  var SAO_TIEN = ['Thiên Phủ', 'Thiên Lương', 'Hóa Lộc', 'Vũ Khúc'];
+
+  var CHU = {
+    TAI: { ten: 'TÀI', tieuDe: 'Chữ TÀI', mo: 'Năng lực làm chủ cuộc đời và tạo ra giá trị cho cộng đồng.', loai: 'nguon',
+      sao: ['Thiên Tài', 'Thiên Cơ', 'Hóa Khoa', 'Đường Phù'],
+      y: { 'Thiên Tài': 'tài năng bẩm sinh, tài năng trời cho', 'Thiên Cơ': 'tài năng do nỗ lực cộng may mắn',
+        'Hóa Khoa': 'tài năng do nỗ lực học hành, mở ra được trí tuệ', 'Đường Phù': 'tài năng tổ chức, quản lý giấy tờ, văn thư' },
+      khuyen: ['Có Hóa Khoa: học tập bài bản, lấy bằng cấp, chứng chỉ để mở trí tuệ.', 'Có Thiên Cơ: phát huy mưu lược, làm quân sư, cố vấn.',
+        'Ít sao tài năng chiếu Mệnh: tài năng đến từ rèn luyện — chọn một lĩnh vực và luyện đủ lâu.'] },
+    TINH: { ten: 'TÌNH', tieuDe: 'Chữ TÌNH', mo: 'Tình cảm, ân tình, nghĩa tình với các mối quan hệ trong công việc và cuộc sống.', loai: 'luutam',
+      sao: ['Đào Hoa', 'Hóa Kị', 'Thiên Diêu', 'Điếu Khách'], hien: { 'Hóa Kị': 'Hóa Kỵ' },
+      y: { 'Đào Hoa': 'ở Mệnh, Tài Bạch, Quan Lộc là nghiệp do tiền kiếp bản thân; ở Phúc Đức là nghiệp dòng họ',
+        'Hóa Kị': 'lời nói cay nghiệt và ghen tuông mù quáng', 'Thiên Diêu': 'đa tình, dễ vướng vào cám dỗ tình cảm', 'Điếu Khách': 'lừa tiền, lừa tình' },
+      khuyen: ['Giữ lời nói; tẩy nghiệp bằng 4 câu "Tôi yêu bạn, tôi xin lỗi, xin hãy tha thứ cho tôi, tôi cảm ơn".',
+        'Hợp tác và tình cảm cần rõ ràng, minh bạch tiền bạc.', 'Đào Hoa ở Phúc Đức: làm bài giải nghiệp dòng họ.'] },
+    TU: { ten: 'TU', tieuDe: 'Chữ TU', mo: 'Quá trình tu dưỡng bản thân để khai mở trí tuệ.', loai: 'luutam',
+      combo: [['Thái Tuế', 'Tuế Phá'], ['Thái Tuế', 'Thiên Hình'], ['Liêm Trinh hãm', 'Thiên Hình'], ['Liêm Trinh', 'Bạch Hổ']],
+      khuyen: ['Ghi Sổ Gieo Phước Báu mỗi ngày, bắt đầu 5–10 việc, tăng dần lên 10–20 việc.', 'Chọn bài tu phù hợp trong 9 bài xử lý tổng thể (Phần 4).'] },
+    AN: { ten: 'AN', tieuDe: 'Chữ AN', mo: 'Bình an, an nhiên, tự do tự tại.', loai: 'nguon',
+      sao: ['Thiên Hỷ', 'Thiên Đức', 'Phúc Đức', 'Nguyệt Đức'],
+      y: { 'Thiên Hỷ': 'niềm vui, hỷ lạc', 'Thiên Đức': 'phúc đức trời ban', 'Phúc Đức': 'phúc phần, phước báu', 'Nguyệt Đức': 'phúc đức, sự che chở' },
+      khuyen: ['Nuôi dưỡng sự biết ơn mỗi ngày.', 'Đói thì ăn, mệt thì nghỉ — sống thuận tự nhiên.'] },
+    KHOE: { ten: 'KHỎE', tieuDe: 'Chữ KHỎE', mo: 'Khỏe mạnh cả thân và tâm, mới có năng lượng để tận hưởng cuộc sống.', loai: 'khoe',
+      sao: ['Thiên Thọ', 'Kiếp Sát', 'Bạch Hổ', 'Thiên Đồng'],
+      y: { 'Thiên Thọ': 'sức khỏe tốt và an lạc, tuổi thọ cao', 'Kiếp Sát': 'bệnh sát thân, không biết trước — chung quy là bệnh về nghiệp',
+        'Bạch Hổ': 'bệnh về tinh thần (stress, căng thẳng) — chung quy là nghiệp bệnh', 'Thiên Đồng': 'bệnh từ miệng mà vào, họa từ miệng mà ra' },
+      khuyen: ['Khám sức khỏe định kỳ; phần này là lời nhắc, không thay chẩn đoán y khoa.', 'Ăn uống điều độ, nói lời lành; giữ tinh thần thư thái.'] }
+  };
+
+  /* ===================== PHÂN TÍCH ===================== */
+  function analyze(c) {
+    var CH = T.CHI, CT = T.CUNG_TITLE;
+    var menh = c.menhCung;
+    var cungOf = function (chi) { return CT[c.cells[chi].cung]; };
+    var chiOfCung = function (idx) { return mod(menh + idx, 12); };
+    function has(chi, name) {
+      var cell = c.cells[chi];
+      if (name === 'Liêm Trinh hãm') return cell.chinh.some(function (s) { return s.name === 'Liêm Trinh' && s.dac === 'H'; });
+      return cell.chinh.some(function (s) { return s.name === name; }) || cell.stars.some(function (s) { return s.name === name; });
+    }
+    function where(name) { for (var i = 0; i < 12; i++) if (has(i, name)) return i; return -1; }
+    function flags(chi) {
+      var f = [];
+      if (c.tuan.indexOf(chi) >= 0) f.push('Tuần');
+      if (c.triet.indexOf(chi) >= 0) f.push('Triệt');
+      if (has(chi, 'Phục Binh')) f.push('Phục Binh');
+      return f;
+    }
+    function chinhStr(chi, withDac) {
+      var a = c.cells[chi].chinh;
+      if (!a.length) return 'Vô chính diệu';
+      return a.map(function (s) { return s.name + (withDac && s.dac ? ' (' + s.dac + ')' : ''); }).join(', ');
+    }
+
+    // Bốn ô tam phương tứ chính: 1 Mệnh, 5 Quan Lộc, 7 Thiên Di, 9 Tài Bạch
+    var O = [
+      { so: 1, nhan: 'Mệnh (tại cung)', chi: menh, cung: 'Mệnh' },
+      { so: 5, nhan: 'Quan Lộc (tam hợp)', chi: mod(menh + 4, 12), cung: 'Quan Lộc' },
+      { so: 7, nhan: 'Thiên Di (xung chiếu)', chi: mod(menh + 6, 12), cung: 'Thiên Di' },
+      { so: 9, nhan: 'Tài Bạch (tam hợp)', chi: mod(menh + 8, 12), cung: 'Tài Bạch' }
+    ];
+    O.forEach(function (o) { o.flags = flags(o.chi); });
+    var inSet = function (chi) { return O.some(function (o) { return o.chi === chi; }); };
+
+    // ---------- TIỀN ----------
+    function tien(chi) {
+      var n = 0;
+      [chi, chi + 4, chi + 8, chi + 6].forEach(function (x) { SAO_TIEN.forEach(function (s) { if (has(mod(x, 12), s)) n++; }); });
+      return n;
+    }
+    var tienRows = [];
+    for (var k = 0; k < 12; k++) {
+      var chi = chiOfCung(k), n = tien(chi), fl = flags(chi);
+      var tai = SAO_TIEN.filter(function (s) { return has(chi, s); });
+      var ut;
+      if (n === 0) ut = { t: 'Tránh (0$)', tone: 'bad' };
+      else if (n >= 2) {
+        if (fl.indexOf('Tuần') >= 0 || fl.indexOf('Triệt') >= 0) ut = { t: 'Ưu tiên 2 · làm nhanh', tone: '' };
+        else if (fl.length) ut = { t: 'Ưu tiên 3 · phòng rủi ro', tone: '' };
+        else ut = { t: 'Ưu tiên 1', tone: 'good' };
+      } else ut = fl.length ? { t: 'Thận trọng', tone: '' } : { t: 'Ưu tiên 4', tone: '' };
+      tienRows.push({ cung: CT[k], chi: chi, tuoi: CH[c.cells[chi].tieuHan], sao: tai, n: n, flags: fl, uuTien: ut, locTon: has(chi, 'Lộc Tồn') });
+    }
+    var maxN = Math.max.apply(null, tienRows.map(function (r) { return r.n; }));
+    var khoa = [];
+    ['Thiên Phủ', 'Thiên Lương'].forEach(function (s) {
+      var w = where(s), fl = w >= 0 ? flags(w).filter(function (x) { return x !== 'Phục Binh'; }) : [];
+      if (fl.length) khoa.push({ sao: s, cung: cungOf(w), gap: fl.join(', ') });
+    });
+
+    // ---------- Các chữ ----------
+    function chuSao(def) {
+      var cols = def.sao, hits = [], ngoai = [];
+      var grid = O.map(function (o) { return cols.map(function (s) { return has(o.chi, s); }); });
+      cols.forEach(function (s, j) {
+        var inside = O.filter(function (o, i) { return grid[i][j]; });
+        if (inside.length) inside.forEach(function (o) { hits.push({ sao: s, cung: o.cung }); });
+        else { var w = where(s); if (w >= 0) ngoai.push({ sao: s, cung: cungOf(w) }); }
+      });
+      var distinct = cols.filter(function (s, j) { return grid.some(function (r) { return r[j]; }); });
+      return { cols: cols, grid: grid, hits: hits, ngoai: ngoai, n: distinct.length };
+    }
+    var TAI = chuSao(CHU.TAI), TINH = chuSao(CHU.TINH), AN = chuSao(CHU.AN), KHOE = chuSao(CHU.KHOE);
+    // TU: tổ hợp – cả hai thành phần cùng nằm trong 4 ô
+    var TU = { cols: CHU.TU.combo.map(function (p) { return p[0] + ' + ' + p[1]; }), grid: O.map(function () { return [false, false, false, false]; }), hits: [], n: 0 };
+    CHU.TU.combo.forEach(function (p, j) {
+      var a = O.filter(function (o) { return has(o.chi, p[0]); }), b = O.filter(function (o) { return has(o.chi, p[1]); });
+      if (a.length && b.length) {
+        TU.n++;
+        a.concat(b).forEach(function (o) { TU.grid[O.indexOf(o)][j] = true; });
+        var cungs = []; a.concat(b).forEach(function (o) { if (cungs.indexOf(o.cung) < 0) cungs.push(o.cung); });
+        TU.hits.push({ combo: p, cungs: cungs });
+      }
+    });
+    var thoIn = KHOE.grid.some(function (r) { return r[0]; });
+    var khoeBad = ['Kiếp Sát', 'Bạch Hổ', 'Thiên Đồng'].filter(function (s, j) { return KHOE.grid.some(function (r) { return r[j + 1]; }); }).length;
+
+    // ---------- Định hướng công việc ----------
+    var NGUON = [{ cung: 'Mệnh', idx: 0 }, { cung: 'Tài Bạch', idx: 8 }, { cung: 'Quan Lộc', idx: 4 }, { cung: 'Thiên Di', idx: 6 }, { cung: 'Phúc Đức', idx: 2 }];
+    NGUON.forEach(function (x) { x.chi = chiOfCung(x.idx); x.flags = flags(x.chi); });
+    var W = { M: 1.2, V: 1.1, 'Đ': 1, B: 0.8, H: 0.5, '': 0.8 };
+    var nhom = NHOM.map(function (g, gi) {
+      var list = [], score = 0;
+      NGUON.forEach(function (x) {
+        c.cells[x.chi].chinh.forEach(function (s) {
+          if (g.sao.indexOf(s.name) >= 0) {
+            list.push(s.name + ' (' + x.cung + ')');
+            var w = W[s.dac] || 0.8; if (x.flags.length) w *= 0.8; score += w;
+          }
+        });
+      });
+      return { i: gi + 1, ten: g.ten, ngan: g.ngan, viec: g.viec, list: list, n: list.length, score: score };
+    });
+    var xep = nhom.filter(function (g) { return g.n > 0; }).sort(function (a, b) { return b.score - a.score || a.i - b.i; });
+    function nhomOf(name) { for (var i = 0; i < NHOM.length; i++) if (NHOM[i].sao.indexOf(name) >= 0) return NHOM[i].ngan; return ''; }
+
+    // ---------- Phần 4 ----------
+    var saoXau = [
+      ['Tuần', 'giảm dần', c.tuan.map(cungOf).join(', ')],
+      ['Triệt', 'đứt, gãy', c.triet.map(cungOf).join(', ')],
+      ['Phục Binh', 'mai phục, rủi ro ngầm', cungOf(where('Phục Binh'))],
+      ['Hóa Kỵ', 'ganh tỵ, đố kỵ', cungOf(where('Hóa Kị'))],
+      ['Hỏa Tinh', 'nóng tính đột xuất → đốt phước', cungOf(where('Hỏa Tinh'))],
+      ['Linh Tinh', 'hay nghĩ nhiều, nghĩ linh tinh', cungOf(where('Linh Tinh'))]
+    ];
+    var phucChi = chiOfCung(2);
+    var star = [];
+    if (c.triet.indexOf(menh) >= 0 || c.tuan.indexOf(menh) >= 0) star.push(1);
+    if (khoa.length || TU.n > 0) star.push(4);
+    if (c.tuan.indexOf(phucChi) >= 0 || c.triet.indexOf(phucChi) >= 0 || has(phucChi, 'Đào Hoa')) star.push(6);
+    star.push(9);
+
+    // ---------- Phần 5: 12 tháng ----------
+    var vChi = mod(c.viewYear - 4, 12);
+    var thChi = -1; for (var i = 0; i < 12; i++) if (c.cells[i].tieuHan === vChi) thChi = i;
+    function tienNhan(chi) {
+      var n = tien(chi), fl = flags(chi), lt = has(chi, 'Lộc Tồn') ? ' · có Lộc Tồn' : '';
+      if (n === 0) return { t: '0$ · giữ tiền' + lt, tone: 'bad', giu: true };
+      if (n >= 2) {
+        if (fl.length) return { t: n + '$ · làm nhanh' + lt, tone: '' };
+        return { t: n + '$ · thuận' + lt, tone: 'good', thuan: true };
+      }
+      if (fl.length) return { t: '1$ · thận trọng' + lt, tone: '', giu: true };
+      return { t: '1$ · vừa' + lt, tone: '' };
+    }
+    function sucKhoe(chi) {
+      var luu = [];
+      if (has(chi, 'Kiếp Sát')) luu.push('Kiếp Sát');
+      if (has(chi, 'Bạch Hổ')) luu.push('Bạch Hổ');
+      if (has(chi, 'L.Tang Môn')) luu.push('lưu Tang Môn');
+      if (has(chi, 'L.Bạch Hổ')) luu.push('lưu Bạch Hổ');
+      var tat = cungOf(chi) === 'Tật Ách';
+      if (luu.length || tat) return { t: 'Lưu tâm', note: (luu.length ? ' (' + luu.join(', ') + ')' : '') + (tat ? ' · vào cung Tật Ách' : ''), tone: 'bad', luu: true };
+      if (has(chi, 'Thiên Thọ')) return { t: 'Thuận', note: ' (Thiên Thọ)', tone: 'good' };
+      if (has(chi, 'Thiên Đồng')) return { t: 'Giữ ăn uống, lời nói', note: '', tone: '' };
+      return { t: 'Bình thường', note: '', tone: '' };
+    }
+    var thang = [];
+    for (var m = 1; m <= 12; m++) {
+      var ch = -1; for (i = 0; i < 12; i++) if (c.cells[i].thang === m) ch = i;
+      thang.push({ m: m, chi: ch, cung: cungOf(ch), tien: tienNhan(ch), khoe: sucKhoe(ch), trongTam: TRONG_TAM[cungOf(ch)] });
+    }
+    var hat = HAT_GIONG.map(function (h) {
+      return { ten: h[0], viec: h[1], thang: thang.filter(function (t) { return t.trongTam === h[0]; }).map(function (t) { return 'T' + t.m; }) };
+    });
+
+    return {
+      c: c, O: O, cungOf: cungOf, flags: flags, has: has, where: where, chinhStr: chinhStr, nhomOf: nhomOf,
+      tienRows: tienRows, maxN: maxN, khoa: khoa, TAI: TAI, TINH: TINH, AN: AN, KHOE: KHOE, TU: TU, thoIn: thoIn, khoeBad: khoeBad,
+      NGUON: NGUON, nhom: nhom, xep: xep, saoXau: saoXau, star: star,
+      thChi: thChi, thTien: tien(thChi), thang: thang, hat: hat, tien: tien
+    };
+  }
+
+  /* ===================== NỘI DUNG (khối) ===================== */
+  function scoreText(ten, n, loai) {
+    if (loai === 'nguon') return [
+      'Chữ ' + ten + ' chưa có sẵn nguồn lực chiếu Mệnh — cần chủ động gieo phước, rèn luyện để bồi đắp.',
+      'Chữ ' + ten + ' có hạt giống — kích hoạt bằng hành động để phát huy.',
+      'Chữ ' + ten + ' có nền tảng — nuôi dưỡng đều đặn để thành thế mạnh.',
+      'Chữ ' + ten + ' là thế mạnh — dựa vào để phát triển và giúp người khác.',
+      'Chữ ' + ten + ' rất mạnh — đồng thời là trách nhiệm lan tỏa cho cộng đồng.'][n];
+    if (n === 0) return 'Không có sao/tổ hợp cần lưu tâm chiếu về Mệnh — chữ ' + ten + ' thuận lợi, giữ gìn bằng gieo phước đều đặn.';
+    return 'Có ' + n + '/4 sao/tổ hợp cần lưu tâm chiếu về Mệnh — chữ ' + ten + ' là nơi cần tu dưỡng' + (n === 1 ? '.' : n === 2 ? ' nhiều.' : ' rất nhiều — ưu tiên các bài xử lý ở Phần 4.');
+  }
+  function khoeLabel(A) { return (A.thoIn ? '+Thiên Thọ' : 'không Thiên Thọ') + ' · ' + A.khoeBad + '/3 cần lưu tâm'; }
+  function khoeText(A) {
+    return (A.thoIn ? 'Có Thiên Thọ chiếu Mệnh — nền sức khỏe tốt.' : 'Không có Thiên Thọ chiếu Mệnh — cần chủ động giữ gìn sức khỏe.') +
+      (A.khoeBad ? ' Có ' + A.khoeBad + ' sao cần lưu tâm.' : ' Không có sao cần lưu tâm.');
+  }
+
+  function buildBlocks(A) {
+    var c = A.c, CH = T.CHI, B = [];
+    var s = c.solar, l = c.lunar;
+    var hien = function (n) { return n === 'Hóa Kị' ? 'Hóa Kỵ' : n; };
+    var flagStr = function (f) { return f.length ? f.join(', ') : '—'; };
+
+    // ---- Đầu trang
+    B.push({ type: 'masthead' });
+    B.push({ type: 'kv', rows: [
+      ['Họ và tên', '**' + (c.name || '—') + '** (' + c.gender + ')'],
+      ['Sinh dương lịch', s.day + '/' + s.month + '/' + s.year + ' lúc ' + pad(c.hour) + ':' + pad(c.minute)],
+      ['Sinh âm lịch', 'Ngày ' + l.day + ' tháng ' + l.month + (l.leap ? ' (nhuận)' : '') + ' năm ' + c.canChi.nam + ' · giờ ' + c.canChi.gio],
+      ['Năm xem', c.viewYear + ' (' + c.viewCanChi + ') · ' + c.tuoi + ' tuổi']
+    ] });
+
+    // ---- Phần 1
+    B.push({ type: 'h1', text: 'Phần 1. Thông tin lá số' });
+    var menhCell = c.cells[c.menhCung];
+    var cmY = menhCell.chinh.length ? menhCell.chinh.map(function (x) { return x.name + ': ' + CHINH_Y[x.name]; }).join('; ') : 'Vô chính diệu: mượn chính tinh cung Thiên Di để luận.';
+    var chuY = [c.menhChu, c.thanChu].filter(function (n, i, a) { return CHINH_Y[n] && a.indexOf(n) === i; }).map(function (n) { return n + ': ' + CHINH_Y[n]; }).join('; ') || '—';
+    var adLy = c.amDuongLy === 'Âm Dương thuận lý';
+    B.push({ type: 'table', cols: [0.16, 0.22, 0.62], head: ['Mục', 'Trên lá số', 'Ý nghĩa'], rows: [
+      ['Mệnh (bản thân)', c.banMenh + ' — hành ' + c.banMenhHanh, 'Hình tượng: ' + (NAP_AM_HINH[c.banMenh] || c.banMenh) + '. Hãy chiêm nghiệm hình tượng này để hiểu cách mình tỏa sáng.'],
+      ['Cục (hoàn cảnh)', c.cucTen.charAt(0).toUpperCase() + c.cucTen.slice(1) + ' — hành ' + ({ 2: 'Thủy', 3: 'Mộc', 4: 'Kim', 5: 'Thổ', 6: 'Hỏa' })[c.cuc], 'Hoàn cảnh, môi trường, gia đình, công việc.'],
+      ['Mệnh — Cục', '**' + c.quanHe + '**', QUAN_HE[c.quanHe] || ''],
+      ['Âm Dương', c.amDuong + ' · ' + c.amDuongLy, adLy ? 'Thuận tự nhiên — khuyên đi hướng Bắc là đi hướng Bắc, dễ tiếp nhận lời khuyên.' : 'Nghịch tự nhiên — hay làm ngược, khuyên đi hướng Bắc lại đi hướng Nam; cần tự quán chiếu nhiều hơn.'],
+      ['Sự tập trung', '**' + c.thanCu + '**', THAN_CU[c.thanCu] || ''],
+      ['Cung Mệnh', CH[c.menhCung] + ' — ' + A.chinhStr(c.menhCung, true), cmY],
+      ['Chủ Mệnh / Chủ Thân', c.menhChu + ' / ' + c.thanChu, chuY]
+    ] });
+    B.push({ type: 'h2', text: 'Nguồn lực của chủ lá số — 5 cung' });
+    B.push({ type: 'table', cols: [0.22, 0.33, 0.25, 0.20], head: ['Cung', 'Chính tinh (độ sáng)', 'Nhóm sao', 'Tuần / Triệt / Phục Binh'], rows: A.NGUON.map(function (x) {
+      var ch = c.cells[x.chi].chinh;
+      return ['**' + x.cung + '** (' + CH[x.chi] + ')', A.chinhStr(x.chi, true), ch.length ? ch.map(function (s2) { return A.nhomOf(s2.name); }).join(', ') : '—', flagStr(x.flags)];
+    }) });
+    var tv = A.where('Tử Vi');
+    B.push({ type: 'p', text: '**Thị trường khách hàng mục tiêu:** Tử Vi tọa tại cung **' + A.cungOf(tv) + '** (' + CH[tv] + ') → nhóm khách hàng gợi ý: ' + THI_TRUONG[A.cungOf(tv)] + '.' });
+
+    // ---- Phần 2: TIỀN
+    B.push({ type: 'h1', text: 'Phần 2. Luận lá số theo 6 Chữ Vàng', keepNext: true });
+    B.push({ type: 'h2', text: '2.1. Chữ TIỀN — tính tiền 12 cung theo công thức 1-5-7-9', keepNext: true });
+    B.push({ type: 'p', text: '4 sao về tiền: **Thiên Phủ** (kho tiền lớn), **Thiên Lương** (kho lương, cứu trợ), **Hóa Lộc** (dòng chảy tiền), **Vũ Khúc** (tiền từ nỗ lực). Mỗi sao = 1$. Tiền một cung = sao tiền tại cung (ô 1) + hai cung tam hợp (ô 5, ô 9) + cung xung chiếu (ô 7).' });
+    B.push({ type: 'table', cols: [0.14, 0.17, 0.21, 0.08, 0.18, 0.22], center: [3], head: ['Cung', 'Tuổi / năm (góc dưới trái)', 'Sao tiền tại cung', 'Tổng', 'Tuần / Triệt / P.Binh', 'Ưu tiên'],
+      rows: A.tienRows.map(function (r) {
+        return ['**' + r.cung + '**', r.tuoi, r.sao.length ? r.sao.join(', ') : '—', '**' + r.n + '$**', flagStr(r.flags), tone(r.uuTien.t, r.uuTien.tone)];
+      }) });
+    var most = A.tienRows.filter(function (r) { return r.n === A.maxN && r.n > 0; });
+    var clean = A.tienRows.filter(function (r) { return r.n >= 2 && !r.flags.length; });
+    var zero = A.tienRows.filter(function (r) { return r.n === 0; });
+    var kq = [];
+    if (most.length) kq.push('Cung nhiều tiền nhất: **' + most.map(function (r) { return r.cung + ' (tuổi ' + r.tuoi + ')'; }).join(', ') + '** — ' + A.maxN + '$.');
+    if (clean.length) { var tc = clean.map(function (r) { return r.tuoi; }).join(', '); kq.push('Cung 2$ trở lên, sạch Tuần/Triệt/Phục Binh — người tuổi **' + tc + '** phù hợp để hợp tác làm ăn, lập gia đình, sinh con; năm ' + tc + ' là năm thuận về tiền.'); }
+    else kq.push('Chưa có cung 2$ nào sạch Tuần/Triệt/Phục Binh — hợp tác cần thỏa thuận rõ ràng, làm nhanh việc cần làm.');
+    if (zero.length) kq.push('Cung 0$: ' + zero.map(function (r) { return r.cung + ' (tuổi ' + r.tuoi + ')'; }).join(', ') + ' — tránh làm việc, lập gia đình, sinh con với người tuổi ' + zero.map(function (r) { return r.tuoi; }).join(', ') + ' và thận trọng trong các năm này.');
+    if (A.khoa.length) kq.push('Kho tiền bị khóa: ' + A.khoa.map(function (k) { return k.sao + ' ở ' + k.cung + ' gặp ' + k.gap; }).join('; ') + ' → cần sám hối, sống đúng đạo đức để mở khóa nguồn lực.');
+    else kq.push('Thiên Phủ, Thiên Lương không bị Tuần/Triệt — kho tiền không bị khóa.');
+    B.push({ type: 'box', title: 'Kết quả chữ Tiền', items: kq });
+
+    // ---- TÀI, TÌNH, TU, AN, KHỎE
+    var sec = [['2.2', 'TAI', A.TAI], ['2.3', 'TINH', A.TINH], ['2.4', 'TU', A.TU], ['2.5', 'AN', A.AN], ['2.6', 'KHOE', A.KHOE]];
+    sec.forEach(function (x) {
+      var def = CHU[x[1]], R = x[2];
+      B.push({ type: 'h2', text: x[0] + '. ' + def.tieuDe, keepNext: true });
+      B.push({ type: 'p', text: '*' + def.mo + '*', color: 'green', keepNext: true });
+      var colN = R.cols.length, cw = x[1] === 'TU' ? [0.2, 0.17, 0.17, 0.2, 0.17, 0.09] : [0.3, 0.13, 0.13, 0.13, 0.17, 0.14];
+      B.push({ type: 'table', cols: cw, center: [1, 2, 3, 4], head: ['Ô · Cung'].concat(R.cols.map(hien), ['T / T / PB']),
+        rows: A.O.map(function (o, i) { return [o.so + ' · ' + o.nhan].concat(R.grid[i].map(function (v) { return v ? '{tick}' : ''; }), [flagStr(o.flags)]); }) });
+      var label, txt;
+      if (def.loai === 'khoe') { label = khoeLabel(A); txt = khoeText(A); }
+      else { label = R.n + '/4 (' + (def.loai === 'nguon' ? 'nguồn lực' : 'cần lưu tâm') + ')'; txt = scoreText(def.ten, R.n, def.loai); }
+      R.label = label; R.text = txt;
+      B.push({ type: 'p', text: '**Điểm chiếu Mệnh (1/5/7/9): ' + label + '.** ' + txt });
+      var bl = [];
+      if (x[1] === 'TU') R.hits.forEach(function (h) { bl.push('**' + h.combo[0] + '** + **' + h.combo[1] + '** cùng chiếu về Mệnh (' + h.cungs.join(' & ') + ') → tín hiệu cần tu dưỡng, sám hối.'); });
+      else R.hits.forEach(function (h) { bl.push('**' + hien(h.sao) + '** ở ' + h.cung + ': ' + def.y[h.sao] + '.'); });
+      if (bl.length) B.push({ type: 'bullets', items: bl });
+      if (R.ngoai && R.ngoai.length) B.push({ type: 'p', text: 'Ngoài tam phương tứ chính Mệnh: ' + R.ngoai.map(function (g) { return hien(g.sao) + ' ở ' + g.cung; }).join(' · ') + '.', small: true });
+      B.push({ type: 'box', title: 'Gợi ý lời khuyên', items: def.khuyen });
+    });
+
+    // ---- Phần 3
+    B.push({ type: 'h1', text: 'Phần 3. Định hướng công việc', keepNext: true });
+    B.push({ type: 'table', cols: [0.17, 0.4, 0.07, 0.36], center: [2], head: ['Nhóm', 'Sao trong 5 cung nguồn lực', 'Số sao', 'Công việc phù hợp'],
+      rows: A.nhom.map(function (g) { return ['**' + g.ten + '**', g.list.length ? g.list.join(', ') : '—', String(g.n), g.viec]; }) });
+    var kl = [];
+    if (A.xep.length) {
+      var top = A.xep[0];
+      kl.push('Nhóm mạnh nhất (tính cả độ sáng): **' + top.ten + '** → ' + top.viec + '.');
+      if (A.xep.length > 1) { var a = Math.min(top.i, A.xep[1].i), b = Math.max(top.i, A.xep[1].i); kl.push('Cặp **Nhóm ' + a + ' + Nhóm ' + b + '**: ' + CAP_NHOM[a + '+' + b]); }
+    } else kl.push('5 cung nguồn lực đều vô chính diệu — chọn nghề theo sao tại cung Thiên Di và sở trường thực tế.');
+    kl.push('Chính tinh hãm (H) hoặc gặp Tuần/Triệt thì nguồn lực đó cần tu thêm mới phát huy.');
+    B.push({ type: 'box', title: 'Kết luận định hướng', items: kl });
+
+    // ---- Phần 4
+    B.push({ type: 'h1', text: 'Phần 4. Sao xấu và cách tu', keepNext: true });
+    B.push({ type: 'table', cols: [0.19, 0.45, 0.36], head: ['Sao', 'Tác động', 'Ở cung'], rows: A.saoXau.map(function (r) { return ['**' + r[0] + '**', r[1], r[2] || '—']; }) });
+    B.push({ type: 'p', text: '9 bài xử lý tổng thể — bài được đánh dấu ★ là bài gợi ý theo lá số này:' });
+    B.push({ type: 'olist', items: BAI_TU.map(function (t, i) { return A.star.indexOf(i + 1) >= 0 ? '★ **' + t + '**' : t; }) });
+    B.push({ type: 'box', title: 'Xử lý theo sự vụ', items: [
+      'Tẩy nghiệp: **Om Benzda Satto Hum**; đọc 4 câu "Tôi yêu bạn, tôi xin lỗi, xin hãy tha thứ cho tôi, tôi cảm ơn".',
+      'Hỏa Tinh (nóng tính): **Om Benzda Satto Hum; Om A so by ah hum**.',
+      'Linh Tinh (nghĩ linh tinh): ghi Sổ Gieo Phước Báu, đọc Tử Vi về tiền cho người khác, nghĩ về sự biết ơn.'] });
+
+    // ---- Phần 5
+    B.push({ type: 'h1', text: 'Phần 5. Lưu ý quan trọng 12 tháng — năm ' + c.viewYear + ' (' + c.viewCanChi + ')' });
+    var thN = A.thTien, thCung = A.cungOf(A.thChi);
+    var thMuc = thN === 0 ? 'tiền yếu — giữ tiền, hạn chế đầu tư mới, tăng gieo phước.' : thN === 1 ? 'tiền ở mức vừa, chi tiêu cẩn trọng.' : 'tiền thuận lợi, nên chủ động nắm cơ hội.';
+    B.push({ type: 'p', text: '**Tiểu hạn năm ' + c.viewYear + '** rơi vào cung **' + thCung + '** (' + CH[A.thChi] + ') — ' + thN + '$. Năm nay lĩnh vực ' + thCung + ' là trọng tâm; ' + thMuc });
+    B.push({ type: 'p', text: 'Tháng âm lịch năm ' + c.viewYear + '. Cung lưu nguyệt của từng tháng lấy theo lá số; tiền tính theo công thức 1-5-7-9 của cung đó.', small: true });
+    B.push({ type: 'table', cols: [0.12, 0.17, 0.19, 0.24, 0.28], head: ['Tháng', 'Cung lưu nguyệt', 'Tiền', 'Sức khỏe', 'Trọng tâm gieo phước'],
+      rows: A.thang.map(function (t) {
+        return ['**Tháng ' + t.m + '**', t.cung + ' (' + CH[t.chi] + ')', tone(t.tien.t, t.tien.tone, true), tone(t.khoe.t, t.khoe.tone, t.khoe.tone === 'good') + t.khoe.note, t.trongTam];
+      }) });
+    var mThuan = A.thang.filter(function (t) { return t.tien.thuan; }).map(function (t) { return 'tháng ' + t.m; });
+    var mGiu = A.thang.filter(function (t) { return t.tien.giu; }).map(function (t) { return 'tháng ' + t.m; });
+    var mKhoe = A.thang.filter(function (t) { return t.khoe.luu; }).map(function (t) { return 'tháng ' + t.m; });
+    B.push({ type: 'box', title: 'Lưu ý về tiền', items: [
+      mThuan.length ? 'Tháng thuận về tiền: **' + mThuan.join(', ') + '** — chủ động ký kết, hợp tác, mở rộng.' : 'Năm nay không có tháng tiền thật thuận — ưu tiên tích lũy, gieo phước đều.',
+      mGiu.length ? 'Tháng cần giữ tiền, thận trọng: **' + mGiu.join(', ') + '** — không vay mượn, không cho vay lớn, không đầu tư mới; tăng gieo phước.' : 'Không có tháng phải giữ tiền đặc biệt — vẫn chi tiêu có kế hoạch.',
+      'Tháng có Tuần/Triệt: việc gì cần làm thì làm nhanh. Tháng có Phục Binh: hợp tác phải có thỏa thuận rõ ràng, phòng rủi ro.'] });
+    B.push({ type: 'box', title: 'Lưu ý về sức khỏe', items: [
+      mKhoe.length ? 'Tháng cần lưu tâm sức khỏe: **' + mKhoe.join(', ') + '** — nghỉ ngơi đủ, tránh làm quá sức, đi lại cẩn thận.' : 'Không có tháng cần lưu tâm đặc biệt — giữ nếp sinh hoạt điều độ.',
+      'Ăn uống điều độ, ngủ đủ, vận động đều; khám sức khỏe định kỳ. Phần này là lời nhắc, không thay cho chẩn đoán y khoa.',
+      'Giữ tâm an: đói thì ăn, mệt thì nghỉ; nóng tính thì niệm Om Benzda Satto Hum.'] });
+    B.push({ type: 'h2', text: 'Tạo phước cải vận — 6 hạt giống gieo đều 12 tháng', keepNext: true });
+    B.push({ type: 'table', cols: [0.05, 0.25, 0.55, 0.15], center: [0], head: ['#', 'Hạt giống', 'Việc làm gợi ý', 'Tháng trọng tâm'],
+      rows: A.hat.map(function (h, i) { return [String(i + 1), '**' + h.ten + '**', h.viec, h.thang.length ? h.thang.join(', ') : '—']; }) });
+    B.push({ type: 'p', text: 'Mỗi tháng gieo đủ 6 hạt giống; hạt trọng tâm của tháng làm nhiều hơn. Ghi tất cả vào **Sổ Gieo Phước Báu** mỗi ngày.' });
+
+    // ---- Phần 6
+    B.push({ type: 'h1', text: 'Phần 6. Tổng kết 6 Chữ Vàng', keepNext: true });
+    var menhTien = A.tien(c.menhCung);
+    B.push({ type: 'table', cols: [0.1, 0.25, 0.65], head: ['Chữ', 'Chiếu Mệnh 1/5/7/9', 'Nhận định'], rows: [
+      ['**KHỎE**', A.KHOE.label, A.KHOE.text], ['**TIỀN**', 'cung Mệnh ' + menhTien + '$', 'mạnh nhất ' + A.maxN + '$'],
+      ['**TÀI**', A.TAI.label, A.TAI.text], ['**TÌNH**', A.TINH.label, A.TINH.text], ['**TU**', A.TU.label, A.TU.text], ['**AN**', A.AN.label, A.AN.text]
+    ] });
+    B.push({ type: 'p', text: '**Cam kết Sổ Gieo Phước Báu:** mỗi ngày ghi từ 5–10 việc gieo phước, tăng dần lên 10–20 việc. Tạo phước liên tục để cải vận.' });
+    B.push({ type: 'closing' });
+    return B;
+  }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function tone(t, tn, bold) { if (tn === 'good') return '{g:' + (bold === false ? t : '**' + t + '**') + '}'; if (tn === 'bad') return '{r:' + t + '}'; return t; }
+
+  /* ===================== VẼ TRANG A4 (canvas) ===================== */
+  var PW = 1240, PH = 1754, ML = 104, MR = 104, MT = 96, MB = 120, CWID = PW - ML - MR;
+  var SERIF = '"Tinos","Liberation Serif","Times New Roman",Times,serif';
+  var COL = { ink: '#1f2328', soft: '#5b6168', mute: '#8b9097', green: '#0f5c3a', gold: '#a5781f', goldLine: '#c9a24a',
+    head: '#0f5c3a', stripe: '#f6f7f5', line: '#d9ddd8', box: '#fbf3e2', bar: '#b8862b', good: '#0f6b3c', bad: '#b03a2e', kvBg: '#eef3ef' };
+
+  // Phân tích chuỗi định dạng thành các đoạn: **đậm**, *nghiêng*, {g:..} xanh, {r:..} đỏ, {tick}
+  function parseRich(str) {
+    var out = [];
+    function walk(s, st) {
+      var i = 0, buf = '';
+      function flush() { if (buf) { out.push({ t: buf, b: st.b, i: st.i, c: st.c }); buf = ''; } }
+      while (i < s.length) {
+        if (s.substr(i, 6) === '{tick}') { flush(); out.push({ tick: true }); i += 6; continue; }
+        if (s[i] === '{' && (s.substr(i, 3) === '{g:' || s.substr(i, 3) === '{r:')) {
+          var depth = 1, j = i + 3; while (j < s.length && depth) { if (s[j] === '{') depth++; else if (s[j] === '}') depth--; j++; }
+          flush(); walk(s.slice(i + 3, j - 1), { b: st.b, i: st.i, c: s[i + 1] === 'g' ? COL.good : COL.bad }); i = j; continue;
+        }
+        if (s.substr(i, 2) === '**') { var e = s.indexOf('**', i + 2); if (e > 0) { flush(); walk(s.slice(i + 2, e), { b: true, i: st.i, c: st.c }); i = e + 2; continue; } }
+        if (s[i] === '*' && s[i + 1] !== '*') { var e2 = s.indexOf('*', i + 1); if (e2 > 0) { flush(); walk(s.slice(i + 1, e2), { b: st.b, i: true, c: st.c }); i = e2 + 1; continue; } }
+        buf += s[i]; i++;
+      }
+      flush();
+    }
+    walk(String(str), { b: false, i: false, c: null });
+    return out;
+  }
+  function fontOf(r, size, base) { return (r.i ? 'italic ' : '') + (r.b || base.b ? '700 ' : '400 ') + size + 'px ' + SERIF; }
+  // Bẻ dòng: trả về danh sách dòng, mỗi dòng là mảng {t,font,color,w,tick}
+  function layout(ctx, rich, width, size, base) {
+    base = base || {};
+    var lines = [[]], x = 0, words = [];
+    rich.forEach(function (r) {
+      if (r.tick) { words.push({ tick: true, sp: false }); return; }
+      var parts = r.t.split(/(\s+)/);
+      parts.forEach(function (p) { if (p === '') return; words.push({ t: p, r: r, sp: /^\s+$/.test(p) }); });
+    });
+    words.forEach(function (w) {
+      if (w.tick) { lines[lines.length - 1].push({ tick: true, w: size }); x += size; return; }
+      var font = fontOf(w.r, size, base); ctx.font = font;
+      var ww = ctx.measureText(w.t).width;
+      if (w.sp) { if (x > 0) { lines[lines.length - 1].push({ t: ' ', font: font, w: ww, color: w.r.c }); x += ww; } return; }
+      if (x + ww > width && x > 0) {
+        var ln = lines[lines.length - 1]; while (ln.length && ln[ln.length - 1].t === ' ') { x -= ln.pop().w; }
+        lines.push([]); x = 0;
+      }
+      lines[lines.length - 1].push({ t: w.t, font: font, w: ww, color: w.r.c }); x += ww;
+    });
+    return lines;
+  }
+  function drawLines(ctx, lines, x, y, lh, size, color, align, width) {
+    lines.forEach(function (ln, k) {
+      var total = ln.reduce(function (s, p) { return s + p.w; }, 0);
+      var cx = align === 'center' ? x + (width - total) / 2 : x;
+      ln.forEach(function (p) {
+        if (p.tick) { drawTick(ctx, cx + p.w / 2, y + k * lh + lh / 2 - 2, size * 0.5); cx += p.w; return; }
+        ctx.font = p.font; ctx.fillStyle = p.color || color; ctx.textBaseline = 'alphabetic';
+        ctx.fillText(p.t, cx, y + k * lh + size * 0.98); cx += p.w;
+      });
+    });
+  }
+  function drawTick(ctx, x, y, s) {
+    ctx.save(); ctx.strokeStyle = COL.green; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.beginPath();
+    ctx.moveTo(x - s * 0.55, y); ctx.lineTo(x - s * 0.1, y + s * 0.45); ctx.lineTo(x + s * 0.6, y - s * 0.5); ctx.stroke(); ctx.restore();
+  }
+
+  function Pager(meta) {
+    this.pages = []; this.meta = meta; this.newPage();
+  }
+  Pager.prototype.newPage = function () {
+    var cv = document.createElement('canvas'); cv.width = PW; cv.height = PH;
+    var ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, PW, PH);
+    this.pages.push(cv); this.ctx = ctx; this.y = MT;
+  };
+  Pager.prototype.room = function () { return PH - MB - this.y; };
+  Pager.prototype.ensure = function (h) { if (h > this.room() && this.y > MT + 1) this.newPage(); };
+
+  // Đo/vẽ từng loại khối
+  function measureBlock(pg, b) { return drawBlock(pg, b, true); }
+  function drawBlock(pg, b, dry) {
+    var ctx = pg.ctx, y = pg.y, h = 0;
+    if (b.type === 'masthead') {
+      h = 205;
+      if (!dry) {
+        txtC(ctx, 'T Â M   K H Ô N G', PW / 2, y + 30, '700 30px ' + SERIF, COL.green);
+        txtC(ctx, 'Lợi cộng đồng • Lợi người khác • Lợi mình', PW / 2, y + 66, 'italic 400 21px ' + SERIF, COL.gold);
+        txtC(ctx, 'LUẬN GIẢI TỬ VI THEO 6 CHỮ VÀNG', PW / 2, y + 122, '700 42px ' + SERIF, COL.green);
+        txtC(ctx, 'KHỎE • TIỀN • TÀI • TÌNH • TU • AN', PW / 2, y + 166, '700 24px ' + SERIF, COL.gold);
+        ctx.fillStyle = COL.goldLine; ctx.fillRect(ML, y + 190, CWID, 3);
+      }
+      return h + 22;
+    }
+    if (b.type === 'closing') {
+      h = 120;
+      if (!dry) {
+        ctx.fillStyle = COL.goldLine; ctx.fillRect(ML, y + 16, CWID, 2);
+        txtC(ctx, 'Đức năng thắng số — Phước báu cải vận', PW / 2, y + 62, 'italic 400 26px ' + SERIF, COL.green);
+        txtC(ctx, 'Bản luận giải tự động theo phương pháp 6 Chữ Vàng của Tâm Không. Người luận giải xem lại và bổ sung trước khi gửi khách hàng.', PW / 2, y + 100, 'italic 400 17px ' + SERIF, COL.mute);
+      }
+      return h;
+    }
+    if (b.type === 'h1') {
+      if (!dry) {
+        txtL(ctx, b.text, ML, y + 40, '700 34px ' + SERIF, COL.green);
+        ctx.fillStyle = COL.goldLine; ctx.fillRect(ML, y + 58, CWID, 2);
+      }
+      return 82;
+    }
+    if (b.type === 'h2') {
+      if (!dry) txtL(ctx, b.text, ML, y + 34, '700 28px ' + SERIF, COL.gold);
+      return 52;
+    }
+    if (b.type === 'p') {
+      var size = b.small ? 19 : 24, lh = b.small ? 28 : 36;
+      var lines = layout(ctx, parseRich(b.text), CWID, size);
+      if (!dry) drawLines(ctx, lines, ML, y, lh, size, b.small ? COL.mute : b.color === 'green' ? COL.green : COL.ink);
+      return lines.length * lh + 14;
+    }
+    if (b.type === 'bullets') {
+      var tot = 0;
+      b.items.forEach(function (it) {
+        var ls = layout(ctx, parseRich(it), CWID - 40, 24);
+        if (!dry) { txtL(ctx, '•', ML + 14, y + tot + 24, '700 24px ' + SERIF, COL.ink); drawLines(ctx, ls, ML + 40, y + tot, 36, 24, COL.ink); }
+        tot += ls.length * 36;
+      });
+      return tot + 10;
+    }
+    if (b.type === 'olist') {
+      var t2 = 0;
+      b.items.forEach(function (it, i) {
+        var ls = layout(ctx, parseRich(it), CWID - 60, 24);
+        if (!dry) { txtL(ctx, (i + 1) + '.', ML + 18, y + t2 + 24, '400 24px ' + SERIF, COL.ink); drawLines(ctx, ls, ML + 54, y + t2, 35, 24, COL.ink); }
+        t2 += ls.length * 35;
+      });
+      return t2 + 14;
+    }
+    if (b.type === 'box') {
+      var pad = 26, inner = CWID - pad * 2 - 8, hh = pad + 36, items = [];
+      b.items.forEach(function (it) { var ls = layout(ctx, parseRich(it), inner - 26, 21); items.push(ls); hh += ls.length * 32; });
+      hh += pad - 6;
+      if (!dry) {
+        ctx.fillStyle = COL.box; ctx.fillRect(ML, y, CWID, hh);
+        ctx.fillStyle = COL.bar; ctx.fillRect(ML, y, 6, hh);
+        txtL(ctx, b.title, ML + pad + 8, y + pad + 22, '700 23px ' + SERIF, COL.ink);
+        var yy = y + pad + 36;
+        items.forEach(function (ls) { txtL(ctx, '•', ML + pad + 14, yy + 21, '400 21px ' + SERIF, COL.ink); drawLines(ctx, ls, ML + pad + 34, yy, 32, 21, COL.ink); yy += ls.length * 32; });
+      }
+      return hh + 22;
+    }
+    if (b.type === 'kv') {
+      var kh = 0, rowsH = [];
+      b.rows.forEach(function (r) { var ls = layout(ctx, parseRich(r[1]), CWID * 0.7 - 24, 22); rowsH.push([ls, Math.max(44, ls.length * 32 + 14)]); kh += rowsH[rowsH.length - 1][1]; });
+      if (!dry) {
+        var yy2 = y;
+        b.rows.forEach(function (r, i) {
+          var rh = rowsH[i][1];
+          ctx.fillStyle = COL.kvBg; ctx.fillRect(ML, yy2, CWID * 0.3, rh);
+          ctx.strokeStyle = COL.line; ctx.lineWidth = 1.5; ctx.strokeRect(ML, yy2, CWID, rh); ctx.beginPath(); ctx.moveTo(ML + CWID * 0.3, yy2); ctx.lineTo(ML + CWID * 0.3, yy2 + rh); ctx.stroke();
+          txtL(ctx, r[0], ML + 14, yy2 + 29, '700 22px ' + SERIF, COL.ink);
+          drawLines(ctx, rowsH[i][0], ML + CWID * 0.3 + 14, yy2 + 7, 32, 22, COL.ink);
+          yy2 += rh;
+        });
+      }
+      return kh + 30;
+    }
+    return 0;
+  }
+  function txtL(ctx, s, x, y, font, color) { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.fillText(s, x, y); }
+  function txtC(ctx, s, x, y, font, color) { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.fillText(s, x, y); ctx.textAlign = 'left'; }
+
+  // Bảng: tách theo hàng khi sang trang, lặp lại tiêu đề
+  function drawTable(pg, b) {
+    var ctx = pg.ctx, size = 21, lh = 30, padX = 12, padY = 9;
+    var widths = b.cols.map(function (f) { return f * CWID; });
+    function cellLines(text, w, bold) { return layout(ctx, parseRich(text), w - padX * 2, size, { b: bold }); }
+    var head = b.head.map(function (t, i) { return cellLines(t, widths[i], true); });
+    var headH = Math.max.apply(null, head.map(function (l) { return l.length; })) * lh + padY * 2;
+    var rows = b.rows.map(function (r) { var ls = r.map(function (t, i) { return cellLines(t, widths[i], false); }); return { ls: ls, h: Math.max.apply(null, ls.map(function (l) { return l.length; })) * lh + padY * 2 }; });
+    function drawHead() {
+      var x = ML, y = pg.y;
+      ctx.fillStyle = COL.head; ctx.fillRect(ML, y, CWID, headH);
+      head.forEach(function (ls, i) {
+        ls.forEach(function (ln) { ln.forEach(function (p) { p.color = '#ffffff'; }); });
+        drawLines(pg.ctx, ls, x + padX, y + padY, lh, size, '#fff', (b.center || []).indexOf(i) >= 0 ? 'center' : 'left', widths[i] - padX * 2);
+        x += widths[i];
+      });
+      pg.y += headH;
+    }
+    pg.ensure(headH + rows.slice(0, 3).reduce(function (a, r) { return a + r.h; }, 0));
+    ctx = pg.ctx; drawHead();
+    rows.forEach(function (r, ri) {
+      if (r.h > pg.room()) { pg.newPage(); ctx = pg.ctx; drawHead(); }
+      var x = ML, y = pg.y;
+      ctx.fillStyle = ri % 2 ? COL.stripe : '#ffffff'; ctx.fillRect(ML, y, CWID, r.h);
+      ctx.strokeStyle = COL.line; ctx.lineWidth = 1.5;
+      r.ls.forEach(function (ls, i) {
+        ctx.strokeRect(x, y, widths[i], r.h);
+        drawLines(ctx, ls, x + padX, y + padY, lh, size, COL.ink, (b.center || []).indexOf(i) >= 0 ? 'center' : 'left', widths[i] - padX * 2);
+        x += widths[i];
+      });
+      pg.y += r.h;
+    });
+    pg.y += 22;
+  }
+
+  function renderPages(chart, A, opts) {
+    opts = opts || {};
+    var pg = new Pager();
+    // Trang 1: lá số (đen trắng) như mẫu
+    var cv = document.createElement('canvas');
+    root.TuViRender.draw(cv, chart, opts.mode || 'bw', { site: 'phuocloc.vn' });
+    var sc = Math.min(CWID / cv.width, (PH - MT - MB + 40) / cv.height);
+    var w = cv.width * sc, h = cv.height * sc;
+    pg.ctx.drawImage(cv, (PW - w) / 2, MT - 30, w, h);
+    pg.newPage();
+    var blocks = buildBlocks(A);
+    blocks.forEach(function (b, i) {
+      if (b.newPage && pg.y > MT + 1) pg.newPage();
+      if (b.type === 'table') { drawTable(pg, b); return; }
+      var need = measureBlock(pg, b), j = i;
+      while (blocks[j] && blocks[j].keepNext && blocks[j + 1]) {
+        var nx = blocks[j + 1];
+        need += nx.type === 'table' ? 400 : measureBlock(pg, nx);
+        j++;
+      }
+      pg.ensure(need);
+      var hh = drawBlock(pg, b, false);
+      pg.y += hh;
+    });
+    // Số trang
+    var N = pg.pages.length;
+    pg.pages.forEach(function (p, i) {
+      var ctx = p.getContext('2d'); ctx.font = '400 18px ' + SERIF; ctx.fillStyle = COL.mute; ctx.textAlign = 'right';
+      ctx.fillText((i + 1) + '/' + N, PW - 60, PH - 50); ctx.textAlign = 'left';
+    });
+    return pg.pages;
+  }
+
+  /* ===================== PDF tối giản (ảnh JPEG mỗi trang) ===================== */
+  function b64ToBytes(b64) { var bin = atob(b64), a = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return a; }
+  function pagesToPdf(pages) {
+    var enc = new TextEncoder(), parts = [], offsets = [], len = 0;
+    function add(x) { var b = typeof x === 'string' ? enc.encode(x) : x; parts.push(b); len += b.length; }
+    var n = pages.length, pw = 595.28, ph = 841.89;
+    add('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'.replace(/[\u0080-ÿ]/g, ''));
+    var objs = 2 + n * 3;
+    function obj(id, body) { offsets[id] = len; add(id + ' 0 obj\n'); add(body); add('\nendobj\n'); }
+    obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+    var kids = []; for (var i = 0; i < n; i++) kids.push((3 + i * 3) + ' 0 R');
+    obj(2, '<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + n + ' >>');
+    pages.forEach(function (cv, i) {
+      var pid = 3 + i * 3, cid = pid + 1, iid = pid + 2;
+      var jpg = b64ToBytes(cv.toDataURL('image/jpeg', 0.9).split(',')[1]);
+      obj(pid, '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + pw + ' ' + ph + '] /Resources << /XObject << /Im0 ' + iid + ' 0 R >> >> /Contents ' + cid + ' 0 R >>');
+      var cs = 'q ' + pw + ' 0 0 ' + ph + ' 0 0 cm /Im0 Do Q';
+      obj(cid, '<< /Length ' + cs.length + ' >>\nstream\n' + cs + '\nendstream');
+      offsets[iid] = len;
+      add(iid + ' 0 obj\n<< /Type /XObject /Subtype /Image /Width ' + cv.width + ' /Height ' + cv.height + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + jpg.length + ' >>\nstream\n');
+      add(jpg); add('\nendstream\nendobj\n');
+    });
+    var xref = len, s = 'xref\n0 ' + (objs + 1) + '\n0000000000 65535 f \n';
+    for (var k = 1; k <= objs; k++) s += String(offsets[k]).padStart(10, '0') + ' 00000 n \n';
+    s += 'trailer\n<< /Size ' + (objs + 1) + ' /Root 1 0 R /Info << /Producer (phuocloc.vn) /Title (Luan giai Tu Vi 6 Chu Vang) >> >>\nstartxref\n' + xref + '\n%%EOF';
+    add(s);
+    var out = new Uint8Array(len), o = 0; parts.forEach(function (p) { out.set(p, o); o += p.length; });
+    return new Blob([out], { type: 'application/pdf' });
+  }
+
+  function makePdf(chart, opts) {
+    var A = analyze(chart);
+    var pages = renderPages(chart, A, opts);
+    return pagesToPdf(pages);
+  }
+
+  var api = { analyze: analyze, buildBlocks: buildBlocks, renderPages: renderPages, pagesToPdf: pagesToPdf, makePdf: makePdf };
+  root.LuanGiai = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof window !== 'undefined' ? window : this);
+
+</script>
+<script>
 (function () {
   'use strict';
   var T = window.TuVi, R = window.TuViRender;
@@ -1186,8 +1900,8 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
   }
   function entryOf(chart, mode, prev) {
     var i = chart.input, s = chart.solar, l = chart.lunar, now = new Date().toISOString();
-    var dl = prev && prev.dl ? { mau: prev.dl.mau || 0, bw: prev.dl.bw || 0 } : { mau: 0, bw: 0 };
-    dl[mode === 'mau' ? 'mau' : 'bw']++;
+    var dl = prev && prev.dl ? { mau: prev.dl.mau || 0, bw: prev.dl.bw || 0, pdf: prev.dl.pdf || 0 } : { mau: 0, bw: 0, pdf: 0 };
+    dl[mode === 'mau' ? 'mau' : mode === 'pdf' ? 'pdf' : 'bw']++;
     return {
       id: keyOf(i).slice(0, 120), name: chart.name, gender: i.gender, calendar: i.calendar, day: i.day, month: i.month, year: i.year,
       leap: !!i.leap, hour: chart.hour, minute: chart.minute, viewYear: chart.viewYear, options: chart.options,
@@ -1247,9 +1961,9 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
         '<td class="num">' + esc(e.solar) + ' <span class="sub">DL</span><div class="sub">' + esc(e.lunar) + ' ÂL</div></td>' +
         '<td class="num">' + pad(e.hour) + ':' + pad(e.minute) + '</td>' +
         '<td>' + esc(e.amDuong || '') + '<div class="sub">' + esc(e.banMenh || '') + ' · ' + esc(e.cuc || '') + '</div></td>' +
-        '<td class="num">' + (dl.mau ? '<span class="chip m">Màu ×' + dl.mau + '</span> ' : '') + (dl.bw ? '<span class="chip">ĐT ×' + dl.bw + '</span>' : '') +
+        '<td class="num">' + (dl.mau ? '<span class="chip m">Màu ×' + dl.mau + '</span> ' : '') + (dl.bw ? '<span class="chip">ĐT ×' + dl.bw + '</span> ' : '') + (dl.pdf ? '<span class="chip m">PDF ×' + dl.pdf + '</span>' : '') +
         '<div class="sub">' + (isNaN(when) ? '' : pad(when.getDate()) + '/' + pad(when.getMonth() + 1) + '/' + when.getFullYear() + ' ' + pad(when.getHours()) + ':' + pad(when.getMinutes())) + '</div></td>' +
-        '<td><div class="row-actions"><button class="btn ghost small" data-act="open">Xem</button><button class="btn ghost small" data-act="mau">Tải màu</button><button class="btn ghost small" data-act="bw">Tải ĐT</button>' +
+        '<td><div class="row-actions"><button class="btn ghost small" data-act="open">Xem</button><button class="btn ghost small" data-act="mau">Tải màu</button><button class="btn ghost small" data-act="bw">Tải ĐT</button><button class="btn ghost small" data-act="pdf">PDF</button>' +
         (state.src === 'local' ? '<button class="btn ghost small" data-act="del">Xóa</button>' : '') + '</div></td></tr>';
     }).join('');
   }
@@ -1266,6 +1980,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     var act = b.getAttribute('data-act');
     if (act === 'open') openEntry(e);
     else if (act === 'mau' || act === 'bw') openEntry(e, function () { download(act === 'mau' ? 'mau' : 'bw'); });
+    else if (act === 'pdf') openEntry(e, downloadPdf);
     else if (act === 'del') {
       if (b.dataset.confirm) { saveLocal(loadLocal().filter(function (x) { return x.id !== id; })); renderHist(); toast('Đã xóa khỏi lịch sử'); }
       else { b.dataset.confirm = '1'; b.textContent = 'Xóa thật?'; setTimeout(function () { if (b.isConnected) { delete b.dataset.confirm; b.textContent = 'Xóa'; } }, 3000); }
@@ -1314,6 +2029,26 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
   function setMode(m) { state.mode = m; $('mMau').setAttribute('aria-pressed', m === 'mau'); $('mBw').setAttribute('aria-pressed', m !== 'mau'); draw(); }
   $('dlMau').addEventListener('click', function () { download('mau'); });
   $('dlBw').addEventListener('click', function () { download('bw'); });
+  $('dlPdf').addEventListener('click', downloadPdf);
+  function downloadPdf() {
+    if (!state.chart) return;
+    if (state.isSample) { toast('Đây là lá số mẫu. Hãy nhập thông tin rồi bấm “Lập lá số”.'); return; }
+    var btn = $('dlPdf'), old = btn.textContent; btn.disabled = true; btn.textContent = 'Đang tạo PDF…';
+    var chart = state.chart, s = chart.solar;
+    var name = slug(chart.name) + '_' + pad(s.day) + '_' + pad(s.month) + '_' + s.year + '_LUAN_GIAI_6_CHU_VANG.pdf';
+    var fontsReady = document.fonts && document.fonts.load ? Promise.all(['400 24px Tinos', '700 24px Tinos', 'italic 400 24px Tinos'].map(function (f) { return document.fonts.load(f); })) : Promise.resolve();
+    fontsReady.catch(function () { }).then(function () {
+      return new Promise(function (res) { setTimeout(function () { res(window.LuanGiai.makePdf(chart, { mode: 'bw' })); }, 30); });
+    }).then(function (blob) {
+      if (state.dl) return state.dl.save({ filename: name, data: blob }).then(function () { return true; }, function (e) { if (e && e.code === 'declined') return false; throw e; });
+      var url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      return true;
+    }).then(function (ok) { if (ok) { record(chart, 'pdf'); toast('Đã tải ' + name); } })
+      .catch(function () { toast('Không tạo được PDF. Vui lòng thử lại.'); })
+      .then(function () { btn.disabled = false; btn.textContent = old; });
+  }
   $('cpLink').addEventListener('click', function () {
     if (!state.chart || state.isSample) { toast('Hãy lập lá số trước.'); return; }
     var i = state.chart.input;
