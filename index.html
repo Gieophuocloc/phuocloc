@@ -1910,13 +1910,15 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
   var IN_APP = /Zalo|FBAN|FBAV|FB_IAB|Instagram|Line\/|MicroMessenger|TikTok|musical_ly|; wv\)/i.test(UA);
   var IS_ZALO = /Zalo/i.test(UA);
   var IS_IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  // Trang chạy http:// → Chrome/Edge chặn tải file ('tải xuống không an toàn'); khi đó mở file để xem rồi lưu
+  var INSECURE = location.protocol === 'http:' && !/^(localhost|127\.)/.test(location.hostname);
   function plainDownload(blob, name) {
     var url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
   }
   function saveFile(blob, name) {
-    if (!IN_APP && !IS_IOS) { plainDownload(blob, name); return Promise.resolve(true); }
+    if (!IN_APP && !IS_IOS && !INSECURE) { plainDownload(blob, name); return Promise.resolve(true); }
     showSaveSheet(blob, name);
     return Promise.resolve(true);
   }
@@ -1929,12 +1931,13 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     var orShare = canShare ? ', hoặc bấm <b>Lưu / Chia sẻ</b>' : '';
     var hint = isImg
       ? (IS_IOS ? 'Nhấn giữ vào ảnh → chọn <b>Lưu vào Ảnh</b>' + orShare + '.' : 'Nhấn giữ vào ảnh → <b>Tải hình ảnh</b>' + orShare + '.')
-      : (canShare ? 'Bấm <b>Lưu / Chia sẻ</b> → chọn <b>Lưu vào Tệp</b> (iPhone/iPad) hoặc ứng dụng để lưu; hoặc bấm <b>Mở PDF</b>.' : 'Bấm <b>Mở PDF</b> để xem, rồi dùng nút chia sẻ/tải của trình duyệt để lưu.');
+      : (canShare ? 'Bấm <b>Lưu / Chia sẻ</b> → chọn <b>Lưu vào Tệp</b> (iPhone/iPad) hoặc ứng dụng để lưu; hoặc bấm <b>Mở PDF</b>.' : 'Bấm <b>Mở PDF</b> để xem, rồi bấm nút tải xuống (⬇) hoặc Ctrl+S trong trình xem PDF để lưu.');
+    if (isImg && INSECURE && !IN_APP && !IS_IOS) hint = 'Nhấn chuột phải vào ảnh → <b>Lưu hình ảnh thành…</b> (trên điện thoại: nhấn giữ vào ảnh).';
     wrap.innerHTML = '<div class="sheet-box"><div class="sheet-hd"><b>' + esc(name) + '</b><button type="button" class="btn ghost small" data-x>Đóng</button></div>' +
       (isImg ? '<img class="sheet-img" alt="' + esc(name) + '" src="' + url + '">' : '<div class="sheet-pdf">📄 Bản luận giải PDF đã sẵn sàng</div>') +
       '<p class="sheet-hint">' + hint + '</p><div class="sheet-act">' +
       (canShare ? '<button type="button" class="btn primary" data-share>Lưu / Chia sẻ</button>' : '') +
-      '<a class="btn ' + (canShare ? 'ghost' : 'primary') + '" href="' + url + '" download="' + esc(name) + '" target="_blank" rel="noopener">' + (isImg ? 'Tải ảnh' : 'Mở PDF') + '</a></div>' +
+      '<a class="btn ' + (canShare ? 'ghost' : 'primary') + '" href="' + url + '"' + (INSECURE ? '' : ' download="' + esc(name) + '"') + ' target="_blank" rel="noopener">' + (isImg ? 'Tải ảnh' : 'Mở PDF') + '</a></div>' +
       (IN_APP ? '<p class="sheet-hint small">Nếu vẫn không lưu được trong ' + (IS_ZALO ? 'Zalo' : 'ứng dụng này') + ': bấm <b>•••</b> (góc trên phải) → <b>Mở bằng trình duyệt</b>, rồi tải lại.</p>' : '') + '</div>';
     document.body.appendChild(wrap);
     function close() { wrap.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000); }
