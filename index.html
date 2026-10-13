@@ -208,7 +208,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
       <div><h2 id="h-hist">Lịch sử tải lá số</h2><p id="histNote">Lá số bạn đã tải về được lưu tại đây để tìm lại và tải lại.</p></div>
       <div class="tabs" role="tablist" id="tabs">
         <button role="tab" aria-selected="true" data-src="local" id="t-local">Trên máy này</button>
-        <button role="tab" aria-selected="false" data-src="shared" id="t-shared" hidden>Dữ liệu chung</button>
+        <button role="tab" aria-selected="false" data-src="shared" id="t-shared" hidden>Đã lưu trên Claude</button>
         <button role="tab" aria-selected="false" data-src="server" id="t-server" hidden>Máy chủ (quản trị)</button>
       </div>
     </div>
@@ -954,7 +954,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     // dòng đầu
     txt(ctx, T.CAN_SHORT[c.can] + '.' + T.CHI[c.chi], x + 18, y + 44, '400 25px ' + FONT, P.ink, 'left');
     var title = T.CUNG[c.cung] + (isThan ? ' <THÂN>' : '');
-    txt(ctx, title, x + r.w / 2 + 6, y + 44, fit(ctx, title, '700 {s}px ' + FONT, r.w - 170, 27), P.cungTitle, 'center');
+    txt(ctx, title, x + r.w / 2 + 6, y + 44, fit(ctx, title, '700 {s}px ' + FONT, r.w - 215, 27), P.cungTitle, 'center');
     txt(ctx, String(c.daiHan), x + r.w - 18, y + 44, '700 27px ' + FONT, P.ink, 'right');
 
     // chính tinh
@@ -1818,12 +1818,15 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     Object.keys(map).forEach(function (k) { if (map[k] != null) $(k).value = map[k]; });
     $('o-luu').checked = o.luuTinh !== false;
   }
+  var INFO = ['noiSinh', 'sdt', 'nhuCau', 'chuyenVien'];
+  function readInfo() { var o = {}; INFO.forEach(function (k) { var e = $('i-' + k); if (e) o[k] = e.value.trim(); }); return o; }
+  function writeInfo(o) { o = o || {}; INFO.forEach(function (k) { if (!$('i-' + k)) return; $('i-' + k).value = o[k] != null ? o[k] : (k === 'chuyenVien' ? 'Tâm Không' : ''); }); }
   function readInput() {
     return {
       name: $('name').value.trim(), gender: gender(), calendar: cal(),
       day: +$('day').value, month: +$('month').value, year: +$('year').value, leap: $('leap').checked,
       hour: +$('hour').value, minute: +$('minute').value, viewYear: +$('viewYear').value || new Date().getFullYear(),
-      options: readOptions()
+      options: readOptions(), info: readInfo()
     };
   }
   function writeInput(i) {
@@ -1835,7 +1838,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     refreshDays(); $('day').value = i.day;
     $('hour').value = i.hour; $('minute').value = i.minute || 0;
     $('viewYear').value = i.viewYear || new Date().getFullYear();
-    writeOptions(i.options); gioHint();
+    writeOptions(i.options); writeInfo(i.info); gioHint();
   }
 
   /* ---------- lá số ---------- */
@@ -1904,7 +1907,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     dl[mode === 'mau' ? 'mau' : mode === 'pdf' ? 'pdf' : 'bw']++;
     return {
       id: keyOf(i).slice(0, 120), name: chart.name, gender: i.gender, calendar: i.calendar, day: i.day, month: i.month, year: i.year,
-      leap: !!i.leap, hour: chart.hour, minute: chart.minute, viewYear: chart.viewYear, options: chart.options,
+      leap: !!i.leap, hour: chart.hour, minute: chart.minute, viewYear: chart.viewYear, options: chart.options, info: readInfo(),
       solar: pad(s.day) + '/' + pad(s.month) + '/' + s.year, lunar: pad(l.day) + '/' + pad(l.month) + (l.leap ? 'N' : '') + '/' + l.year,
       canChi: chart.canChi.nam, amDuong: chart.amDuong, banMenh: chart.banMenh, cuc: chart.cucTen,
       createdAt: prev && prev.createdAt || now, lastAt: now, dl: dl
@@ -1968,7 +1971,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     }).join('');
   }
   function openEntry(e, then) {
-    var input = { name: e.name, gender: e.gender, calendar: e.calendar, day: e.day, month: e.month, year: e.year, leap: e.leap, hour: e.hour, minute: e.minute, viewYear: e.viewYear, options: e.options };
+    var input = { name: e.name, gender: e.gender, calendar: e.calendar, day: e.day, month: e.month, year: e.year, leap: e.leap, hour: e.hour, minute: e.minute, viewYear: e.viewYear, options: e.options, info: e.info };
     writeInput(input);
     try { show(build(input)); } catch (err) { toast(err.message); return; }
     if (then) then(); else window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1992,7 +1995,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     Array.prototype.forEach.call(this.children, function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
     $('adminBox').hidden = state.src !== 'server';
     $('histNote').textContent = state.src === 'local' ? 'Lá số bạn đã tải về được lưu tại đây để tìm lại và tải lại.' :
-      state.src === 'shared' ? 'Lá số mọi người trong nhóm đã tải trên trang này.' : 'Toàn bộ lá số khách đã tải trên phuocloc.vn.';
+      state.src === 'shared' ? 'Lá số đã tải được lưu trên Claude – bấm Tải màu / Tải ĐT / PDF để tải lại bất cứ lúc nào.' : 'Toàn bộ lá số khách đã tải trên phuocloc.vn.';
     renderHist();
   });
   $('adminGo').addEventListener('click', loadServer);
@@ -2038,7 +2041,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     var name = slug(chart.name) + '_' + pad(s.day) + '_' + pad(s.month) + '_' + s.year + '_LUAN_GIAI_6_CHU_VANG.pdf';
     var fontsReady = document.fonts && document.fonts.load ? Promise.all(['400 24px Tinos', '700 24px Tinos', 'italic 400 24px Tinos'].map(function (f) { return document.fonts.load(f); })) : Promise.resolve();
     fontsReady.catch(function () { }).then(function () {
-      return new Promise(function (res) { setTimeout(function () { res(window.LuanGiai.makePdf(chart, { mode: 'bw' })); }, 30); });
+      return new Promise(function (res) { setTimeout(function () { var d = new Date(); res(window.LuanGiai.makePdf(chart, { mode: 'bw', info: Object.assign(readInfo(), { ngayLap: pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() }) })); }, 30); });
     }).then(function (blob) {
       if (state.dl) return state.dl.save({ filename: name, data: blob }).then(function () { return true; }, function (e) { if (e && e.code === 'declined') return false; throw e; });
       var url = URL.createObjectURL(blob), a = document.createElement('a');
@@ -2097,7 +2100,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     window.claude.use('downloads').then(function (d) { state.dl = d; });
     window.claude.use('db').then(function (db) {
       if (!db) return;
-      state.db = db; $('t-shared').hidden = false;
+      state.db = db; $('t-shared').hidden = false; $('t-shared').click();
       db.collection('laso').orderBy('lastAt', 'desc').limit(1000).onSnapshot(function (snap) {
         var arr = [];
         (snap.docs || []).forEach(function (d) { var v = typeof d.data === 'function' ? d.data() : d.data; if (v) { v.id = v.id || d.id; arr.push(v); } });
