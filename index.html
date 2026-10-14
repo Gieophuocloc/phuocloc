@@ -115,7 +115,23 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
 .inapp{background:#fff4d6;color:#4a3b10;font-size:13.5px;padding:10px 40px 10px 14px;position:relative;line-height:1.45}
 .inapp button{position:absolute;right:8px;top:6px;border:0;background:transparent;font-size:16px;cursor:pointer;color:inherit}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+input[type=password]{font:15px/1.3 var(--f-ui);color:var(--ink);background:var(--paper);border:1px solid var(--line-2);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+.acct{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.acct-info{display:grid;min-width:0;text-align:right}
+.acct-info b{font-size:14px;overflow-wrap:anywhere}
+.acct-info span{font-size:12.5px;color:var(--ink-2)}
+.acct-info span.warn{color:var(--seal);font-weight:600}
+details.acct-menu{position:relative}
+details.acct-menu summary{list-style:none;cursor:pointer}
+details.acct-menu summary::-webkit-details-marker{display:none}
+.acct-pop{position:absolute;right:0;top:calc(100% + 6px);background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.14);padding:6px;display:grid;min-width:190px;z-index:15}
+.acct-pop button,.acct-pop a{font:500 14px/1.2 var(--f-ui);text-align:left;padding:10px 12px;border:0;background:transparent;color:var(--ink);border-radius:7px;cursor:pointer;text-decoration:none}
+.acct-pop button:hover,.acct-pop a:hover{background:var(--paper)}
+.sheet-box label.f{font-size:13.5px}
+.sheet-box .err{min-height:0}
+@media (max-width:600px){.acct-info{text-align:left}}
 </style>
+<script src="config.js"></script>
 </head>
 <body>
 
@@ -127,12 +143,13 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
       <span><h1>Phước Lộc</h1><small>Lá số Tử Vi · phuocloc.vn</small></span>
     </a>
     <span class="motto">Đức năng thắng số — Phước báu cải vận</span>
+    <div class="acct" id="acct" aria-live="polite"></div>
   </header>
 
   <div class="layout">
     <section class="panel" aria-labelledby="h-form">
       <h2 id="h-form">Lập lá số</h2>
-      <p class="lead">Nhập ngày giờ sinh, xem lá số và tải ảnh PNG màu hoặc đen trắng.</p>
+      <p class="lead">Đăng nhập tài khoản thành viên, nhập ngày giờ sinh để xem lá số, tải ảnh PNG và bản luận giải PDF.</p>
       <form id="f" novalidate>
         <label class="f">Họ và tên
           <input type="text" id="name" autocomplete="name" placeholder="VD: Nguyễn Văn An" maxlength="80">
@@ -219,12 +236,8 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
       <div class="tabs" role="tablist" id="tabs">
         <button role="tab" aria-selected="true" data-src="local" id="t-local">Trên máy này</button>
         <button role="tab" aria-selected="false" data-src="shared" id="t-shared" hidden>Đã lưu trên Claude</button>
-        <button role="tab" aria-selected="false" data-src="server" id="t-server" hidden>Máy chủ (quản trị)</button>
+        <button role="tab" aria-selected="false" data-src="mine" id="t-mine" hidden>Tài khoản của tôi</button>
       </div>
-    </div>
-    <div class="admin" id="adminBox" hidden>
-      <input type="search" id="adminKey" placeholder="Mật khẩu quản trị" autocomplete="current-password" aria-label="Mật khẩu quản trị">
-      <button class="btn ghost small" type="button" id="adminGo">Mở</button>
     </div>
     <div class="search">
       <input type="search" id="q" placeholder="Tìm theo tên, ngày sinh (VD 14/02/1985), năm hoặc can chi…" aria-label="Tìm lá số đã tải">
@@ -1771,7 +1784,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
   var $ = function (id) { return document.getElementById(id); };
   var IN_CLAUDE = !!(window.claude && typeof window.claude.use === 'function');
   var LS_KEY = 'phuocloc.history.v1';
-  var state = { chart: null, mode: 'bw', src: 'local', shared: [], server: [], adminKey: '', api: false, db: null, dl: null };
+  var state = { chart: null, mode: 'bw', src: 'local', shared: [], mine: [], db: null, dl: null };
 
   /* ---------- tiện ích ---------- */
   function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -1889,7 +1902,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     if (!state.chart) return;
     if (state.isSample) { toast('Đây là lá số mẫu. Hãy nhập thông tin rồi bấm “Lập lá số”.'); return; }
     var chart = state.chart, name = fileName(chart, mode);
-    canvasBlob(mode).then(function (blob) {
+    consume('png', chart).then(function () { return canvasBlob(mode); }).then(function (blob) {
       if (state.dl) {
         return state.dl.save({ filename: name, data: blob }).then(function () { return true; }, function (e) {
           if (e && e.code === 'declined') return false;
@@ -1901,7 +1914,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
       if (!ok) return;
       record(chart, mode);
       toast('Đã tải ' + name);
-    }).catch(function () { toast('Không tải được ảnh. Vui lòng thử lại.'); });
+    }).catch(function (e) { if (!e || !e.handled) toast('Không tải được ảnh. Vui lòng thử lại.'); });
   }
 
 
@@ -1980,14 +1993,11 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
       var se = entryOf(chart, mode, p);
       state.db.collection('laso').doc(se.id).set(se).catch(function () { });
     }
-    if (state.api) {
-      fetch('api.php?action=save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ mode: mode }, e)) }).catch(function () { });
-    }
     renderHist();
   }
   function currentList() {
     if (state.src === 'shared') return state.shared;
-    if (state.src === 'server') return state.server;
+    if (state.src === 'mine') return state.mine;
     return loadLocal();
   }
   function renderHist() {
@@ -2006,7 +2016,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
       return String(b.lastAt).localeCompare(String(a.lastAt));
     });
     var hb = $('hb');
-    if (state.src === 'server' && !state.adminKey) { hb.innerHTML = '<tr><td colspan="6" class="empty">Nhập mật khẩu quản trị để xem lá số khách đã tải trên phuocloc.vn.</td></tr>'; return; }
+    if (state.src === 'mine' && !acct.user) { hb.innerHTML = '<tr><td colspan="6" class="empty">Đăng nhập để xem các lá số đã lập bằng tài khoản của bạn.</td></tr>'; return; }
     if (!list.length) {
       hb.innerHTML = '<tr><td colspan="6" class="empty">' + (q ? 'Không có lá số nào khớp “' + esc($('q').value) + '”.' :
         'Chưa có lá số nào. Lập lá số rồi bấm “Tải PNG đen trắng” hoặc “Tải PNG màu” – lá số sẽ hiện ở đây.') + '</td></tr>';
@@ -2019,7 +2029,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
         '<td class="num">' + esc(e.solar) + ' <span class="sub">DL</span><div class="sub">' + esc(e.lunar) + ' ÂL</div></td>' +
         '<td class="num">' + pad(e.hour) + ':' + pad(e.minute) + '</td>' +
         '<td>' + esc(e.amDuong || '') + '<div class="sub">' + esc(e.banMenh || '') + ' · ' + esc(e.cuc || '') + '</div></td>' +
-        '<td class="num">' + (dl.mau ? '<span class="chip m">Màu ×' + dl.mau + '</span> ' : '') + (dl.bw ? '<span class="chip">ĐT ×' + dl.bw + '</span> ' : '') + (dl.pdf ? '<span class="chip m">PDF ×' + dl.pdf + '</span>' : '') +
+        '<td class="num">' + (dl.mau ? '<span class="chip m">Màu ×' + dl.mau + '</span> ' : '') + (dl.bw ? '<span class="chip">ĐT ×' + dl.bw + '</span> ' : '') + (dl.png ? '<span class="chip">PNG ×' + dl.png + '</span> ' : '') + (dl.pdf ? '<span class="chip m">PDF ×' + dl.pdf + '</span>' : '') +
         '<div class="sub">' + (isNaN(when) ? '' : pad(when.getDate()) + '/' + pad(when.getMonth() + 1) + '/' + when.getFullYear() + ' ' + pad(when.getHours()) + ':' + pad(when.getMinutes())) + '</div></td>' +
         '<td><div class="row-actions"><button class="btn ghost small" data-act="open">Xem</button><button class="btn ghost small" data-act="mau">Tải màu</button><button class="btn ghost small" data-act="bw">Tải ĐT</button><button class="btn ghost small" data-act="pdf">PDF</button>' +
         (state.src === 'local' ? '<button class="btn ghost small" data-act="del">Xóa</button>' : '') + '</div></td></tr>';
@@ -2028,8 +2038,12 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
   function openEntry(e, then) {
     var input = { name: e.name, gender: e.gender, calendar: e.calendar, day: e.day, month: e.month, year: e.year, leap: e.leap, hour: e.hour, minute: e.minute, viewYear: e.viewYear, options: e.options, info: e.info };
     writeInput(input);
-    try { show(build(input)); } catch (err) { toast(err.message); return; }
-    if (then) then(); else window.scrollTo({ top: 0, behavior: 'smooth' });
+    var chart;
+    try { chart = build(input); } catch (err) { toast(err.message); return; }
+    consume('chart', chart).then(function () {
+      show(chart);
+      if (then) then(); else window.scrollTo({ top: 0, behavior: 'smooth' });
+    }).catch(function () { });
   }
   $('hb').addEventListener('click', function (ev) {
     var b = ev.target.closest('button'); if (!b) return;
@@ -2048,21 +2062,11 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     var b = ev.target.closest('button[role=tab]'); if (!b) return;
     state.src = b.getAttribute('data-src');
     Array.prototype.forEach.call(this.children, function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
-    $('adminBox').hidden = state.src !== 'server';
+    if (state.src === 'mine') loadMine();
     $('histNote').textContent = state.src === 'local' ? 'Lá số bạn đã tải về được lưu tại đây để tìm lại và tải lại.' :
-      state.src === 'shared' ? 'Lá số đã tải được lưu trên Claude – bấm Tải màu / Tải ĐT / PDF để tải lại bất cứ lúc nào.' : 'Toàn bộ lá số khách đã tải trên phuocloc.vn.';
+      state.src === 'shared' ? 'Lá số đã tải được lưu trên Claude – bấm Tải màu / Tải ĐT / PDF để tải lại bất cứ lúc nào.' : 'Lá số đã lập bằng tài khoản của bạn – đăng nhập ở máy nào cũng tải lại được, không tính thêm lượt.';
     renderHist();
   });
-  $('adminGo').addEventListener('click', loadServer);
-  $('adminKey').addEventListener('keydown', function (e) { if (e.key === 'Enter') loadServer(); });
-  function loadServer() {
-    var k = $('adminKey').value.trim(); if (!k) return;
-    fetch('api.php?action=list&limit=2000', { headers: { 'X-Admin-Key': k } }).then(function (r) {
-      if (r.status === 401) throw new Error('Sai mật khẩu quản trị.');
-      return r.json();
-    }).then(function (d) { state.adminKey = k; state.server = d.items || []; renderHist(); toast('Đã tải ' + state.server.length + ' lá số từ máy chủ'); })
-      .catch(function (e) { toast(e.message || 'Không kết nối được máy chủ.'); });
-  }
   $('q').addEventListener('input', renderHist);
   $('sort').addEventListener('change', renderHist);
 
@@ -2070,12 +2074,16 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
   $('f').addEventListener('submit', function (ev) {
     ev.preventDefault();
     $('err').textContent = '';
-    try {
-      var input = readInput();
-      show(build(input));
+    var input, chart;
+    try { input = readInput(); chart = build(input); } catch (e) { $('err').textContent = e.message; return; }
+    var btn = this.querySelector('button[type=submit]'), old = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Đang lập…';
+    consume('chart', chart).then(function () {
+      show(chart);
       try { localStorage.setItem('phuocloc.lastInput', JSON.stringify(input)); } catch (e) { }
       if (window.matchMedia('(max-width:900px)').matches) $('cv').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } catch (e) { $('err').textContent = e.message; }
+    }).catch(function (e) { if (e && e.code !== 'cancel' && !e.handled) $('err').textContent = e.message; })
+      .then(function () { btn.disabled = false; btn.textContent = old; });
   });
   ['year', 'month'].forEach(function (id) { $(id).addEventListener('change', refreshDays); });
   $('year').addEventListener('input', function () { if (String(this.value).length === 4) refreshDays(); });
@@ -2094,14 +2102,16 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     var btn = $('dlPdf'), old = btn.textContent; btn.disabled = true; btn.textContent = 'Đang tạo PDF…';
     var chart = state.chart, s = chart.solar;
     var name = slug(chart.name) + '_' + pad(s.day) + '_' + pad(s.month) + '_' + s.year + '_LUAN_GIAI_6_CHU_VANG.pdf';
-    var fontsReady = document.fonts && document.fonts.load ? Promise.all(['400 24px Tinos', '700 24px Tinos', 'italic 400 24px Tinos'].map(function (f) { return document.fonts.load(f); })) : Promise.resolve();
-    fontsReady.catch(function () { }).then(function () {
+    var fontsReady = consume('pdf', chart).then(function () {
+      return document.fonts && document.fonts.load ? Promise.all(['400 24px Tinos', '700 24px Tinos', 'italic 400 24px Tinos'].map(function (f) { return document.fonts.load(f); })).catch(function () { }) : null;
+    });
+    fontsReady.then(function () {
       return new Promise(function (res) { setTimeout(function () { var d = new Date(); res(window.LuanGiai.makePdf(chart, { mode: 'bw', info: Object.assign(readInfo(), { ngayLap: pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() }) })); }, 30); });
     }).then(function (blob) {
       if (state.dl) return state.dl.save({ filename: name, data: blob }).then(function () { return true; }, function (e) { if (e && e.code === 'declined') return false; throw e; });
       return saveFile(blob, name);
     }).then(function (ok) { if (ok) { record(chart, 'pdf'); toast('Đã tải ' + name); } })
-      .catch(function () { toast('Không tạo được PDF. Vui lòng thử lại.'); })
+      .catch(function (e) { if (!e || !e.handled) toast('Không tạo được PDF. Vui lòng thử lại.'); })
       .then(function () { btn.disabled = false; btn.textContent = old; });
   }
   $('cpLink').addEventListener('click', function () {
@@ -2114,6 +2124,170 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
     else prompt2(url);
   });
   function prompt2(url) { $('q').value = url; $('q').select(); toast('Hãy chép link trong ô tìm kiếm'); }
+
+  /* ---------- tài khoản thành viên (máy chủ phuocloc-api) ---------- */
+  var API = String(window.PL_API || '').replace(/\/+$/, '');
+  var CONTACT = String(window.PL_CONTACT || '').trim();
+  var TK_KEY = 'phuocloc.token.v1';
+  var acct = { token: null, user: null, checking: null };
+  try { acct.token = localStorage.getItem(TK_KEY); } catch (e) { }
+
+  function apiCall(method, path, body) {
+    if (!API) {
+      var ce = new Error('Trang chưa được nối với máy chủ tài khoản (thiếu địa chỉ trong config.js).'); ce.code = 'no_api';
+      return Promise.reject(ce);
+    }
+    var headers = { 'Content-Type': 'application/json' };
+    if (acct.token) headers.Authorization = 'Bearer ' + acct.token;
+    return fetch(API + '/api' + path, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined })
+      .catch(function () { var ne = new Error('Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'); ne.code = 'network'; throw ne; })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (!r.ok || j.ok === false) { var he = new Error(j.message || ('Lỗi máy chủ (' + r.status + ').')); he.code = j.error || ('http_' + r.status); he.status = r.status; throw he; }
+          return j;
+        });
+      });
+  }
+  function setToken(t) { acct.token = t; try { if (t) localStorage.setItem(TK_KEY, t); else localStorage.removeItem(TK_KEY); } catch (e) { } }
+  function fmtDate(iso) { var d = new Date(iso); return isNaN(d) ? '' : pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear(); }
+  function quotaText(q) { return q.limit == null ? q.used + ' (không giới hạn)' : q.used + '/' + q.limit; }
+  function setUser(u) {
+    acct.user = u || null;
+    var box = $('acct');
+    if (!u) {
+      box.innerHTML = '<button class="btn primary small" type="button" id="btnLogin">Đăng nhập</button>';
+      $('btnLogin').onclick = function () { requireLogin().catch(function () { }); };
+      $('t-mine').hidden = true; state.mine = [];
+      if (state.src === 'mine') $('t-local').click(); else renderHist();
+      return;
+    }
+    var hsd = u.expiresAt ? 'HSD ' + fmtDate(u.expiresAt) + (u.expired ? ' (đã hết hạn)' : ' · còn ' + u.daysLeft + ' ngày') : 'Không giới hạn thời gian';
+    var low = u.expired || (u.chart.limit != null && u.chart.used >= u.chart.limit) || (u.daysLeft != null && u.daysLeft <= 3);
+    box.innerHTML = '<div class="acct-info"><b>' + esc(u.fullName || u.username) + '</b>' +
+      '<span' + (low ? ' class="warn"' : '') + '>Lá số ' + quotaText(u.chart) + ' · PDF ' + quotaText(u.pdf) + ' · ' + hsd + '</span></div>' +
+      '<details class="acct-menu"><summary class="btn ghost small">Tài khoản ▾</summary><div class="acct-pop">' +
+      (u.role === 'admin' || u.role === 'manager' ? '<a href="admin.html">Trang quản trị</a>' : '') +
+      '<button type="button" data-a="pw">Đổi mật khẩu</button><button type="button" data-a="out">Đăng xuất</button></div></details>';
+    box.querySelector('[data-a=pw]').onclick = function () { box.querySelector('details').open = false; passwordDialog(); };
+    box.querySelector('[data-a=out]').onclick = function () { box.querySelector('details').open = false; logout(); };
+    var wasHidden = $('t-mine').hidden;
+    $('t-mine').hidden = false;
+    if (wasHidden && state.src === 'local') $('t-mine').click();
+  }
+  function logout() {
+    apiCall('POST', '/logout').catch(function () { });
+    setToken(null); setUser(null); toast('Đã đăng xuất');
+  }
+  function refreshMe() {
+    if (!acct.token) return Promise.resolve(null);
+    if (acct.checking) return acct.checking;
+    acct.checking = apiCall('GET', '/me').then(function (j) { setUser(j.user); return j.user; }, function (e) {
+      if (e.status === 401 || e.status === 403) { setToken(null); setUser(null); return null; }
+      throw e;
+    }).then(function (u) { acct.checking = null; return u; }, function (e) { acct.checking = null; throw e; });
+    return acct.checking;
+  }
+  // Trả về Promise hoàn tất khi đã đăng nhập; nếu người dùng đóng hộp đăng nhập → lỗi code 'cancel'
+  function requireLogin(msg) {
+    if (acct.user) return Promise.resolve(acct.user);
+    return refreshMe().catch(function () { return null; }).then(function (u) { return u || loginDialog(msg); });
+  }
+  function dialog(html) {
+    var old = document.getElementById('plDlg'); if (old) old.remove();
+    var wrap = document.createElement('div'); wrap.id = 'plDlg'; wrap.className = 'sheet-ov'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
+    wrap.innerHTML = html; document.body.appendChild(wrap);
+    return wrap;
+  }
+  function loginDialog(msg) {
+    return new Promise(function (resolve, reject) {
+      var w = dialog('<form class="sheet-box" novalidate><div class="sheet-hd"><b>Đăng nhập thành viên</b><button type="button" class="btn ghost small" data-x>Đóng</button></div>' +
+        '<p class="sheet-hint">' + esc(msg || 'Vui lòng đăng nhập để lập lá số và tải bản luận giải.') + '</p>' +
+        '<label class="f">Tên đăng nhập<input type="text" name="u" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>' +
+        '<label class="f">Mật khẩu<input type="password" name="p" autocomplete="current-password" required></label>' +
+        '<p class="err" role="alert"></p><button class="btn primary" type="submit">Đăng nhập</button>' +
+        '<p class="sheet-hint small">Chưa có tài khoản hoặc quên mật khẩu? ' + (CONTACT ? 'Liên hệ ' + esc(CONTACT) : 'Liên hệ người quản trị') + ' để được cấp.</p></form>');
+      var f = w.querySelector('form'), er = w.querySelector('.err'), b = f.querySelector('button[type=submit]');
+      setTimeout(function () { f.u.focus(); }, 30);
+      function cancel() { w.remove(); var c = new Error('cancel'); c.code = 'cancel'; c.handled = true; reject(c); }
+      w.addEventListener('click', function (ev) { if (ev.target === w || ev.target.closest('[data-x]')) cancel(); });
+      f.addEventListener('submit', function (ev) {
+        ev.preventDefault(); er.textContent = '';
+        var u = f.u.value.trim(), p = f.p.value;
+        if (!u || !p) { er.textContent = 'Nhập tên đăng nhập và mật khẩu.'; return; }
+        b.disabled = true; b.textContent = 'Đang đăng nhập…';
+        apiCall('POST', '/login', { username: u, password: p }).then(function (j) {
+          setToken(j.token); setUser(j.user); w.remove(); toast('Xin chào ' + (j.user.fullName || j.user.username));
+          resolve(j.user);
+        }, function (e) { er.textContent = e.message; b.disabled = false; b.textContent = 'Đăng nhập'; });
+      });
+    });
+  }
+  function passwordDialog() {
+    var w = dialog('<form class="sheet-box" novalidate><div class="sheet-hd"><b>Đổi mật khẩu</b><button type="button" class="btn ghost small" data-x>Đóng</button></div>' +
+      '<label class="f">Mật khẩu hiện tại<input type="password" name="o" autocomplete="current-password"></label>' +
+      '<label class="f">Mật khẩu mới (ít nhất 6 ký tự)<input type="password" name="n" autocomplete="new-password"></label>' +
+      '<label class="f">Nhập lại mật khẩu mới<input type="password" name="n2" autocomplete="new-password"></label>' +
+      '<p class="err" role="alert"></p><button class="btn primary" type="submit">Lưu mật khẩu mới</button></form>');
+    var f = w.querySelector('form'), er = w.querySelector('.err');
+    w.addEventListener('click', function (ev) { if (ev.target === w || ev.target.closest('[data-x]')) w.remove(); });
+    f.addEventListener('submit', function (ev) {
+      ev.preventDefault(); er.textContent = '';
+      if (f.n.value !== f.n2.value) { er.textContent = 'Hai lần nhập mật khẩu mới chưa khớp.'; return; }
+      apiCall('POST', '/password', { oldPassword: f.o.value, newPassword: f.n.value }).then(function () { w.remove(); toast('Đã đổi mật khẩu'); },
+        function (e) { er.textContent = e.message; });
+    });
+  }
+  function notice(title, msg) {
+    var w = dialog('<div class="sheet-box"><div class="sheet-hd"><b>' + esc(title) + '</b><button type="button" class="btn ghost small" data-x>Đóng</button></div>' +
+      '<p class="sheet-hint">' + esc(msg) + '</p>' + (CONTACT ? '<p class="sheet-hint small">Liên hệ: ' + esc(CONTACT) + '</p>' : '') + '</div>');
+    w.addEventListener('click', function (ev) { if (ev.target === w || ev.target.closest('[data-x]')) w.remove(); });
+  }
+  function serverEntry(chart) {
+    var e = entryOf(chart, 'bw', null); delete e.dl; delete e.createdAt; delete e.lastAt; return e;
+  }
+  // kind: 'chart' (lập / mở lá số) | 'png' (tải ảnh) | 'pdf' (tải bản luận giải)
+  function consume(kind, chart) {
+    return requireLogin().then(function () {
+      return apiCall('POST', '/' + kind, { key: keyOf(chart.input).slice(0, 120), entry: serverEntry(chart) });
+    }).then(function (j) {
+      setUser(j.user);
+      if (j.countedChart) toast('Đã dùng 1 lượt lá số · còn ' + (j.user.chart.limit == null ? 'không giới hạn' : (j.user.chart.limit - j.user.chart.used) + ' lượt'));
+      if (j.countedPdf) toast('Đã dùng 1 lượt luận giải · còn ' + (j.user.pdf.limit == null ? 'không giới hạn' : (j.user.pdf.limit - j.user.pdf.used) + ' lượt'));
+      if (state.src === 'mine') loadMine();
+      return j;
+    }).catch(function (e) {
+      if (e.code === 'cancel') throw e;
+      e.handled = true;
+      if (e.status === 401) { setToken(null); setUser(null); return requireLogin(e.message).then(function () { return consume(kind, chart); }); }
+      if (e.code === 'quota_chart') notice('Đã hết lượt lập lá số', e.message);
+      else if (e.code === 'quota_pdf') notice('Đã hết lượt tải bản luận giải', e.message);
+      else if (e.code === 'expired') notice('Tài khoản đã hết hạn', e.message);
+      else if (e.code === 'locked') { setToken(null); setUser(null); notice('Tài khoản bị khóa', e.message); }
+      else toast(e.message);
+      throw e;
+    });
+  }
+  function loadMine() {
+    if (!acct.user) return;
+    apiCall('GET', '/history?limit=1000').then(function (j) {
+      state.mine = (j.items || []).map(function (x) {
+        x.id = x.key; x.dl = { png: x.pngCount || 0, pdf: x.pdfCount || 0 }; x.lastAt = x.lastAt || x.createdAt; return x;
+      });
+      if (state.src === 'mine') renderHist();
+    }, function (e) { if (e.status === 401) { setToken(null); setUser(null); } });
+  }
+  function bootAccount(pendingInput) {
+    setUser(null);
+    var p = acct.token ? refreshMe().catch(function () { return null; }) : Promise.resolve(null);
+    p.then(function (u) {
+      if (pendingInput) {
+        // Mở bằng link lá số: lập ngay sau khi đăng nhập
+        (u ? Promise.resolve(u) : requireLogin('Đăng nhập để mở lá số từ đường link.')).then(function () {
+          var f = $('f'); if (f.requestSubmit) f.requestSubmit(); else f.dispatchEvent(new Event('submit', { cancelable: true }));
+        }).catch(function () { });
+      }
+    });
+  }
 
   /* ---------- khởi động ---------- */
   fillSelect($('month'), 1, 12);
@@ -2129,7 +2303,7 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
   }
   var sample = { name: 'Nguyễn Văn Mẫu', gender: 'nam', calendar: 'duong', day: 15, month: 8, year: 1990, hour: 8, minute: 30, viewYear: new Date().getFullYear() };
   writeInput(fromUrl || { name: '', gender: 'nam', calendar: 'duong', day: 1, month: 1, year: 1990, hour: 12, minute: 0, viewYear: new Date().getFullYear() });
-  try { show(build(fromUrl || sample), !fromUrl); } catch (e) { $('err').textContent = e.message; }
+  try { show(build(sample), true); } catch (e) { $('err').textContent = e.message; }
 
   function boot() {
     if (document.fonts && document.fonts.load) {
@@ -2140,13 +2314,8 @@ footer.site{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);co
   boot();
   if (!IN_CLAUDE) $('cpLink').hidden = false; else $('cpLink').hidden = true;
   renderHist();
+  bootAccount(fromUrl);
 
-  // Máy chủ phuocloc.vn (api.php) – chỉ khi chạy trên web thật
-  if (!IN_CLAUDE && /^https?:$/.test(location.protocol)) {
-    fetch('api.php?action=ping').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-      if (d && d.ok) { state.api = true; $('t-server').hidden = false; }
-    }).catch(function () { });
-  }
   // Trong Claude: tải file qua "downloads", lịch sử chung qua "db"
   if (IN_CLAUDE) {
     window.claude.use('downloads').then(function (d) { state.dl = d; });
