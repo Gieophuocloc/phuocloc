@@ -5,4 +5,4 @@ window.PL_API = 'https://phuocloc-api.gieophuocloc.workers.dev';
 
 // Thông tin liên hệ hiện cho thành viên khi chưa có tài khoản, hết lượt hoặc hết hạn (để trống nếu không cần)
 // Ví dụ: window.PL_CONTACT = 'Zalo 09xx xxx xxx (Phước Lộc)';
-window.PL_CONTACT = '';
+window.PL_CONTACT = 'Phước Lộc – Zalo 0986 099 335';
