@@ -454,7 +454,7 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
       '<h2 style="font-size:16px">Hoạt động</h2><div class="tbl"><table style="min-width:620px"><thead><tr><th>Thời gian</th><th>Hoạt động</th><th>Chi tiết</th><th>Người thực hiện</th></tr></thead><tbody data-l><tr><td colspan="4" class="empty">Đang tải…</td></tr></tbody></table></div>', true);
     api('GET', '/admin/users/' + u.id + '/charts').then(function (j) {
       ov.querySelector('[data-c]').innerHTML = j.items.length ? j.items.map(function (c) {
-        return '<tr><td><div class="nm">' + esc(c.name || '(không tên)') + '</div><div class="sub">' + (c.gender === 'nu' ? 'Nữ' : 'Nam') + ' · ' + esc(c.canChi || '') + '</div></td><td class="num">' + esc(c.solar || '') + '<div class="sub">' + esc(c.lunar || '') + ' ÂL</div></td>' +
+        return '<tr><td><div class="nm">' + esc(c.name || '(không tên)') + '</div><div class="sub">' + (c.type === 'tk' ? 'Lá số Tâm Không' : (c.gender === 'nu' ? 'Nữ' : 'Nam') + ' · ' + esc(c.canChi || '')) + '</div></td><td class="num">' + esc(c.solar || '') + (c.lunar ? '<div class="sub">' + esc(c.lunar) + ' ÂL</div>' : '') + '</td>' +
           '<td class="num">' + fd(c.createdAt, true) + '</td><td class="num">' + fd(c.lastAt, true) + '</td><td>' + (c.pngCount ? '<span class="chip gray">PNG ×' + c.pngCount + '</span> ' : '') + (c.hasPdf ? '<span class="chip gold">PDF ×' + c.pdfCount + '</span>' : '') + '</td></tr>';
       }).join('') : '<tr><td colspan="5" class="empty">Chưa lập lá số nào.</td></tr>';
     }).catch(function (e) { ov.querySelector('[data-c]').innerHTML = '<tr><td colspan="5" class="empty">' + esc(e.message) + '</td></tr>'; });

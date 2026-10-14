@@ -1,0 +1,910 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Lá Số Tâm Không · Phước Lộc</title>
+<meta name="description" content="Lập lá số Tâm Không (Bản đồ Tâm Không H & D), tải PDF lá số và PDF luận giải 6 Chữ Vàng – phuocloc.vn">
+<script src="config.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap">
+<style>
+/* Bố cục: cột nhập liệu + lịch sử bên trái, tờ lá số A4 giấy trắng bên phải, bảng chỉ số chi tiết bên dưới. Giao diện theo màu Tâm Không; tờ lá số giữ đúng mẫu in. */
+:root{--bg:#eef2ee;--panel:#ffffff;--ink:#1d1d1b;--muted:#5f6a62;--line:#d5dcd3;--accent:#0B5D3B;--gold:#B8860B;--field:#ffffff;--warn:#B23A2E;--soft:#f3f7f4;
+--display:"Times New Roman",Times,serif;--body:"Times New Roman",Times,serif;--sheet:"Be Vietnam Pro",Verdana,"DejaVu Sans",Arial,Helvetica,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#151a16;--panel:#1f2621;--ink:#e8ebe6;--muted:#a3ada5;--line:#38423a;--accent:#64c497;--gold:#dcae45;--field:#262e28;--warn:#e07a6e;--soft:#252d27}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#151a16;--panel:#1f2621;--ink:#e8ebe6;--muted:#a3ada5;--line:#38423a;--accent:#64c497;--gold:#dcae45;--field:#262e28;--warn:#e07a6e;--soft:#252d27}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+#sheet,#sheet *{letter-spacing:.01px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body)}
+.wrap{max-width:1240px;margin:0 auto;padding-block:20px 40px;padding-inline:16px;display:grid;grid-template-columns:330px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:920px){.wrap{grid-template-columns:minmax(0,1fr)}}
+.wrap>div{min-width:0;display:grid;gap:16px;align-content:start}
+h1{font-family:var(--display);font-size:26px;margin:0 0 4px;color:var(--accent);text-wrap:balance}
+h2{font-family:var(--display);font-size:19px;margin:0 0 8px;color:var(--accent)}
+.sub{color:var(--muted);font-size:14px;margin:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+label{display:block;font-size:14px;margin:10px 0 4px;color:var(--muted)}
+input,textarea{width:100%;font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:inherit}
+textarea{min-height:60px;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.btn{display:block;width:100%;margin-top:14px;padding:11px;border:0;border-radius:8px;background:var(--accent);color:#fff;font:inherit;font-size:17px;font-weight:bold;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);font-weight:normal;font-size:15px;margin-top:8px;padding:9px}
+.btn.small{display:inline-block;width:auto;margin:0;padding:7px 12px;font-size:14px}
+.btn.gold{background:var(--gold);color:#fff}
+.btn.warn{background:var(--warn)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hint{font-size:13px;color:var(--muted);margin:8px 0 0;line-height:1.45}
+.msg{font-size:14px;margin-top:8px;color:var(--gold);min-height:1em}
+.editbar{display:flex;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--gold);border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:14px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.stage{overflow:hidden}
+.scaler{transform-origin:top left;width:794px}
+
+/* Lịch sử */
+.hs-top{display:flex;gap:8px;align-items:center}
+.hs-c{font-size:13px;color:var(--muted);white-space:nowrap}
+.hs-st{font-size:12.5px;color:var(--muted);margin:6px 0}
+.hs-l{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.hs-it{display:flex;align-items:stretch;border-bottom:1px solid var(--line)}
+.hs-it:last-child{border-bottom:0}
+.hs-it.on{background:var(--soft)}
+.hs-open{flex:1;min-width:0;text-align:left;background:transparent;border:0;color:inherit;font:inherit;padding:8px 10px;cursor:pointer}
+.hs-open:hover{background:var(--soft)}
+.hs-open b{display:block;font-size:15.5px}
+.hs-open span{display:block;font-size:13.5px;color:var(--muted)}
+.hs-open small{display:block;font-size:12px;color:var(--muted)}
+.hs-open small.dl{color:var(--accent)}
+.hs-act{display:flex;align-items:center;gap:2px;padding-right:6px}
+.hs-act button{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:6px 7px;font-size:15px;border-radius:6px;font-family:inherit}
+.hs-act button:hover{background:var(--soft);color:var(--accent)}
+.hs-act button.sure{background:var(--warn);color:#fff;font-size:12px}
+#lgDoc{padding:22px 24px;border:1px solid #d9d2c3;border-radius:6px;max-width:820px;min-width:520px}
+.hs-empty{padding:12px;font-size:13.5px;color:var(--muted);line-height:1.45}
+
+/* ---------- Tờ lá số theo mẫu (giấy trắng cố định, khổ A4 794×1123) ---------- */
+#sheet{width:794px;height:1123px;background:#fff;color:#111;font-family:var(--sheet);position:relative;padding:40px 92px 0;border:1px solid #d9d2c3}
+.s-h1{text-align:center;font-weight:bold;font-size:15px}
+.s-h2{text-align:center;font-weight:bold;font-size:25px;margin-top:6px;letter-spacing:.6px;color:#0B5D3B}
+.s-h3{text-align:center;font-style:italic;font-size:11px;margin-top:6px}
+.s-info{display:flex;justify-content:space-between;font-size:15px;margin-top:8px;padding-bottom:6px;border-bottom:2px solid #B8860B}
+.s-grids{display:flex;justify-content:space-between;margin-top:6px}
+.s-g{width:262px}
+.s-gt{text-align:center;font-weight:bold;font-size:15px;text-decoration:underline;margin-bottom:14px}
+.s-tab{display:grid;grid-template-columns:repeat(3,1fr)}
+.s-tab div{height:37px;display:flex;align-items:center;justify-content:center;color:#D7262E;font-weight:800;font-size:14px;letter-spacing:1px}
+.s-tab div:nth-child(-n+6){border-bottom:1px solid #222}
+.s-tab div:not(:nth-child(3n)){border-right:1px solid #222}
+.s-curve{display:block;margin:10px 0 0 -20px}
+.s-cd{margin-top:4px;font-family:var(--sheet);font-size:14.5px}
+.s-cd .r{display:grid;grid-template-columns:196px repeat(5,1fr);align-items:center;height:37px}
+.s-cd .k{font-weight:700;white-space:nowrap;color:#0B5D3B;letter-spacing:.3px}
+.s-cd .k i{font-style:normal;display:inline-block;width:24px}
+.s-cd .v{text-align:center;font-variant-numeric:tabular-nums;color:#222}.s-cd .v b{color:#D7262E;font-weight:800;margin-left:1px}
+.s-map{position:relative;margin:4px auto 0}
+.s-map img{display:block;width:100%;height:100%}
+.s-map .mp{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-family:var(--sheet);font-weight:700;color:#1F2B24;line-height:1}
+.s-map .mp.g{color:#0B5D3B}.s-map .mp.n{color:#D7262E;font-weight:800}.s-map .mp b{color:#D7262E;font-weight:800;font-size:1.45em;margin-left:.25em;vertical-align:-.08em}
+.s-mt{text-align:center;font-weight:bold;font-size:16px;margin-top:4px;color:#0B5D3B;letter-spacing:1px}
+.s-ft{position:absolute;left:92px;right:92px;bottom:24px;display:flex;justify-content:space-between;align-items:baseline;border-top:1.5px solid #B8860B;padding-top:6px;font-size:11.5px;color:#444}
+.s-ft b{font-family:"Playfair Display",Georgia,serif;font-weight:700;font-size:13.5px;color:#0B5D3B}
+
+/* Bảng chỉ số */
+.tbl{overflow-x:auto}
+table.ct{width:100%;border-collapse:collapse;font-size:14.5px;min-width:560px}
+table.ct th{background:var(--accent);color:#fff;text-align:left;padding:6px 8px}
+table.ct td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
+table.ct td.n{font-weight:bold;color:var(--warn);font-size:17px;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.ct td.k{font-weight:bold;white-space:nowrap}
+table.ct tr.grp td{background:var(--soft);font-weight:bold;color:var(--accent);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+.wrap>div>*{min-width:0}
+.acct{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-family:var(--sheet);font-size:13.5px}
+.acct-t{display:grid;min-width:0}.acct-t b{font-size:14.5px;overflow-wrap:anywhere}.acct-t span{color:var(--muted)}.acct-t span.warn{color:var(--warn);font-weight:600}
+.acct-b{display:flex;gap:6px;flex-wrap:wrap}
+.pl-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+.pl-box{background:var(--panel);color:var(--ink);border-radius:12px;max-width:420px;width:100%;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.pl-box form{display:grid;gap:4px}.pl-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:17px}
+.tk-nav{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}.tk-nav a{flex:1;min-width:0;text-align:center;padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);text-decoration:none;font-size:14px;font-weight:bold;white-space:nowrap}.tk-nav a:hover{border-color:var(--accent)}.tk-nav a[aria-current]{background:var(--accent);color:#fff;border-color:var(--accent)}
+</style>
+
+<div class="wrap">
+  <div>
+    <div>
+      <nav class="tk-nav" aria-label="Lập lá số"><a href="./">Tử Vi</a><a href="tamkhong.html" aria-current="page">Tâm Không</a></nav>
+      <div class="acct" id="acct" aria-live="polite"></div>
+      <h1>Lập Lá Số Tâm Không</h1>
+      <p class="sub">Giải mã 6 Chữ Vàng · Bản đồ Tâm Không H &amp; D theo khoa học con số Pitago</p>
+    </div>
+    <form class="panel" id="form" autocomplete="off">
+      <div class="editbar" id="editBar" hidden><span id="editTxt" style="flex:1">Đang sửa lá số</span><button class="btn small ghost" id="cancelEdit" type="button" style="margin:0">Hủy sửa</button></div>
+      <label for="paste" style="margin-top:0">Dán nhanh thông tin khách hàng</label>
+      <textarea id="paste" placeholder="Ví dụ: Lã Thị Ánh Hồng sinh ngày 11/02/1979"></textarea>
+      <button class="btn ghost" id="parseBtn" type="button">Đọc thông tin</button>
+      <label for="name">Họ và tên đầy đủ (đúng như trên căn cước công dân)</label>
+      <input id="name" value="Đào Đức Đắc" autocomplete="off">
+      <label>Ngày / tháng / năm sinh dương lịch (theo căn cước công dân)</label>
+      <div class="row"><input id="d" type="number" min="1" max="31" value="14" aria-label="Ngày sinh"><input id="m" type="number" min="1" max="12" value="2" aria-label="Tháng sinh"><input id="y" type="number" min="1900" max="2100" value="1985" aria-label="Năm sinh"></div>
+      <label for="vd">Ngày xem (năm, tháng, ngày chủ đạo tính từ ngày này)</label>
+      <input id="vd" type="date">
+      <label for="note">Ghi chú (số điện thoại, nguồn khách…)</label>
+      <input id="note" placeholder="Không bắt buộc">
+      <button class="btn" id="goBtn" type="submit">Lập lá số</button>
+      <button class="btn gold" id="saveEdit" type="button" hidden>Lưu thay đổi</button>
+      <div class="msg" id="msg" role="status"></div>
+      <p class="hint">Lá số Tâm Không dựa trên nền tảng thần số học Pitago: dùng họ tên và ngày sinh dương lịch ghi trên căn cước công dân, không dùng âm lịch hay tên gọi khác. Họ tên được đổi sang chữ in hoa không dấu (Đ → D) trước khi mã hóa. Chữ Y là phụ âm khi đứng sát một nguyên âm (U E O A I), ngược lại là nguyên âm. Số Master 11, 22, 33 được giữ nguyên.</p>
+    </form>
+    <div class="panel">
+      <h2>Lịch sử lá số</h2>
+      <div class="hs-top"><input id="hsQ" type="search" placeholder="Tìm theo tên hoặc năm sinh" aria-label="Tìm lá số"><span class="hs-c" id="hsC"></span></div>
+      <div class="hs-st" id="hsS" role="status"></div>
+      <div class="hs-l" id="hsL"></div>
+      <p class="hint">Lá số đã lập bằng tài khoản của bạn — đăng nhập ở máy nào cũng thấy. Mở: xem lại · ⬇ tải lại PDF lá số · 📄 tải PDF luận giải. Mở lại hoặc tải lại không tính thêm lượt.</p>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div class="toolbar">
+        <button class="btn small gold" id="lgTop" type="button">⬇ PDF luận giải 6 Chữ Vàng</button>
+        <button class="btn small gold" id="pdfBtn" type="button">⬇ Tải bản PDF lá số</button>
+        <button class="btn small" id="pngBtn" type="button">⬇ Tải ảnh PNG</button>
+        <button class="btn small ghost" id="copyBtn" type="button" style="margin:0">Sao chép dữ liệu để luận giải</button>
+      </div>
+      <div class="msg" id="msg2" role="status" style="margin-top:0"></div>
+      <textarea id="out" hidden readonly style="min-height:200px;margin-bottom:10px"></textarea>
+      <div class="stage" id="stage"><div class="scaler" id="scaler"><div id="sheet"></div></div></div>
+    </div>
+    <div class="panel">
+      <h2>Các chỉ số và cách tính</h2>
+      <p class="sub" style="margin-bottom:10px">Từng chỉ số trên Bản đồ Tâm Không, kèm phép tính cụ thể theo họ tên và ngày sinh ở trên.</p>
+      <div class="tbl"><table class="ct" id="ct"></table></div>
+    </div>
+    <div class="panel">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <h2 style="margin:0">Luận giải 6 Chữ Vàng theo Bản đồ Tâm Không</h2>
+        <button class="btn small gold" id="lgBtn" type="button">⬇ Tải PDF luận giải</button>
+      </div>
+      <p class="sub" style="margin-bottom:10px">Tự động theo Cẩm nang luận giải Bản đồ Tâm Không: các chỉ số, 6 Chữ Vàng, tiền nổi – tiền chìm, Bộ số Tổng Tài, cung pháp lý số 4, nợ phải trả, kích hoạt kho phước, chu kỳ 9 năm và lộ trình mỗi ngày. PDF gồm trang bìa, trang lá số, đầu trang và số trang.</p>
+      <div class="msg" id="msg3" role="status" style="margin-top:0"></div>
+      <div class="tbl"><div id="lgDoc" class="lgd"></div></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ===== Bộ tính Thần số học Pitago — Phần mềm số học Tâm Không ===== */
+window.TamKhong = (function () {
+  const VAL = { A: 1, J: 1, S: 1, B: 2, K: 2, T: 2, C: 3, L: 3, U: 3, D: 4, M: 4, V: 4, E: 5, N: 5, W: 5, F: 6, O: 6, X: 6, G: 7, P: 7, Y: 7, H: 8, Q: 8, Z: 8, I: 9, R: 9 };
+  const VOW = new Set(['U', 'E', 'O', 'A', 'I']);
+  const MASTER = [11, 22, 33];
+  const ds = n => String(n).split('').reduce((a, c) => a + (+c || 0), 0);
+  const red = n => { while (n > 9 && !MASTER.includes(n)) n = ds(n); return n; };   // giữ Master
+  const one = n => { while (n > 9) n = ds(n); return n; };                             // rút hết về 1 chữ số
+  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toUpperCase().replace(/[^A-Z\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  function letters(name) {
+    const words = norm(name).split(' ').filter(Boolean);
+    return words.map(w => [...w].map((ch, i) => {
+      let vowel = VOW.has(ch);
+      if (ch === 'Y') vowel = !(VOW.has(w[i - 1]) || VOW.has(w[i + 1]));
+      return { ch, v: VAL[ch] || 0, vowel };
+    }));
+  }
+  function count(digits) { const c = Array(10).fill(0); digits.forEach(x => { if (x >= 1 && x <= 9) c[x]++; }); return c; }
+  const year = (pd, pm, Y) => one(pd + pm + one(ds(Y)));
+  function calc(name, d, m, y, view) {
+    const W = letters(name), L = W.flat();
+    const sumAll = L.reduce((a, x) => a + x.v, 0), sumV = L.filter(x => x.vowel).reduce((a, x) => a + x.v, 0), sumC = L.filter(x => !x.vowel).reduce((a, x) => a + x.v, 0);
+    const nameC = count(L.map(x => x.v));
+    const dobC = count((String(d).padStart(2, '0') + String(m).padStart(2, '0') + String(y)).split('').map(Number));
+    const sd = one(ds(d)), sm = one(ds(m)), sy = one(ds(y));
+    const kp = red(sd + sm + sy), mt = red(sumAll), tl = red(L.length);
+    const no = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(k => !nameC[k]);
+    const mx = Math.max(...nameC.slice(1)); const dm = mx ? [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(k => nameC[k] === mx) : [];
+    const kq = one(one(kp) + one(mt)) /* Kết quả luôn rút gọn 1 chữ số (theo phần mềm gốc) */, hd = red(sumC), nl = red(sumV);
+    const last = W[W.length - 1] || [], ngl = last.length ? last[0].v : 0;
+    const ngu = red(d), tn = red(ngu + red(m));
+    const tc = one(one(kp) + one(tl));
+    const tt = one(one(tc) + one(kp) + one(mt) + one(kq));
+    const sk = one(one(nl) + one(ngl) + one(kp));
+    const ba = one(one(sk) + one(tt));
+    const mqh = one(one(kq) + one(tl) + one(nl) + one(hd));
+    const cd = one(one(tt) + one(tc) + one(mqh) + one(sk) + one(ba));
+    // Năm, tháng, ngày chủ đạo
+    const vd = view instanceof Date ? view : new Date();
+    const Y0 = vd.getFullYear(), M0 = vd.getMonth() + 1;
+    const years = [0, 1, 2, 3, 4].map(k => ({ y: Y0 + k, v: year(sd, sm, Y0 + k) }));
+    const months = [0, 1, 2, 3, 4].map(k => { const mm = (M0 - 1 + k) % 12 + 1, yy = Y0 + Math.floor((M0 - 1 + k) / 12); return { m: mm, y: yy, v: one(one(mm) + year(sd, sm, yy)) }; });
+    const days = [0, 1, 2, 3, 4].map(k => { const t = new Date(vd.getFullYear(), vd.getMonth(), vd.getDate() + k); const mm = t.getMonth() + 1, yy = t.getFullYear(); return { d: t.getDate(), m: mm, v: one(one(mm) + year(sd, sm, yy) + one(t.getDate())) }; });
+    return { name, norm: norm(name), d, m, y, W, L, nameC, dobC, sumAll, sumV, sumC, sd, sm, sy, kp, mt, tl, no, dm, kq, hd, nl, ngl, ngu, tn, tc, tt, sk, ba, mqh, cd, years, months, days, view: vd };
+  }
+  return { calc, norm, one, red, ds };
+})();
+</script>
+<script>
+/* ===== Luận giải 6 Chữ Vàng theo Bản đồ Tâm Không — theo Cẩm nang luận giải Bản đồ Tâm Không (Tâm Không) ===== */
+window.TKLuanGiai = (function () {
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const pad = n => String(n).padStart(2, '0');
+  const one = n => { while (n > 9) n = String(n).split('').reduce((a, c) => a + +c, 0); return n; };
+  const NUM = {
+    0: ['Tâm Không', 'Giác ngộ — sự hợp nhất Từ Bi (Tâm) và Trí Tuệ (Không).'],
+    1: ['Lãnh Đạo', 'Làm chủ bản thân, người khác, đội nhóm, tổ chức.'],
+    2: ['Lắng Nghe', 'Lắng nghe sâu bản thân và người khác.'],
+    3: ['Truyền Cảm Hứng', 'Nói truyền cảm hứng với bản thân và người khác để phát triển danh – lợi – tình – ngộ trí tuệ.'],
+    4: ['Quy Trình', 'Xây tiêu chuẩn nội quy gia đình, quy trình kinh doanh, đóng gói, nhân bản.'],
+    5: ['Ngôi Sao', 'Mô hình kinh doanh, kết nối, ngoại giao, tổ chức sân chơi.'],
+    6: ['Yêu Thương', 'Yêu thương trí tuệ, hành động và trách nhiệm.'],
+    7: ['Chiến Lược Gia', 'Chuyên gia chiến lược và tâm linh.'],
+    8: ['Kinh Doanh', 'Thu nhập, lợi nhuận, tài chính, đầu tư.'],
+    9: ['Cộng Đồng', 'Nhân đạo, lòng trắc ẩn, phụng sự xã hội, cho đi, giúp đỡ.'],
+    11: ['Nhà Truyền Cảm Hứng & Lãnh Đạo Tâm Linh', 'Cầu nối giữa thế giới tâm linh và thực tế — mang ánh sáng trí tuệ đến cộng đồng. Điểm mạnh: trực giác cực mạnh, nhạy cảm tâm linh, truyền cảm hứng đại chúng. Thách thức: dễ lo lắng, căng thẳng; cần cân bằng cảm xúc và tự chữa lành.'],
+    22: ['Nhà Kiến Tạo Vĩ Đại & Kiến Trúc Sư Thực Tiễn', 'Biến giấc mơ lớn thành hiện thực — xây dựng hệ thống, công trình có tầm ảnh hưởng lâu dài. Thách thức: dễ áp lực vì ôm quá lớn, cầu toàn; cần học buông bỏ và tin tưởng đội nhóm.'],
+    33: ['Vị Thầy Vũ Trụ & Người Chữa Lành Nhân Loại', 'Dâng hiến tình yêu thương vô điều kiện — chữa lành, nâng đỡ nhân loại. Thách thức: dễ hy sinh quá mức, quên chăm sóc bản thân; cần học yêu bản thân trước.'],
+  };
+  const NO = {
+    0: ['Nghiệp Vô Minh', 'Không thấy bản chất thực của vạn vật, sống trong si mê, thiếu trí tuệ để nhận ra nhân quả.'],
+    1: ['Nghiệp Ngạo Mạn, Cứng Đầu', 'Tự cao tự đại, không chịu học hỏi, bảo thủ, coi thường người khác và coi thường nhân quả.'],
+    2: ['Nghiệp Không Giữ Giới, Phóng Túng', 'Buông thả theo dục vọng, không giữ giới hạnh, sống phóng túng, tạo nghiệp thân – khẩu – ý.'],
+    3: ['Nghiệp Khẩu – Nói Vô Nghĩa, Nói Leo', 'Lời nói vô nghĩa, nói xấu, nói leo, thêu dệt, tạo khẩu nghiệp gây hại người khác.'],
+    4: ['Nghiệp Nợ Căn Tu – Tam Phủ', 'Nợ căn tu, nợ căn Tam Phủ, nợ tào quan từ nhiều kiếp chưa trả, cần hóa giải kịp thời.'],
+    5: ['Nghiệp Loạn Tâm', 'Tâm bất định, tán loạn, khó tập trung, bị cuốn vào cảm xúc tiêu cực, thiếu định lực và an trú.'],
+    6: ['Nghiệp Nợ Duyên Âm', 'Nợ duyên âm từ kiếp trước ảnh hưởng mối quan hệ, hôn nhân, gia đình. Cần hóa giải bằng sám hối và bố thí.'],
+    7: ['Nghiệp Nợ Tiền Kiếp – Điêu Đứng', 'Tổng hợp nợ từ tiền kiếp khiến cuộc sống hiện tại gặp nhiều trắc trở, điêu đứng trên nhiều mặt.'],
+    8: ['Tổng Nợ Tiền Bạc Vô Lượng Kiếp', 'Nợ tào quan, nợ oan gia trái chủ, nợ Thần Thánh Quan, nợ pháp giới chúng sinh trong vô lượng kiếp.'],
+    9: ['Nghiệp Tham – Sân – Si & Tào Quan', 'Ba độc tham, sân, si, nghiệp nhiều kiếp cùng nợ tào quan cần được hóa giải.'],
+  };
+  const BO = n => n === 0 ? 'Bộ 4 — Giúp đỡ cộng đồng' : [1, 2, 3, 11].includes(n) ? 'Bộ 1 — Phát triển bản thân' : n === 6 || n === 33 ? 'Bộ 2 — Giúp đỡ gia đình' : [4, 5, 8, 22].includes(n) ? 'Bộ 3 — Phát triển sự nghiệp' : 'Bộ 4 — Giúp đỡ cộng đồng';
+  const YEAR = {
+    1: 'Năm khởi đầu — gieo hạt mới, đặt mục tiêu lớn, chủ động dẫn dắt.',
+    2: 'Năm lắng nghe — hợp tác, vun đắp quan hệ, kiên nhẫn chờ hạt nảy mầm.',
+    3: 'Năm truyền cảm hứng — nói, viết, giảng dạy, sáng tạo, mở rộng danh tiếng.',
+    4: 'Năm quy trình — xây nền, chuẩn hóa, đóng gói hệ thống, kỷ luật.',
+    5: 'Năm ngôi sao — kết nối, mở rộng thị trường, thay đổi, tổ chức sân chơi.',
+    6: 'Năm yêu thương — gia đình, trách nhiệm, chăm sóc, chữa lành các mối quan hệ.',
+    7: 'Năm chiến lược gia — tu học, nghiên cứu, chiêm nghiệm, nâng tầm chuyên môn.',
+    8: 'Năm kinh doanh — thu hoạch tài chính, đầu tư, mở rộng quy mô.',
+    9: 'Năm cộng đồng — hoàn tất, buông bỏ cái cũ, phụng sự, cho đi.',
+  };
+  const n = v => NUM[v] || NUM[one(v)];
+  const nm = v => `<b class="lg-n">${v}</b> — ${esc(n(v)[0])}`;
+
+  function analyze(R) {
+    const IDX = [['Kho phước', [R.kp]], ['Nợ phải trả', R.no], ['Mục tiêu', [R.mt]], ['Tài lực', [R.tl]], ['Kết quả', [R.kq]], ['Điểm mạnh', R.dm], ['Nội lực', [R.nl]], ['Ngoại lực', [R.ngl]], ['Hành động', [R.hd]], ['Trải nghiệm', [R.tn]], ['Nguồn lực', [R.ngu]]];
+    const get = k => IDX.find(x => x[0] === k)[1];
+    // Tiền nổi: số 8 trong 11 chỉ số
+    const noi = []; IDX.forEach(([k, vs]) => vs.forEach(v => { if (v === 8) noi.push(k); }));
+    // Tiền chìm theo Phương pháp xác định số 8 (5 cách) — Tâm Không
+    const PAIRS = [
+      // Cách 2: Cộng các cặp đối xứng
+      ['Nội lực', 'Ngoại lực'], ['Nội lực', 'Hành động'], ['Tài lực', 'Nợ phải trả'], ['Hành động', 'Điểm mạnh'], ['Ngoại lực', 'Điểm mạnh'], ['Kết quả', 'Kho phước'], ['Nguồn lực', 'Trải nghiệm'],
+      // Cách 3: Mục tiêu + các cạnh Bảo tháp
+      ['Mục tiêu', 'Kết quả'], ['Mục tiêu', 'Trải nghiệm'], ['Mục tiêu', 'Kho phước'], ['Mục tiêu', 'Nguồn lực'],
+      // Cách 4: Mục tiêu + bên trong Bảo tháp
+      ['Mục tiêu', 'Tài lực'], ['Mục tiêu', 'Điểm mạnh'], ['Mục tiêu', 'Hành động'], ['Mục tiêu', 'Nợ phải trả'], ['Mục tiêu', 'Nội lực'], ['Mục tiêu', 'Ngoại lực']];
+    const chim = [];
+    PAIRS.forEach(([a, b]) => get(a).forEach(x => get(b).forEach(y => { const s = x + y; if (one(s) === 8) chim.push({ a, b, x, y, s }); })));
+    const dacBiet = R.no.length === 1;
+    const tongNoi = noi.length, tongChim = chim.length + (dacBiet ? 1 : 0);
+    // Tình: số 6 ở 5 vị trí
+    const sau = [['Kho phước', [R.kp]], ['Nợ phải trả', R.no], ['Mục tiêu', [R.mt]], ['Tài lực', [R.tl]], ['Kết quả', [R.kq]]].filter(([, vs]) => vs.includes(6)).map(x => x[0]);
+    // Tu: cung pháp lý số 4
+    const phapLy = [];
+    if (R.nameC[4] === 1) phapLy.push('Hóa giải cung pháp lý số 4 ở biểu đồ họ tên.');
+    if (R.dobC[4] === 1) phapLy.push('Hóa giải cung pháp lý số 4 ở biểu đồ ngày sinh.');
+    if (R.tl === 4 && R.no.includes(4)) phapLy.push('Hóa giải cung pháp lý số 4 ở cặp chỉ số tài lực và nợ phải trả.');
+    return { IDX, noi, chim, dacBiet, tongNoi, tongChim, sau, phapLy };
+  }
+
+  function build(R) {
+    const A = analyze(R);
+    const tbl = (head, rows, cls = '') => `<table class="lg-t ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(x => `<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+    const box = (t, items, cls = '') => `<div class="lg-box ${cls}"><b>${t}</b><ul>${items.map(x => `<li>${x}</li>`).join('')}</ul></div>`;
+    const v = R;
+    let h = '';
+    h += `<div class="lg-head"><div class="lg-org">TÂM KHÔNG</div><div class="lg-tag">Lợi cộng đồng • Lợi người khác • Lợi mình</div><h1>LUẬN GIẢI 6 CHỮ VÀNG<br>THEO BẢN ĐỒ TÂM KHÔNG</h1><div class="lg-six">KHỎE • TIỀN • TÀI • TÌNH • TU • AN</div><div class="lg-who">${esc(R.name.toUpperCase())} · sinh ${pad(R.d)}/${pad(R.m)}/${R.y}</div></div>`;
+
+    /* 1. Bản đồ & chỉ số */
+    h += `<h2>1. Các chỉ số trên Bản đồ Tâm Không</h2>`;
+    h += `<p><b>Biểu đồ ngày sinh</b> — tài sản có sẵn khi bạn sinh ra: kho phước, nguồn lực, trải nghiệm. <b>Biểu đồ họ tên</b> — sức mạnh bạn đang dùng và những nghiệp cần hóa giải: tài lực, điểm mạnh, nợ phải trả.</p>`;
+    h += tbl(['Chỉ số Bảo tháp', 'Số', 'Ý nghĩa con số'], A.IDX.map(([k, vs]) => [`<b>${k}</b>`, `<b class="lg-n">${vs.length ? vs.join(', ') : '—'}</b>`, k === 'Nợ phải trả' ? (vs.length ? vs.map(x => `${x}: ${esc(NO[x][0])}`).join('; ') : 'Không có số nợ') : vs.map(x => `${esc(n(x)[0])}: ${esc(n(x)[1])}`).join('<br>')]), 'lg-idx');
+    h += tbl(['6 lĩnh vực vòng ngoài', 'Số', 'Ý nghĩa'], [['Trí tuệ', v.tt], ['Bình an', v.ba], ['Cộng đồng', v.cd], ['Tài chính', v.tc], ['Sức khỏe', v.sk], ['Mối quan hệ', v.mqh]].map(([k, x]) => [`<b>${k}</b>`, `<b class="lg-n">${x}</b>`, `${esc(n(x)[0])}: ${esc(n(x)[1])}`]), 'lg-idx');
+
+    /* 2. 6 Chữ Vàng */
+    h += `<h2>2. Giải mã 6 Chữ Vàng</h2>`;
+    h += `<p class="lg-it">Lấy chữ <b>Tu</b> làm trung tâm — hạt nhân, nguyên nhân gốc để kích hoạt 5 chữ vàng còn lại. Tu để tạo phước, mở tuệ (tích lũy nhị tư lương: phước và tuệ được tạo lập đồng thời).</p>`;
+    // KHỎE
+    h += `<h3>2.1. Chữ KHỎE <span class="lg-el">· Thủy</span></h3><p class="lg-it">Khỏe mạnh về cả thân tâm (thân thể và tinh thần) mới có năng lượng để tận hưởng cuộc sống.</p>`;
+    h += `<p>Cung <b>Sức khỏe</b> trên Bản đồ Tâm Không: ${nm(v.sk)}. ${esc(n(v.sk)[1])}</p>`;
+    h += box('Gieo phước để gặt quả KHỎE', ['Giúp người khác có sức khỏe tốt, khỏe mạnh thân tâm: chỉ lối sống lành mạnh, luyện tập thể dục thể thao.', `Phát huy năng lượng số ${v.sk} (${esc(n(v.sk)[0])}) trong việc chăm sóc thân tâm mỗi ngày.`, 'Phần này là lời nhắc theo Bản đồ Tâm Không, không thay cho chẩn đoán y khoa.']);
+    // TIỀN
+    h += `<h3>2.2. Chữ TIỀN <span class="lg-el">· Kim</span></h3><p class="lg-it">Tiền là công cụ và phương tiện để có cuộc sống tốt đẹp hơn. Tra cứu: tìm số 8 (nổi, chìm) trong Bảo tháp.</p>`;
+    h += tbl(['Hạng mục', 'Cách tính', 'Kết quả'], [
+      ['<b>Tiền nổi</b><br><small>tiền trên ví, tài khoản</small>', A.noi.length ? 'Số 8 có ở: ' + A.noi.join(', ') : 'Không có số 8 trong 11 chỉ số Bảo tháp', `<b>${A.tongNoi} × 8</b>`],
+      ['<b>Tiền chìm</b><br><small>đất đai, nhà cửa, cổ phần, vàng…</small>', (A.chim.length ? A.chim.map(c => `${c.a} ${c.x} + ${c.b} ${c.y} = ${c.s}${c.s !== 8 ? ` → ${one(c.s)}` : ''}`).join('<br>') : 'Không có cặp chỉ số nào cộng bằng 8') + (A.dacBiet ? `<br>Số 8 chìm đặc biệt (song hao đắc địa, hết tiền lại có): nợ phải trả chỉ có một số (${R.no[0]})` : ''), `<b>${A.tongChim} × 8</b>`],
+      ['<b>Tổng tiền</b>', `${A.tongNoi}×8 (nổi) + ${A.tongChim}×8 (chìm)`, `<b class="lg-n">${A.tongNoi + A.tongChim} × 8</b>`],
+    ], 'lg-tien');
+    h += `<div class="lg-box"><b>Phương pháp xác định số 8</b><ul><li><b>Cách 1 — Tìm trực số 8 (tiền nổi):</b> mỗi số 8 trực tiếp trên Bảo tháp (11 chỉ số) tính 1×8 — tiền trên ví, tài khoản ngân hàng.</li><li><b>Cách 2 — Cộng các cặp đối xứng:</b> Nội lực + Ngoại lực · Nội lực + Hành động · Tài lực + Nợ phải trả · Hành động + Điểm mạnh · Ngoại lực + Điểm mạnh · Kết quả + Kho phước · Nguồn lực + Trải nghiệm.</li><li><b>Cách 3 — Mục tiêu + các cạnh Bảo tháp:</b> Kết quả · Trải nghiệm · Kho phước · Nguồn lực.</li><li><b>Cách 4 — Mục tiêu + bên trong Bảo tháp:</b> Tài lực · Điểm mạnh · Hành động · Nợ phải trả · Nội lực · Ngoại lực.</li><li><b>Cách 5 — Lấy 9 – Nợ phải trả:</b> khi Nợ phải trả chỉ có 1 con số (từ 1 đến 9) thì tính thêm 1×8 chìm đặc biệt (song hao đắc địa, hết tiền lại có).</li></ul><small>Cách 2–4: cặp cộng bằng 8 (1+7, 2+6, 3+5, 4+4, 0+8; tổng hai chữ số rút gọn, vd 9+8 = 17 → 1+7 = 8) thì tính 1×8 tiền chìm — tài sản: đất đai, nhà cửa, cổ phần, vàng, ngoại tệ, kho hàng…; không bằng 8 thì bỏ qua.</small></div>`;
+    h += `<p>Cung <b>Tài chính</b>: ${nm(v.tc)}. ${esc(n(v.tc)[1])} ${A.noi.includes('Nợ phải trả') ? 'Số 8 nằm trong <b>Nợ phải trả</b>: tiền trước hết là bài học — minh bạch, dám nhận đúng giá trị, trả nợ tiền âm.' : ''}</p>`;
+    h += box('Gieo phước để gặt quả TIỀN', ['Cho tiền trực tiếp với tâm hoan hỉ.', 'Kết duyên các mối quan hệ để giúp người khác có tiền.', 'Chỉ phương pháp kiếm tiền, cách tạo phước về tiền để có tài lộc.']);
+    // TÀI
+    const tongTai = [['Kho phước', R.kp, 'Phước báu sẵn có đã tích lũy của bạn.'], ['Mục tiêu', R.mt, 'Điều bạn khát khao muốn đạt được.'], ['Tài lực', R.tl, 'Năng lực sẵn có của bạn, giống như vũ khí bí mật.'], ['Điểm mạnh', R.dm.join(', ') || '—', 'Thế mạnh, sở trường của bạn.']];
+    h += `<h3>2.3. Chữ TÀI <span class="lg-el">· Hỏa</span></h3><p class="lg-it">Năng lực làm chủ cuộc đời và tạo ra giá trị cho cộng đồng. Tra cứu: Bộ số Tổng Tài — Kho phước · Mục tiêu · Tài lực · Điểm mạnh.</p>`;
+    h += tbl(['Bộ số Tổng Tài', 'Số', 'Vai trò', 'Ý nghĩa con số'], tongTai.map(([k, x, d]) => [`<b>${k}</b>`, `<b class="lg-n">${x}</b>`, d, String(x).split(', ').filter(t => t !== '—').map(t => `${esc(n(+t)[0])} (${BO(+t).split(' — ')[1]})`).join('; ')]));
+    const dmPick = R.dm.length >= 3 ? R.dm.filter(x => [R.kp, R.mt, R.tl].includes(x)) : R.dm;
+    const bos = [...new Set([R.kp, R.mt, R.tl, ...R.dm].map(BO))];
+    h += box('Kích hoạt Bộ số Tổng Tài', [`Đây là Bộ số Tổng Tài của bạn: <b>${R.kp} · ${R.mt} · ${R.tl} · ${R.dm.join(',') || '—'}</b> — hãy kích hoạt 4 chỉ số này.`, R.dm.length >= 3 ? `Có ${R.dm.length} điểm mạnh: lấy điểm mạnh trùng với kho phước, mục tiêu, tài lực để kích hoạt — ${dmPick.length ? dmPick.join(', ') : 'không có số trùng, chọn điểm mạnh gần mục tiêu nhất'}.` : `Điểm mạnh ${R.dm.join(', ') || '—'}: phát huy để tăng năng suất lao động và thu nhập.`, `Bộ số tổng tài thuộc: ${bos.join(' · ')}.`, 'Định hướng sự nghiệp theo Kim Tứ Đồ (làm thuê · làm chủ nhỏ · làm chủ lớn · nhà đầu tư): người luận giải đối chiếu 4 chỉ số trên để chọn nhóm phù hợp.']);
+    // TÌNH
+    h += `<h3>2.4. Chữ TÌNH <span class="lg-el">· Mộc</span></h3><p class="lg-it">Tình cảm, ân tình, nghĩa tình với các mối quan hệ trong công việc, cuộc sống. Tra cứu: tìm số 6 trong Bảo tháp tại 5 vị trí Kho phước · Nợ phải trả · Mục tiêu · Tài lực · Kết quả.</p>`;
+    h += `<p>${A.sau.length ? `Số 6 xuất hiện ở: <b>${A.sau.join(', ')}</b> → <b class="lg-no">cần hóa giải duyên âm</b> — giải pháp bài tu hóa giải.` : 'Không có số 6 ở 5 vị trí tra cứu → không có dấu hiệu duyên âm cần hóa giải theo Bảo tháp.'} Cung <b>Mối quan hệ</b>: ${nm(v.mqh)}. ${esc(n(v.mqh)[1])}</p>`;
+    h += box('Gieo phước để gặt quả TÌNH', ['Giúp người khác hòa hợp các mối quan hệ: chữa lành tổn thương để mối quan hệ hòa hợp.', 'Thực hành lòng biết ơn: lập danh sách ân nhân và ân tình, báo ơn bằng hành động.', ...(A.sau.length ? ['Đọc bài tu hóa giải duyên âm.'] : [])]);
+    // TU
+    h += `<h3>2.5. Chữ TU <span class="lg-el">· Trung tâm</span></h3><p class="lg-it">Quá trình tu dưỡng bản thân để khai mở trí tuệ. Tra cứu: số 4 ở biểu đồ họ tên và ngày sinh (chỉ tính khi có đúng 1 số 4), cặp tài lực – nợ phải trả.</p>`;
+    h += tbl(['Vị trí', 'Trên lá số', 'Kết luận'], [
+      ['Biểu đồ họ tên', R.nameC[4] ? '4'.repeat(R.nameC[4]) : 'Không có số 4', R.nameC[4] === 1 ? '<b class="lg-no">Hóa giải cung pháp lý số 4</b>' : 'Không cần hóa giải'],
+      ['Biểu đồ ngày sinh', R.dobC[4] ? '4'.repeat(R.dobC[4]) : 'Không có số 4', R.dobC[4] === 1 ? '<b class="lg-no">Hóa giải cung pháp lý số 4</b>' : 'Không cần hóa giải'],
+      ['Cặp tài lực – nợ phải trả', `Tài lực ${R.tl} · Nợ ${R.no.join(',') || '—'}`, R.tl === 4 && R.no.includes(4) ? '<b class="lg-no">Hóa giải cung pháp lý số 4</b>' : 'Không cần hóa giải'],
+    ]);
+    h += box(A.phapLy.length ? 'Bài tu cần làm' : 'Giữ gìn chữ TU', A.phapLy.length ? [...A.phapLy, 'Lập Sổ Gieo Phước Báu (3.000 việc tốt), ghi mỗi ngày.'] : ['Không có cung pháp lý số 4 cần hóa giải.', 'Lập Sổ Gieo Phước Báu (3.000 việc tốt), ghi mỗi ngày.']);
+    // AN
+    h += `<h3>2.6. Chữ AN <span class="lg-el">· Thổ</span></h3><p class="lg-it">Bình an, an nhiên, tự do tự tại.</p>`;
+    h += `<p>Cung <b>Bình an</b>: ${nm(v.ba)}. ${esc(n(v.ba)[1])}</p>`;
+    h += box('Gieo phước để gặt quả AN', ['Giúp người khác bình an: thực hành lòng biết ơn, mở rộng tình yêu thương.', 'Đói thì ăn, mệt thì nghỉ — sống thuận tự nhiên; giữ tâm bất động.']);
+    h += tbl(['Chữ', 'Tra cứu', 'Kết quả của bạn'], [
+      ['<b>KHỎE</b>', 'Cung Sức khỏe', `${v.sk} — ${esc(n(v.sk)[0])}`],
+      ['<b>TIỀN</b>', 'Số 8 nổi, chìm', `${A.tongNoi}×8 + ${A.tongChim}×8 = <b>${A.tongNoi + A.tongChim}×8</b>`],
+      ['<b>TÀI</b>', 'Bộ số Tổng Tài', `${R.kp} · ${R.mt} · ${R.tl} · ${R.dm.join(',') || '—'}`],
+      ['<b>TÌNH</b>', 'Số 6 ở 5 vị trí', A.sau.length ? `<span class="lg-no">Có (${A.sau.join(', ')}) — hóa giải duyên âm</span>` : 'Không có số 6'],
+      ['<b>TU</b>', 'Cung pháp lý số 4', A.phapLy.length ? `<span class="lg-no">${A.phapLy.length} vị trí cần hóa giải</span>` : 'Không cần hóa giải'],
+      ['<b>AN</b>', 'Cung Bình an', `${v.ba} — ${esc(n(v.ba)[0])}`],
+    ]);
+
+    /* 3. Nợ phải trả */
+    h += `<h2>3. Nợ phải trả và cách hóa giải</h2>`;
+    h += R.no.length ? tbl(['Số', 'Nghiệp', 'Ý nghĩa'], R.no.map(x => [`<b class="lg-n">${x}</b>`, `<b>${esc(NO[x][0])}</b>`, esc(NO[x][1])])) : '<p>Biểu đồ họ tên có đủ các số từ 1 đến 9 — không có số nợ phải trả.</p>';
+    h += box('Cách hóa giải', ['Dừng gieo nghiệp nợ phải trả mới.', 'Sám hối nghiệp xấu đã gieo (đọc <b>Om Benza Satto Hum</b> 21 lần).', 'Hào phóng cho đi bằng 4 cách: Vật chất – Tình yêu thương – Trí tuệ – Sự bảo vệ.', 'Biết ơn trong suy nghĩ, lời nói và hành động mỗi ngày.']);
+
+    /* 4. Kích hoạt kho phước */
+    h += `<h2>4. Kích hoạt kho phước để đạt mục tiêu tài chính</h2>`;
+    h += `<p>Từ <b>Mục tiêu ${R.mt}</b> (trung tâm Bảo tháp) bạn hướng về <b>Tài chính ${R.tc}</b> (dưới cùng). Bạn đi qua hai bước: <b>Nợ phải trả ${R.no.join(',') || '—'}</b> và <b>Kho phước ${R.kp}</b>. Giống như đi thuyền từ Mục tiêu đến Tài chính: nợ phải trả là những lỗ thủng trên con thuyền, cần vá trước khi đi; vá xong thì kích hoạt kho phước để đạt kết quả tài chính.</p>`;
+    h += `<div class="lg-flow"><span>MỤC TIÊU<b>${R.mt}</b></span><i>→</i><span class="no">NỢ PHẢI TRẢ<b>${R.no.join(',') || '—'}</b></span><i>→</i><span>KHO PHƯỚC<b>${R.kp}</b></span><i>→</i><span class="g">TÀI CHÍNH<b>${R.tc}</b></span></div>`;
+    h += `<div class="lg-formula">Kết quả tài chính = Kho phước tài chính + Mục tiêu tài chính<br><small>Công việc đang làm = Kho phước tiền + Mục tiêu thu nhập</small></div>`;
+    h += tbl(['Việc cần làm', 'Cách làm'], [
+      ['<b>1. Hóa giải nợ phải trả</b>', 'Đọc bài sám hối, bài xin xóa nợ, bài giải nghiệp dòng họ, bài tăng năng lượng cho đất, bài biếu tiền/trả nợ.'],
+      ['<b>2. Kích hoạt kho phước</b>', `Lập Sổ Gieo Phước Báu (3.000 việc tốt). Lấy chữ Tu làm trung tâm để gieo hạt phước báu về Khỏe, Tiền, Tài, Tình, An. Kho phước số ${R.kp} — ${esc(n(R.kp)[0])}: gieo phước qua ${esc(n(R.kp)[1]).toLowerCase()}`],
+      ['<b>3. Kích hoạt mục tiêu thu nhập</b>', `Hoàn thành tốt công việc đang làm với trách nhiệm. Mục tiêu số ${R.mt} — ${esc(n(R.mt)[0])}.`],
+      ['<b>4. Kích hoạt Ngũ Hành Pháp Trận</b>', 'Thực hành biết ơn, báo ơn: Mộc (mối quan hệ) → Hỏa (tài năng, năng lực) → Thổ (bình an trong tâm) → Kim (thu nhập về) → Thủy (có tiền chăm sóc sức khỏe) → lại chăm sóc tốt các mối quan hệ.'],
+    ]);
+    h += `<p class="lg-it">Quy trình: Phát triển bản thân → Giúp đỡ gia đình → Phát triển sự nghiệp → Giúp đỡ cộng đồng.</p>`;
+
+    /* 5. Chu kỳ 9 năm */
+    h += `<h2>5. Chu kỳ 9 năm — năm, tháng, ngày chủ đạo</h2>`;
+    h += `<p>Mỗi người đi qua chu kỳ 9 năm lặp lại. Năm chủ đạo cho thông điệp tài lộc tổng quát của năm; tháng chủ đạo cho vận hội của tháng; ngày chủ đạo giúp chọn ngày cho quyết định quan trọng.</p>`;
+    h += tbl(['Năm', 'Số chủ đạo', 'Thông điệp của năm'], R.years.map(y => [`<b>${y.y}</b>`, `<b class="lg-n">${y.v}</b>`, esc(YEAR[y.v])]));
+    h += tbl(['Tháng', ...R.months.map(m => `${pad(m.m)}/${m.y}`)], [['Số chủ đạo', ...R.months.map(m => `<b class="lg-n">${m.v}</b> ${esc(NUM[m.v][0])}`)]], 'lg-sm');
+    h += tbl(['Ngày', ...R.days.map(d => `${pad(d.d)}/${pad(d.m)}`)], [['Số chủ đạo', ...R.days.map(d => `<b class="lg-n">${d.v}</b> ${esc(NUM[d.v][0])}`)]], 'lg-sm');
+    const y8 = R.years.filter(y => y.v === 8).map(y => y.y), y1 = R.years.filter(y => y.v === 1).map(y => y.y);
+    h += box('Thời điểm vàng', [y8.length ? `Năm số 8 (thu hoạch tài chính): <b>${y8.join(', ')}</b> — đặt mục tiêu thu nhập lớn nhất vào năm này.` : 'Trong 5 năm tới chưa có năm số 8 — gieo phước tiền đều đặn để chuẩn bị.', y1.length ? `Năm số 1 (khởi đầu chu kỳ mới): <b>${y1.join(', ')}</b> — thời điểm gieo hạt, mở dự án mới.` : 'Chưa đến năm số 1 trong 5 năm tới.', 'Chọn ngày chủ đạo số 1, 5, 8 cho việc ký kết, ra mắt; ngày số 7, 9 cho tu học, phụng sự.']);
+
+    /* 6. Hành động đột phá */
+    h += `<h2>6. Hành động đột phá — lộ trình mỗi ngày 5h30 – 22h30</h2>`;
+    h += tbl(['Giờ', 'Việc làm', 'Chữ Vàng'], [
+      ['05:30 – 06:00', 'Thức dậy, biết ơn; sám hối — đọc Om Benza Satto Hum 21 lần; đặt ý nguyện ngày', 'TU · AN'],
+      ['06:00 – 07:00', 'Vận động, đi bộ, yoga; phơi nắng sớm', 'KHỎE'],
+      ['07:00 – 08:00', 'Ăn sáng cùng gia đình; hỏi thăm cha mẹ', 'TÌNH'],
+      ['08:00 – 11:30', `Việc tạo giá trị lớn nhất — phát huy Bộ số Tổng Tài (${R.kp} · ${R.mt} · ${R.tl} · ${R.dm.join(',') || '—'})`, 'TÀI · TIỀN'],
+      ['11:30 – 13:30', 'Ăn trưa, nghỉ trưa ngắn', 'KHỎE · AN'],
+      ['13:30 – 17:00', 'Gặp gỡ khách hàng, đối tác; hoàn thành nhiệm vụ được giao (kích hoạt mục tiêu thu nhập)', 'TIỀN · TÌNH'],
+      ['17:00 – 19:30', 'Vận động nhẹ; bữa tối gia đình, không điện thoại', 'KHỎE · TÌNH'],
+      ['19:30 – 21:00', 'Học tập; giúp người khác: đọc Bản đồ Tâm Không, Tử Vi, Bát Tự cho người khác', 'TÀI · TU'],
+      ['21:00 – 22:00', '<b>Ghi Sổ Gieo Phước Báu</b> — 5–10 việc, tăng dần 10–20 việc; hồi hướng công đức', 'TU'],
+      ['22:00 – 22:30', 'Thiền, thư giãn, đi ngủ', 'AN'],
+    ], 'lg-day');
+    h += `<div class="lg-foot">Đức năng thắng số — Phước báu cải vận<br><span>Bản luận giải tự động theo Cẩm nang luận giải Bản đồ Tâm Không. Người luận giải xem lại và bổ sung trước khi gửi khách hàng.</span></div>`;
+    return h;
+  }
+
+  const CSS = `
+.lgd{background:#fff;color:#1a1a1a;font-family:"Be Vietnam Pro",Verdana,Arial,sans-serif;font-size:13.5px;line-height:1.6}
+.lgd h1,.lgd h2,.lgd h3{font-family:"Playfair Display",Georgia,serif}
+.lgd,.lgd *,.lgcover,.lgcover *{letter-spacing:.01px}
+.lgd h2{color:#0B5D3B;font-size:20px;border-bottom:1.5px solid #B8860B;padding-bottom:3px;margin:24px 0 10px}
+.lgd h3{color:#8a6408;font-size:17px;margin:16px 0 4px}.lgd h3 .lg-el{font-weight:normal;font-size:14px;color:#777}
+.lgd p{margin:6px 0}.lgd .lg-it{font-style:italic;color:#0B5D3B}
+.lgd small{font-size:12px;color:#666}
+.lgd .lg-n{color:#C8202C}.lgd .lg-no{color:#9B2C2C}
+.lgd table.lg-t{width:100%;border-collapse:collapse;margin:8px 0;font-size:12.5px}
+.lgd table.lg-t th{background:#0B5D3B;color:#fff;text-align:left;padding:5px 7px;font-weight:bold}
+.lgd table.lg-t td{border:1px solid #cfd8d2;padding:5px 7px;vertical-align:top}
+.lgd table.lg-t tr:nth-child(even) td{background:#f6f9f7}
+.lgd table.lg-idx td:nth-child(2){text-align:center;width:70px;font-size:16px}
+.lgd table.lg-day td:first-child{white-space:nowrap}
+.lgd table.lg-sm td,.lgd table.lg-sm th{text-align:center;font-size:12.5px}
+.lgd .lg-box{background:#fbf3df;border-left:4px solid #B8860B;padding:8px 12px;margin:10px 0;font-size:14px}
+.lgd .lg-box ul{margin:4px 0 0;padding-left:20px}
+.lgd .lg-head{text-align:center;border-bottom:2px solid #B8860B;padding-bottom:10px;margin-bottom:12px}
+.lgd .lg-org{color:#0B5D3B;font-weight:bold;letter-spacing:3px;font-size:18px}
+.lgd .lg-tag{color:#B8860B;font-style:italic;font-size:13px}
+.lgd .lg-head h1{color:#0B5D3B;font-size:26px;margin:10px 0 4px;line-height:1.25}
+.lgd .lg-six{color:#B8860B;font-weight:bold;letter-spacing:1px}
+.lgd .lg-who{font-size:17px;font-weight:bold;margin-top:6px}
+.lgd .lg-flow{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0}
+.lgd .lg-flow span{border:2px solid #0B5D3B;border-radius:8px;padding:6px 10px;text-align:center;font-size:12px;font-weight:bold;color:#0B5D3B;min-width:96px}
+.lgd .lg-flow span b{display:block;font-size:22px;color:#C8202C}
+.lgd .lg-flow span.no{border-color:#9B2C2C;color:#9B2C2C}.lgd .lg-flow span.g{background:#0B5D3B;color:#F4D58A}.lgd .lg-flow span.g b{color:#fff}
+.lgd .lg-flow i{font-style:normal;font-size:20px;color:#B8860B}
+.lgd .lg-formula{background:#0B5D3B;color:#F4D58A;text-align:center;font-weight:bold;border-radius:8px;padding:10px;margin:10px 0;font-size:15.5px}
+.lgd .lg-formula small{color:#fff;font-weight:normal;font-size:13px}
+.lgd .lg-foot{text-align:center;color:#0B5D3B;font-style:italic;margin-top:24px;border-top:1px solid #B8860B;padding-top:8px}
+.lgd .lg-foot span{font-size:12px;color:#777}
+.lgcover{width:794px;height:1123px;background:#fff;color:#1a1a1a;font-family:"Be Vietnam Pro",Verdana,Arial,sans-serif;position:relative;box-sizing:border-box;padding:46px 54px}
+.lgcover .fr{position:absolute;inset:22px;border:3px solid #B8860B}.lgcover .fr2{position:absolute;inset:30px;border:1px solid #B8860B}
+.lgcover .band{background:#0B5D3B;color:#F4D58A;text-align:center;padding:16px 0 12px;margin:0 -24px}
+.lgcover .band .o{font-size:30px;font-weight:bold;letter-spacing:8px}.lgcover .band .t{font-size:14px;font-style:italic;color:#fff3d6;margin-top:2px}
+.lgcover h1{font-family:"Playfair Display",Georgia,serif;text-align:center;color:#0B5D3B;font-size:40px;margin:40px 0 6px;line-height:1.2}
+.lgcover .six{text-align:center;color:#B8860B;font-weight:bold;font-size:19px;letter-spacing:3px}
+.lgcover .sub{text-align:center;font-style:italic;color:#555;font-size:15px;margin-top:6px}
+.lgcover .nm{text-align:center;font-size:34px;font-weight:bold;margin:40px 0 4px}
+.lgcover .inf{text-align:center;font-size:16px;color:#444}
+.lgcover .nums{display:flex;justify-content:center;gap:12px;margin:34px 0 0}
+.lgcover .nums div{width:120px;border:1.5px solid #B8860B;border-radius:10px;text-align:center;padding:10px 0}
+.lgcover .nums b{display:block;font-size:34px;color:#C8202C;line-height:1.1}.lgcover .nums span{font-size:13px;color:#0B5D3B;font-weight:bold}
+.lgcover .motto{position:absolute;left:0;right:0;bottom:96px;text-align:center;color:#0B5D3B;font-style:italic;font-size:18px}
+.lgcover .bt{position:absolute;left:54px;right:54px;bottom:52px;display:flex;justify-content:space-between;font-size:14px;color:#555;border-top:1px solid #B8860B;padding-top:8px}`;
+  (function () { const s = document.createElement('style'); s.textContent = CSS; document.head.appendChild(s); })();
+
+  function cover(R) {
+    const d = new Date(), today = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+    return `<div class="fr"></div><div class="fr2"></div><div class="band"><div class="o">TÂM KHÔNG</div><div class="t">Lợi cộng đồng • Lợi người khác • Lợi mình</div></div>
+      <h1>LUẬN GIẢI 6 CHỮ VÀNG<br>THEO BẢN ĐỒ TÂM KHÔNG</h1><div class="six">KHỎE • TIỀN • TÀI • TÌNH • TU • AN</div><div class="sub">Theo khoa học con số của Pitago · Bản đồ Tâm Không H &amp; D</div>
+      <div class="nm">${esc(R.name.toUpperCase())}</div><div class="inf">Ngày sinh ${pad(R.d)}/${pad(R.m)}/${R.y}</div>
+      <div class="nums"><div><b>${R.kp}</b><span>KHO PHƯỚC</span></div><div><b>${R.mt}</b><span>MỤC TIÊU</span></div><div><b>${R.kq}</b><span>KẾT QUẢ</span></div><div><b>${R.tc}</b><span>TÀI CHÍNH</span></div></div>
+      <div class="motto">Đức năng thắng số — Phước báu cải vận</div>
+      <div class="bt"><span>Người luận giải: ………………………………</span><span>Ngày lập: ${today}</span></div>`;
+  }
+  function textImg(txt, o) { const c = document.createElement('canvas'); const s = 3; c.width = o.w * s; c.height = o.h * s; const x = c.getContext('2d'); x.scale(s, s); x.fillStyle = '#fff'; x.fillRect(0, 0, o.w, o.h); x.font = `${o.italic ? 'italic ' : ''}${o.size}px "Be Vietnam Pro",Verdana,Arial,sans-serif`; x.fillStyle = o.color; x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillText(txt, 0, o.h / 2); if (o.right) { x.textAlign = 'right'; x.fillText(o.right, o.w, o.h / 2); } return c.toDataURL('image/png'); }
+  async function cap(el, width, scale) {
+    const holder = document.createElement('div'); holder.style.cssText = `position:fixed;left:-12000px;top:0;width:${width}px;background:#fff`;
+    holder.appendChild(el); document.body.appendChild(holder); await new Promise(r => setTimeout(r, 60));
+    const top = el.getBoundingClientRect().top;
+    const pos = sel => [...el.querySelectorAll(sel)].map(n => n.getBoundingClientRect().top - top).filter(y => y > 0).sort((a, b) => a - b);
+    const breaks = { strong: pos('h2,h3'), weak: pos('tr,p,li,.lg-box,.lg-flow,.lg-formula,.lg-foot') };
+    try { const cv = await html2canvas(el, { scale, backgroundColor: '#ffffff', windowWidth: 1280 }); return { cv, breaks }; } finally { holder.remove(); }
+  }
+  // sheetCanvas: ảnh lá số A4 đã chụp sẵn
+  async function makePdf(R, sheetCanvas) {
+    try { await document.fonts.ready; } catch (e) { }
+    const { jsPDF } = window.jspdf; const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+    const cov = document.createElement('div'); cov.className = 'lgcover'; cov.innerHTML = cover(R);
+    const c1 = await cap(cov, 794, 2); pdf.addImage(c1.cv.toDataURL('image/jpeg', 0.93), 'JPEG', 0, 0, 210, 297);
+    pdf.addPage(); pdf.addImage(sheetCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+    const doc = document.createElement('div'); doc.className = 'lgd'; doc.innerHTML = build(R); doc.querySelector('.lg-head').remove();
+    const Wd = 760, { cv, breaks } = await cap(doc, Wd, 2);
+    const ML = 14, CW = 182, TOP = 21, BOT = 282, ph = BOT - TOP, pxmm = cv.width / CW, sc = cv.width / Wd, pageH = Math.floor(ph * pxmm);
+    const sp = breaks.strong.map(b => Math.round(b * sc)), wp = breaks.weak.map(b => Math.round(b * sc));
+    let y = 0; const slices = [];
+    while (y < cv.height - 4) { let end = Math.min(y + pageH, cv.height); if (end < cv.height) { const cs = sp.filter(b => b > y + pageH * 0.55 && b <= end && !sp.some(o => o < b && o > b - 90 * sc)); const cw = wp.filter(b => b > y + pageH * 0.5 && b <= end); const cand = cs.length ? cs : cw; if (cand.length) end = cand[cand.length - 1] - 2; } slices.push([y, end]); y = end; }
+    const hdr = textImg('TÂM KHÔNG  •  Luận giải 6 Chữ Vàng theo Bản đồ Tâm Không', { w: 620, h: 20, size: 12, color: '#0B5D3B', italic: true, right: R.name });
+    const ftr = textImg('Đức năng thắng số — Phước báu cải vận', { w: 400, h: 18, size: 11, color: '#777', italic: true });
+    const total = slices.length + 2;
+    slices.forEach(([a, b], i) => {
+      const s = document.createElement('canvas'); s.width = cv.width; s.height = b - a; const x = s.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, s.width, s.height); x.drawImage(cv, 0, a, cv.width, b - a, 0, 0, cv.width, b - a);
+      pdf.addPage(); pdf.addImage(hdr, 'PNG', ML, 8, CW, CW * 20 / 620); pdf.setDrawColor(184, 134, 11); pdf.setLineWidth(0.6); pdf.line(ML, 15.5, ML + CW, 15.5);
+      pdf.addImage(s.toDataURL('image/jpeg', 0.92), 'JPEG', ML, TOP, CW, (b - a) / pxmm);
+      pdf.setLineWidth(0.3); pdf.line(ML, 286, ML + CW, 286); pdf.addImage(ftr, 'PNG', ML, 287.5, 70, 70 * 18 / 400);
+      pdf.setFontSize(9); pdf.setTextColor(120); pdf.text(`${i + 3} / ${total}`, ML + CW, 291.5, { align: 'right' });
+    });
+    return pdf.output('blob');
+  }
+  return { build, analyze, makePdf };
+})();
+
+</script>
+<script>
+/* ===== Tài khoản thành viên phuocloc.vn (dùng chung với trang Tử Vi) ===== */
+window.PLAcct = (function () {
+  const API = String(window.PL_API || '').replace(/\/+$/, '');
+  const CONTACT = String(window.PL_CONTACT || '').trim();
+  const TK = 'phuocloc.token.v1';
+  const A = { token: null, user: null, listeners: [] };
+  try { A.token = localStorage.getItem(TK); } catch (e) { }
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const pad = n => String(n).padStart(2, '0');
+  const fmtDate = iso => { const d = new Date(iso); return isNaN(d) ? '' : `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`; };
+  const quota = q => q.limit == null ? `${q.used} (không giới hạn)` : `${q.used}/${q.limit}`;
+  function setToken(t) { A.token = t; try { t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch (e) { } }
+
+  function api(method, path, body) {
+    if (!API) { const e = new Error('Trang chưa được nối với máy chủ tài khoản.'); e.code = 'no_api'; return Promise.reject(e); }
+    const h = { 'Content-Type': 'application/json' }; if (A.token) h.Authorization = 'Bearer ' + A.token;
+    return fetch(API + '/api' + path, { method, headers: h, body: body ? JSON.stringify(body) : undefined })
+      .catch(() => { const e = new Error('Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'); e.code = 'network'; throw e; })
+      .then(r => r.json().catch(() => ({})).then(j => {
+        if (!r.ok || j.ok === false) { const e = new Error(j.message || ('Lỗi máy chủ (' + r.status + ').')); e.code = j.error || ('http_' + r.status); e.status = r.status; throw e; }
+        return j;
+      }));
+  }
+
+  function setUser(u) {
+    A.user = u || null;
+    const box = $('acct'); if (!box) return;
+    if (!u) {
+      box.innerHTML = '<span class="acct-t">Chưa đăng nhập</span><button class="btn small" type="button" id="acLogin" style="margin:0">Đăng nhập</button>';
+      $('acLogin').onclick = () => requireLogin().catch(() => { });
+    } else {
+      const hsd = u.expiresAt ? 'HSD ' + fmtDate(u.expiresAt) + (u.expired ? ' (đã hết hạn)' : ' · còn ' + u.daysLeft + ' ngày') : 'Không giới hạn thời gian';
+      const low = u.expired || (u.chart.limit != null && u.chart.used >= u.chart.limit) || (u.daysLeft != null && u.daysLeft <= 3);
+      box.innerHTML = `<span class="acct-t"><b>${esc(u.fullName || u.username)}</b><span${low ? ' class="warn"' : ''}>Lá số ${quota(u.chart)} · Luận giải ${quota(u.pdf)} · ${hsd}</span></span>` +
+        `<span class="acct-b">${u.role !== 'member' ? '<a class="btn small ghost" href="admin.html" style="margin:0">Quản trị</a>' : ''}<button class="btn small ghost" type="button" id="acPw" style="margin:0">Đổi mật khẩu</button><button class="btn small ghost" type="button" id="acOut" style="margin:0">Đăng xuất</button></span>`;
+      $('acPw').onclick = pwDialog;
+      $('acOut').onclick = () => { api('POST', '/logout').catch(() => { }); setToken(null); setUser(null); };
+    }
+    A.listeners.forEach(f => { try { f(A.user); } catch (e) { console.error(e); } });
+  }
+  function dialog(html) {
+    const old = $('plDlg'); if (old) old.remove();
+    const w = document.createElement('div'); w.id = 'plDlg'; w.className = 'pl-ov'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true');
+    w.innerHTML = `<div class="pl-box">${html}</div>`; document.body.appendChild(w); return w;
+  }
+  function loginDialog(msg) {
+    return new Promise((resolve, reject) => {
+      const w = dialog(`<form novalidate><div class="pl-hd"><b>Đăng nhập thành viên</b><button type="button" class="btn small ghost" data-x style="margin:0">Đóng</button></div>
+        <p class="hint">${esc(msg || 'Vui lòng đăng nhập để lập lá số Tâm Không và tải bản luận giải.')}</p>
+        <label>Tên đăng nhập<input name="u" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+        <label>Mật khẩu<input name="p" type="password" autocomplete="current-password"></label>
+        <div class="msg" data-err role="alert"></div><button class="btn" type="submit">Đăng nhập</button>
+        <p class="hint">Chưa có tài khoản hoặc quên mật khẩu? ${CONTACT ? 'Liên hệ ' + esc(CONTACT) : 'Liên hệ người quản trị'} để được cấp.</p></form>`);
+      const f = w.querySelector('form'), er = w.querySelector('[data-err]'), b = f.querySelector('button[type=submit]');
+      setTimeout(() => f.u.focus(), 30);
+      const cancel = () => { w.remove(); const c = new Error('cancel'); c.code = 'cancel'; c.handled = true; reject(c); };
+      w.addEventListener('click', ev => { if (ev.target === w || ev.target.closest('[data-x]')) cancel(); });
+      f.addEventListener('submit', ev => {
+        ev.preventDefault(); er.textContent = '';
+        const u = f.u.value.trim(), p = f.p.value; if (!u || !p) { er.textContent = 'Nhập tên đăng nhập và mật khẩu.'; return; }
+        b.disabled = true; b.textContent = 'Đang đăng nhập…';
+        api('POST', '/login', { username: u, password: p }).then(j => { setToken(j.token); w.remove(); setUser(j.user); resolve(j.user); },
+          e => { er.textContent = e.message; b.disabled = false; b.textContent = 'Đăng nhập'; });
+      });
+    });
+  }
+  function pwDialog() {
+    const w = dialog(`<form novalidate><div class="pl-hd"><b>Đổi mật khẩu</b><button type="button" class="btn small ghost" data-x style="margin:0">Đóng</button></div>
+      <label>Mật khẩu hiện tại<input name="o" type="password" autocomplete="current-password"></label>
+      <label>Mật khẩu mới (ít nhất 6 ký tự)<input name="n" type="password" autocomplete="new-password"></label>
+      <label>Nhập lại mật khẩu mới<input name="n2" type="password" autocomplete="new-password"></label>
+      <div class="msg" data-err role="alert"></div><button class="btn" type="submit">Lưu mật khẩu mới</button></form>`);
+    const f = w.querySelector('form'), er = w.querySelector('[data-err]');
+    w.addEventListener('click', ev => { if (ev.target === w || ev.target.closest('[data-x]')) w.remove(); });
+    f.addEventListener('submit', ev => {
+      ev.preventDefault(); er.textContent = '';
+      if (f.n.value !== f.n2.value) { er.textContent = 'Hai lần nhập mật khẩu mới chưa khớp.'; return; }
+      api('POST', '/password', { oldPassword: f.o.value, newPassword: f.n.value }).then(() => { w.remove(); }, e => { er.textContent = e.message; });
+    });
+  }
+  function notice(title, msg) {
+    const w = dialog(`<div class="pl-hd"><b>${esc(title)}</b><button type="button" class="btn small ghost" data-x style="margin:0">Đóng</button></div><p>${esc(msg)}</p>${CONTACT ? `<p class="hint">Liên hệ: ${esc(CONTACT)}</p>` : ''}`);
+    w.addEventListener('click', ev => { if (ev.target === w || ev.target.closest('[data-x]')) w.remove(); });
+  }
+  function refresh() {
+    if (!A.token) { setUser(null); return Promise.resolve(null); }
+    return api('GET', '/me').then(j => { setUser(j.user); return j.user; }, e => { if (e.status === 401 || e.status === 403) { setToken(null); setUser(null); return null; } throw e; });
+  }
+  function requireLogin(msg) {
+    if (A.user) return Promise.resolve(A.user);
+    return refresh().catch(() => null).then(u => u || loginDialog(msg));
+  }
+  // kind: 'chart' (lập / mở lá số) | 'png' (tải PDF/ảnh lá số) | 'pdf' (tải bản luận giải)
+  function consume(kind, key, entry) {
+    return requireLogin().then(() => api('POST', '/' + kind, { key: key.slice(0, 120), entry })).then(j => { setUser(j.user); return j; }).catch(e => {
+      if (e.code === 'cancel') throw e;
+      e.handled = true;
+      if (e.status === 401) { setToken(null); setUser(null); return requireLogin(e.message).then(() => consume(kind, key, entry)); }
+      if (e.code === 'quota_chart') notice('Đã hết lượt lập lá số', e.message);
+      else if (e.code === 'quota_pdf') notice('Đã hết lượt tải bản luận giải', e.message);
+      else if (e.code === 'expired') notice('Tài khoản đã hết hạn', e.message);
+      else if (e.code === 'locked') { setToken(null); setUser(null); notice('Tài khoản bị khóa', e.message); }
+      else notice('Chưa thực hiện được', e.message);
+      throw e;
+    });
+  }
+  function history() { return A.user ? api('GET', '/history?limit=2000').then(j => j.items || []) : Promise.resolve([]); }
+  function onChange(f) { A.listeners.push(f); }
+  function boot() { setUser(null); return refresh().catch(() => null); }
+  return { consume, history, onChange, boot, requireLogin, get user() { return A.user; } };
+})();
+</script>
+<script>
+/* ===== Giao diện, lịch sử, xuất file ===== */
+(function () {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const pad = n => String(n).padStart(2, '0');
+  const fold = s => TamKhong.norm(s).toLowerCase();
+  const slug = s => (TamKhong.norm(s).replace(/\s+/g, '_') || 'KHACH');
+  let last = null, editingId = null, currentId = null;
+  const todayISO = () => { const t = new Date(); return `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`; };
+  $('vd').value = todayISO();
+
+  /* ---------- Tờ lá số ---------- */
+  const ORDER = [3, 6, 9, 2, 5, 8, 1, 4, 7];
+  const grid = c => `<div class="s-tab">${ORDER.map(k => `<div>${c[k] ? String(k).repeat(c[k]) : ''}</div>`).join('')}</div>`;
+  const CURVE = (() => {
+    const xs = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => 35 + i * 72.6), ys = [58, 82, 119, 155, 119, 94, 130, 70, 34];
+    const P = xs.map((x, i) => [x, ys[i]]); let d = `M${P[0][0]},${P[0][1]}`;
+    for (let i = 0; i < P.length - 1; i++) { const p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2; d += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`; }
+    return `<svg xmlns="http://www.w3.org/2000/svg" class="s-curve" width="690" height="172" viewBox="0 0 690 172" aria-hidden="true"><path d="${d}" fill="none" stroke="#0B5D3B" stroke-width="2.6"/>${P.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="#0B5D3B"/><text x="${p[0]}" y="${p[1] - 12}" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="11" font-weight="bold" fill="#0B5D3B">${i + 1}</text>`).join('')}</svg>`;
+  })();
+  /* Bản đồ Tâm Không H & D: hình khối vẽ bằng SVG (không chữ), toàn bộ chữ là HTML dùng font Be Vietnam Pro để xuất PDF giữ đúng font */
+  const MAP = (() => {
+    const cx = 467, cy = 435, W1L = 217, W1R = 717, SPR = 400, BOT1 = 672, R1 = 308.6, T = 64;
+    const CL = W1L + R1, W2L = W1L + T, W2R = W1R - T, BOT2 = BOT1 - T, R2 = R1 - T;
+    const apex1 = SPR - Math.sqrt(R1 * R1 - (CL - cx) ** 2), apex2 = SPR - Math.sqrt(R2 * R2 - (CL - cx) ** 2);
+    const f = v => v.toFixed(1), rad = d => d * Math.PI / 180;
+    const edge = (tx, ty, r = 70) => { const dx = tx - cx, dy = ty - cy, L = Math.hypot(dx, dy); return [cx + dx / L * r, cy + dy / L * r]; };
+    const ex = 345, ey = SPR - Math.sqrt(R2 * R2 - (CL - ex) ** 2);
+    const a = edge(ex, ey), b = edge(2 * cx - ex, ey), lo = edge(330, BOT2), lo2 = edge(2 * cx - 330, BOT2);
+    const rayArc = ang => { const dx = Math.cos(rad(ang)), dy = Math.sin(rad(ang)), ox = cx - CL, oy = cy - SPR, B = 2 * (ox * dx + oy * dy), C = ox * ox + oy * oy - R1 * R1, t = (-B + Math.sqrt(B * B - 4 * C)) / 2; return [[cx + dx * t, cy + dy * t], [cx + dx * 415, cy + dy * 415]]; };
+    const [p1, q1] = rayArc(-122.4), bt = (BOT1 - cy) / Math.sin(rad(125.9)), p3 = [cx + Math.cos(rad(125.9)) * bt, BOT1], q3 = [cx + Math.cos(rad(125.9)) * 415, cy + Math.sin(rad(125.9)) * 415];
+    const m = p => [2 * cx - p[0], p[1]], seg = (u, v) => `M${f(u[0])},${f(u[1])} L${f(v[0])},${f(v[1])}`;
+    const L1 = `M${W1L},${BOT1} L${W1L},${SPR} A${R1},${R1} 0 0 1 ${cx},${f(apex1)} A${R1},${R1} 0 0 1 ${W1R},${SPR} L${W1R},${BOT1} Z`;
+    const L2 = `M${W2L},${BOT2} L${W2L},${SPR} A${f(R2)},${f(R2)} 0 0 1 ${cx},${f(apex2)} A${f(R2)},${f(R2)} 0 0 1 ${W2R},${SPR} L${W2R},${BOT2} Z`;
+    const outer = [seg(q1, p1), seg(m(q1), m(p1)), `M${cx - 415},${cy} L${W1L},${cy}`, `M${W1R},${cy} L${cx + 415},${cy}`, seg(q3, p3), seg(m(q3), m(p3))].join(' ');
+    const inner = `M${W2L},${cy} L${cx - 70},${cy} M${cx + 70},${cy} L${W2R},${cy} ${seg(a, [ex, ey])} ${seg(b, [2 * cx - ex, ey])} ${seg(lo, [330, BOT2])} ${seg(lo2, [2 * cx - 330, BOT2])}`;
+    const C = { ink: '#1F2B24', green: '#0B5D3B', gold: '#B8860B', ring: '#FBF5E4', band: '#EAF3EC', core: '#FFF4D6' };
+    const SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="858" height="850" viewBox="38 6 858 850">
+      <circle cx="${cx}" cy="${cy}" r="415" fill="${C.ring}" stroke="${C.green}" stroke-width="5"/>
+      <circle cx="${cx}" cy="${cy}" r="405" fill="none" stroke="${C.gold}" stroke-width="1.6"/>
+      <path d="${L1}" fill="${C.band}" stroke="${C.ink}" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="${L2}" fill="#FFFFFF" stroke="${C.ink}" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="${outer}" stroke="${C.ink}" stroke-width="2.4" fill="none"/>
+      <path d="${inner}" stroke="${C.ink}" stroke-width="2" fill="none"/>
+      <circle cx="${cx}" cy="${cy}" r="70" fill="${C.core}" stroke="${C.gold}" stroke-width="3"/></svg>`;
+    const URL_ = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(SVG);
+    return { cx, cy, apex1, apex2, BOT1, BOT2, W1L, W1R, T, URL: URL_ };
+  })();
+  const MAPW = 450, MK = MAPW / 858, FONT = '"Be Vietnam Pro", Verdana, "DejaVu Sans", Arial, sans-serif';
+  const mctx = document.createElement('canvas').getContext('2d');
+  const tw = (t, size, ls = 0) => { mctx.font = `700 ${size}px ${FONT}`; return [...t].map(ch => mctx.measureText(ch).width + ls); };
+  function mapSVG(R) {
+    const X = x => ((x - 38) * MK).toFixed(1), Y = y => ((y - 6) * MK).toFixed(1), S = s => (s * MK).toFixed(1);
+    const out = [];
+    const put = (x, y, html, size, o = {}) => out.push(`<span class="mp${o.n ? ' n' : ''}${o.g ? ' g' : ''}" style="left:${X(x)}px;top:${Y(y)}px;font-size:${S(size)}px${o.rot ? `;transform:translate(-50%,-50%) rotate(${o.rot}deg)` : ''}${o.ls ? `;letter-spacing:${S(o.ls)}px` : ''}">${String(html).replace(/ (?![^<]*>)/g, '&nbsp;')}</span>`);
+    const curve = (text, ccx, ccy, r, centerDeg, size, top, ls, o = {}) => {
+      const ws = tw(text, size * MK, ls * MK).map(w => w / MK), L = ws.reduce((p, q) => p + q, 0);
+      let acc = 0;
+      [...text].forEach((ch, i) => {
+        const mid = acc + ws[i] / 2; acc += ws[i];
+        const th = top ? centerDeg + (mid - L / 2) / r * 180 / Math.PI : centerDeg - (mid - L / 2) / r * 180 / Math.PI;
+        const x = ccx + r * Math.cos(rad(th)), y = ccy + r * Math.sin(rad(th));
+        if (ch !== ' ') put(x, y, ch, size, { rot: top ? th + 90 : th - 90, g: o.g });
+      });
+    };
+    const rad = d => d * Math.PI / 180, cx = MAP.cx, cy = MAP.cy;
+    const list = a => a.length ? a.join(',') : '—';
+    // 6 lĩnh vực vòng ngoài
+    const RING = [['TRÍ TUỆ', -90, 1, R.tt], ['BÌNH AN', -28.8, 1, R.ba], ['CỘNG ĐỒNG', 27, 0, R.cd], ['TÀI CHÍNH', 90, 0, R.tc], ['SỨC KHỎE', 153, 0, R.sk], ['MỐI QUAN HỆ', -151.2, 1, R.mqh]];
+    RING.forEach(([lab, ang, top, val]) => {
+      curve(lab, cx, cy, top ? 392 : 393, ang, 25, top, 1.5, { g: 1 });
+      if (lab === 'TRÍ TUỆ') put(cx, 74, val, 34, { n: 1 });
+      else if (lab === 'TÀI CHÍNH') put(cx, (MAP.BOT1 + 812) / 2 - 4, val, 42, { n: 1 });
+      else put(cx + 322 * Math.cos(rad(ang)), cy + 322 * Math.sin(rad(ang)), val, 42, { n: 1 });
+    });
+    // Bảo tháp
+    put(cx, (MAP.apex1 + MAP.apex2) / 2 + 2, `KẾT QUẢ <b>${R.kq}</b>`, 19, { g: 1 });
+    put(cx, 250, 'TÀI LỰC', 18); put(cx, 288, R.tl, 30, { n: 1 });
+    put(352, 364, 'NGOẠI LỰC', 18); put(352, 398, R.ngl, 30, { n: 1 });
+    put(582, 364, 'ĐIỂM MẠNH', 18); put(582, 398, list(R.dm), 30, { n: 1 });
+    put(350, 474, 'NỘI LỰC', 18); put(350, 508, R.nl, 30, { n: 1 });
+    put(584, 474, 'HÀNH ĐỘNG', 18); put(584, 508, R.hd, 30, { n: 1 });
+    put(cx, 538, 'NỢ PHẢI TRẢ', 18); put(cx, 574, list(R.no), 27, { n: 1 });
+    curve('MỤC TIÊU', cx, cy, 53, -90, 16, 1, 1, { g: 1 });
+    put(cx, cy + 12, R.mt, 46, { n: 1 });
+    put(cx, (MAP.BOT1 + MAP.BOT2) / 2, `KHO PHƯỚC <b>${R.kp}</b>`, 20, { g: 1 });
+    const bx = MAP.W1L + MAP.T / 2, bx2 = MAP.W1R - MAP.T / 2;
+    put(bx, 485, 'NGUỒN LỰC', 18, { rot: -90, g: 1, ls: 1.5 }); put(bx, 372, R.ngu, 30, { n: 1 });
+    put(bx2, 485, 'TRẢI NGHIỆM', 18, { rot: 90, g: 1, ls: 1.5 }); put(bx2, 372, R.tn, 30, { n: 1 });
+    return `<div class="s-map" style="width:${MAPW}px;height:${(850 * MK).toFixed(0)}px"><img src="${MAP.URL}" alt="" width="${MAPW}" height="${(850 * MK).toFixed(0)}">${out.join('')}</div>`;
+  }
+  function renderSheet(R) {
+    const yy = n => String(n).slice(-2);
+    $('sheet').innerHTML = `
+      <div class="s-h1">Giải mã 6 chữ vàng</div>
+      <div class="s-h2">KHỎE TIỀN TÀI TÌNH TU AN</div>
+      <div class="s-h3">(Theo khoa học con số của Pitago)</div>
+      <div class="s-info"><span>Họ và Tên: <b>${esc(R.name.toUpperCase())}</b></span><span>Ngày sinh: <b>${pad(R.d)}/${pad(R.m)}/${R.y}</b></span></div>
+      <div class="s-grids"><div class="s-g"><div class="s-gt">Biểu đồ họ tên</div>${grid(R.nameC)}</div><div class="s-g"><div class="s-gt">Biểu đồ ngày sinh</div>${grid(R.dobC)}</div></div>
+      ${CURVE}
+      <div class="s-cd">
+        <div class="r"><span class="k"><i>🔮</i>NĂM CHỦ ĐẠO</span>${R.years.map(x => `<span class="v">${x.y}|<b>${x.v}</b></span>`).join('')}</div>
+        <div class="r"><span class="k"><i>✨</i>THÁNG CHỦ ĐẠO</span>${R.months.map(x => `<span class="v">${pad(x.m)}/${yy(x.y)}|<b>${x.v}</b></span>`).join('')}</div>
+        <div class="r"><span class="k"><i>💎</i>NGÀY CHỦ ĐẠO</span>${R.days.map(x => `<span class="v">${pad(x.d)}/${pad(x.m)}|<b>${x.v}</b></span>`).join('')}</div>
+      </div>
+      ${mapSVG(R)}
+      <div class="s-mt">BẢN ĐỒ TÂM KHÔNG H &amp; D</div>
+      <div class="s-ft"><b>Đức năng thắng số — Phước báu cải vận</b><span>phuocloc.vn · Cộng Đồng Tâm Không · Lập ngày ${pad(new Date().getDate())}/${pad(new Date().getMonth() + 1)}/${new Date().getFullYear()}</span></div>`;
+    fit();
+  }
+  function fit() { const w = $('stage').clientWidth, s = Math.min(1, w / 796); $('scaler').style.transform = `scale(${s})`; $('stage').style.height = Math.ceil(1125 * s) + 'px'; }
+  window.addEventListener('resize', fit);
+
+  /* ---------- Bảng chỉ số ---------- */
+  function renderTable(R) {
+    const W = R.W.map(w => w.map(x => x.ch).join('')), sumW = w => w.reduce((a, x) => a + x.v, 0);
+    const per = R.W.map((w, i) => `${W[i]} ${sumW(w)}`).join(' + ');
+    const vow = R.L.filter(x => x.vowel).map(x => `${x.ch}${x.v}`).join(' ') || '—', con = R.L.filter(x => !x.vowel).map(x => `${x.ch}${x.v}`).join(' ') || '—';
+    const o = TamKhong.one, f = (n, v) => n === v ? `${n}` : `${n} → ${v}`;
+    const rows = [
+      ['grp', 'Từ ngày sinh'],
+      ['Kho phước', R.kp, `Ngày ${R.d} → ${R.sd} · tháng ${R.m} → ${R.sm} · năm ${R.y} → ${R.sy}; ${R.sd} + ${R.sm} + ${R.sy} = ${f(R.sd + R.sm + R.sy, R.kp)}`],
+      ['Nguồn lực', R.ngu, `Chỉ số ngày sinh: ${f(R.d, R.ngu)}`],
+      ['Trải nghiệm', R.tn, `Ngày sinh ${R.ngu} + tháng sinh ${TamKhong.red(R.m)} = ${f(R.ngu + TamKhong.red(R.m), R.tn)}`],
+      ['grp', 'Từ họ tên (' + esc(R.norm) + ')'],
+      ['Mục tiêu', R.mt, `Tổng các chữ cái: ${per} = ${f(R.sumAll, R.mt)}`],
+      ['Tài lực', R.tl, `Số chữ cái trong họ tên: ${f(R.L.length, R.tl)}`],
+      ['Nội lực', R.nl, `Nguyên âm: ${vow} → tổng ${f(R.sumV, R.nl)}`],
+      ['Hành động', R.hd, `Phụ âm: ${con} → tổng ${f(R.sumC, R.hd)}`],
+      ['Ngoại lực', R.ngl, `Chữ cái đầu của tên ${W[W.length - 1] || ''}: ${(W[W.length - 1] || ' ')[0]} = ${R.ngl}`],
+      ['Điểm mạnh', R.dm.join(', ') || '—', 'Số lặp lại nhiều nhất trong biểu đồ họ tên'],
+      ['Nợ phải trả', R.no.join(', ') || 'Không', 'Các số 1–9 không có trong biểu đồ họ tên'],
+      ['grp', 'Tổng hợp'],
+      ['Kết quả', R.kq, `Kho phước ${o(R.kp)} + Mục tiêu ${o(R.mt)} = ${f(o(R.kp) + o(R.mt), R.kq)}`],
+      ['Tài chính', R.tc, `Kho phước ${o(R.kp)} + Tài lực ${o(R.tl)} = ${f(o(R.kp) + o(R.tl), R.tc)}`],
+      ['Trí tuệ', R.tt, `Tài chính ${o(R.tc)} + Kho phước ${o(R.kp)} + Mục tiêu ${o(R.mt)} + Kết quả ${o(R.kq)} = ${f(o(R.tc) + o(R.kp) + o(R.mt) + o(R.kq), R.tt)}`],
+      ['Sức khỏe', R.sk, `Nội lực ${o(R.nl)} + Ngoại lực ${o(R.ngl)} + Kho phước ${o(R.kp)} = ${f(o(R.nl) + o(R.ngl) + o(R.kp), R.sk)}`],
+      ['Bình an', R.ba, `Sức khỏe ${o(R.sk)} + Trí tuệ ${o(R.tt)} = ${f(o(R.sk) + o(R.tt), R.ba)}`],
+      ['Mối quan hệ', R.mqh, `Kết quả ${o(R.kq)} + Tài lực ${o(R.tl)} + Nội lực ${o(R.nl)} + Hành động ${o(R.hd)} = ${f(o(R.kq) + o(R.tl) + o(R.nl) + o(R.hd), R.mqh)}`],
+      ['Cộng đồng', R.cd, `Trí tuệ ${o(R.tt)} + Tài chính ${o(R.tc)} + Mối quan hệ ${o(R.mqh)} + Sức khỏe ${o(R.sk)} + Bình an ${o(R.ba)} = ${f(o(R.tt) + o(R.tc) + o(R.mqh) + o(R.sk) + o(R.ba), R.cd)}`],
+      ['grp', 'Chủ đạo theo ngày xem ' + `${pad(R.view.getDate())}/${pad(R.view.getMonth() + 1)}/${R.view.getFullYear()}`],
+      ['Năm chủ đạo ' + R.years[0].y, R.years[0].v, `Ngày ${R.sd} + tháng ${R.sm} + năm ${R.years[0].y} → ${o(TamKhong.ds(R.years[0].y))} = ${R.years[0].v}`],
+      ['Tháng chủ đạo ' + pad(R.months[0].m) + '/' + R.months[0].y, R.months[0].v, `Tháng ${R.months[0].m} → ${o(R.months[0].m)} + năm chủ đạo = ${R.months[0].v}`],
+      ['Ngày chủ đạo ' + pad(R.days[0].d) + '/' + pad(R.days[0].m), R.days[0].v, `Tháng chủ đạo + ngày ${R.days[0].d} → ${o(R.days[0].d)} = ${R.days[0].v}`],
+    ];
+    $('ct').innerHTML = `<thead><tr><th>Chỉ số</th><th>Số</th><th>Cách tính</th></tr></thead><tbody>${rows.map(r => r[0] === 'grp' ? `<tr class="grp"><td colspan="3">${r[1]}</td></tr>` : `<tr><td class="k">${r[0]}</td><td class="n">${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody>`;
+  }
+  function asText(R) {
+    return `LÁ SỐ TÂM KHÔNG – ${R.name} (${R.norm}) – sinh ${pad(R.d)}/${pad(R.m)}/${R.y}
+Biểu đồ họ tên: ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => k + ':' + R.nameC[k]).join(' ')}
+Biểu đồ ngày sinh: ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => k + ':' + R.dobC[k]).join(' ')}
+Kho phước ${R.kp} · Mục tiêu ${R.mt} · Kết quả ${R.kq} · Tài lực ${R.tl} · Ngoại lực ${R.ngl} · Điểm mạnh ${R.dm.join(',') || '—'} · Nội lực ${R.nl} · Hành động ${R.hd} · Nợ phải trả ${R.no.join(',') || 'không'} · Nguồn lực ${R.ngu} · Trải nghiệm ${R.tn}
+Trí tuệ ${R.tt} · Bình an ${R.ba} · Cộng đồng ${R.cd} · Tài chính ${R.tc} · Sức khỏe ${R.sk} · Mối quan hệ ${R.mqh}
+Năm chủ đạo: ${R.years.map(x => x.y + '|' + x.v).join('  ')}
+Tháng chủ đạo: ${R.months.map(x => pad(x.m) + '/' + x.y + '|' + x.v).join('  ')}
+Ngày chủ đạo: ${R.days.map(x => pad(x.d) + '/' + pad(x.m) + '|' + x.v).join('  ')}`;
+  }
+
+  /* ---------- Lập lá số ---------- */
+  function readForm() {
+    const name = $('name').value.trim(), d = +$('d').value, m = +$('m').value, y = +$('y').value;
+    if (!TamKhong.norm(name)) return { err: 'Nhập họ và tên khách hàng.' };
+    if (!d || !m || !y) return { err: 'Nhập đủ ngày, tháng, năm sinh.' };
+    const dt = new Date(y, m - 1, d); if (dt.getDate() !== d || dt.getMonth() !== m - 1) return { err: 'Ngày sinh không hợp lệ. Kiểm tra lại ngày và tháng.' };
+    return { name, d, m, y, vd: $('vd').value || todayISO(), note: $('note').value.trim() };
+  }
+  function viewDate(iso) { const p = String(iso || '').split('-').map(Number); return p.length === 3 && p[0] ? new Date(p[0], p[1] - 1, p[2]) : new Date(); }
+  function show(e) { last = TamKhong.calc(e.name, e.d, e.m, e.y, viewDate(e.vd)); renderSheet(last); renderTable(last); try { $('lgDoc').innerHTML = TKLuanGiai.build(last); } catch (err) { console.error(err); $('lgDoc').textContent = 'Không tạo được phần luận giải: ' + err.message; } }
+  function fill(e) { $('name').value = e.name || ''; $('d').value = e.d; $('m').value = e.m; $('y').value = e.y; $('vd').value = e.vd || todayISO(); $('note').value = e.note || ''; }
+
+  /* ---------- Lịch sử: theo tài khoản trên máy chủ phuocloc.vn ---------- */
+  const H = { items: [] };
+  const status = t => { $('hsS').textContent = t; };
+  const keyOf = e => `tk|${TamKhong.norm(e.name)}|${e.d}|${e.m}|${e.y}`;
+  const entryOf = e => ({ type: 'tk', name: e.name, d: e.d, m: e.m, y: e.y, vd: e.vd || todayISO(), note: e.note || '', gender: '', solar: `${pad(e.d)}/${pad(e.m)}/${e.y}`, lunar: '', canChi: 'Lá số Tâm Không' });
+  const fmtD = t => { const d = new Date(t); return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; };
+  function renderHist() {
+    if (!PLAcct.user) { $('hsC').textContent = ''; $('hsL').innerHTML = '<div class="hs-empty">Đăng nhập để lập lá số và xem các lá số Tâm Không đã lập bằng tài khoản của bạn.</div>'; status(''); return; }
+    const q = fold($('hsQ').value.trim());
+    const list = H.items.filter(x => !q || fold(x.name).includes(q) || String(x.y).includes(q) || fold(x.note || '').includes(q));
+    $('hsC').textContent = H.items.length ? `${H.items.length} lá số` : '';
+    if (!list.length) { $('hsL').innerHTML = `<div class="hs-empty">${H.items.length ? 'Không tìm thấy lá số phù hợp.' : 'Chưa có lá số nào. Bấm <b>Lập lá số</b>, lá số sẽ nằm ở đây để mở lại hoặc tải lại PDF bất cứ lúc nào.'}</div>`; return; }
+    $('hsL').innerHTML = list.map(x => `<div class="hs-it${x.id === currentId ? ' on' : ''}" data-id="${esc(x.id)}">
+      <button type="button" class="hs-open" data-a="open" title="Mở lại lá số"><b>${esc(x.name)}</b><span>${pad(x.d)}/${pad(x.m)}/${x.y}${x.note ? ' · ' + esc(x.note) : ''}</span>
+      <small>Lập ${fmtD(x.at)}${x.upd && x.upd !== x.at ? ' · mở lại ' + fmtD(x.upd) : ''}</small>${x.pngCount ? `<small class="dl">Đã tải PDF lá số ×${x.pngCount}</small>` : ''}${x.hasPdf ? `<small class="dl">Đã tải PDF luận giải ×${x.pdfCount}</small>` : ''}</button>
+      <span class="hs-act"><button type="button" data-a="pdf" title="Tải PDF lá số" aria-label="Tải PDF lá số">⬇</button><button type="button" data-a="lg" title="Tải PDF luận giải 6 Chữ Vàng" aria-label="Tải PDF luận giải">📄</button></span></div>`).join('');
+  }
+  $('hsQ').addEventListener('input', renderHist);
+  $('hsL').addEventListener('click', ev => {
+    const b = ev.target.closest('button[data-a]'), it = ev.target.closest('.hs-it'); if (!b || !it) return;
+    const x = H.items.find(r => r.id === it.dataset.id); if (!x) return;
+    const a = b.dataset.a;
+    currentId = x.id; fill(x); show(x); renderHist();
+    if (a === 'open') $('msg2').textContent = 'Đã mở lá số ' + x.name + '.';
+    if (a === 'pdf') exportPdf();
+    if (a === 'lg') exportLg('msg2');
+  });
+  async function loadHist() {
+    if (!PLAcct.user) { H.items = []; renderHist(); return; }
+    status('Đang tải lịch sử…');
+    try {
+      const items = await PLAcct.history();
+      H.items = items.filter(x => x.type === 'tk' || String(x.key || '').startsWith('tk|')).map(x => ({ ...x, id: x.key, at: Date.parse(x.createdAt), upd: Date.parse(x.lastAt) }));
+      status('');
+    } catch (e) { status('Không tải được lịch sử: ' + e.message); }
+    renderHist();
+  }
+  function initHist() { PLAcct.onChange(() => loadHist()); renderHist(); }
+
+  /* ---------- Lập lá số (trừ 1 lượt lá số với người mới; mở lại không tính) ---------- */
+  function stopEdit() { $('editBar').hidden = true; $('saveEdit').hidden = true; }
+  $('form').addEventListener('submit', async ev => {
+    ev.preventDefault(); const e = readForm(); if (e.err) { $('msg').textContent = e.err; return; }
+    $('msg').textContent = 'Đang lập lá số…';
+    let j; try { j = await PLAcct.consume('chart', keyOf(e), entryOf(e)); } catch (err) { $('msg').textContent = err.code === 'cancel' ? '' : err.message; return; }
+    show(e); currentId = keyOf(e);
+    $('msg').textContent = j.countedChart ? `Đã lập lá số ${e.name} (dùng 1 lượt lá số).` : `Đã mở lại lá số ${e.name} (không tính thêm lượt).`;
+    loadHist();
+  });
+  $('parseBtn').onclick = () => {
+    const t = $('paste').value; if (!t.trim()) return;
+    const nm = t.match(/^\s*([^(\n:,0-9]+?)\s*(\(|,|\s-\s|\bsinh|\bngày|$)/i); if (nm && nm[1].trim()) $('name').value = nm[1].trim();
+    const dm = t.match(/(\d{1,2})\s*[\/\-.]\s*(\d{1,2})\s*[\/\-.]\s*(\d{4})/); if (dm) { $('d').value = +dm[1]; $('m').value = +dm[2]; $('y').value = +dm[3]; }
+    $('form').requestSubmit();
+  };
+
+  /* ---------- Xuất PDF, PNG ---------- */
+  async function shoot() {
+    try { await document.fonts.ready; } catch (e) { }
+    const holder = document.createElement('div'); holder.style.cssText = 'position:fixed;left:-12000px;top:0;width:794px;background:#fff';
+    const cl = $('sheet').cloneNode(true); cl.removeAttribute('id'); cl.style.cssText = 'width:794px;height:1123px;background:#fff;color:#111;position:relative;padding:40px 92px 0;border:0;box-sizing:border-box';
+    cl.id = 'sheet'; holder.appendChild(cl); document.body.appendChild(holder);
+    for (const sv of [...cl.querySelectorAll('svg')]) {
+      const w = +sv.getAttribute('width'), h = +sv.getAttribute('height');
+      const img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(sv)); });
+      const c = document.createElement('canvas'); c.width = w * 3; c.height = h * 3; c.getContext('2d').drawImage(img, 0, 0, w * 3, h * 3);
+      const out = document.createElement('img'); out.src = c.toDataURL('image/png'); out.width = w; out.height = h; out.className = sv.getAttribute('class') || ''; out.style.cssText = getComputedStyle(sv).cssText ? '' : ''; sv.replaceWith(out);
+      await new Promise(r => out.complete ? r() : (out.onload = r));
+    }
+    const real = $('sheet'); real.id = 'sheetLive';
+    try { return await html2canvas(cl, { scale: 2.5, backgroundColor: '#ffffff', windowWidth: 1280 }); }
+    finally { real.id = 'sheet'; holder.remove(); }
+  }
+  async function save(blob, filename, say) {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); say('Đã tải file.'); return true;
+  }
+  const cur = () => ({ name: last.name, d: last.d, m: last.m, y: last.y, vd: $('vd').value || todayISO(), note: $('note').value.trim() });
+  async function gate(kind, say) {
+    try { const e = cur(); const j = await PLAcct.consume(kind, keyOf(e), entryOf(e)); currentId = keyOf(e); return j; }
+    catch (err) { say(err.code === 'cancel' ? '' : err.message); return null; }
+  }
+  const fileBase = () => `${slug(last.name)}_${pad(last.d)}_${pad(last.m)}_${last.y}_TAM_KHONG`;
+  async function exportPdf() {
+    if (!last) return; const say = t => { $('msg2').textContent = t; };
+    if (!window.html2canvas || !window.jspdf) { say('Chưa tải được thư viện tạo PDF. Kiểm tra kết nối mạng rồi thử lại.'); return; }
+    if (!(await gate('png', say))) return;
+    say('Đang tạo PDF…');
+    let blob; try { const cv = await shoot(); const pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }); pdf.addImage(cv.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297); blob = pdf.output('blob'); }
+    catch (e) { console.error(e); say('Không tạo được PDF: ' + e.message); return; }
+    const ok = await save(blob, fileBase() + '.pdf', say);
+    if (ok) loadHist();
+  }
+  $('pdfBtn').onclick = exportPdf;
+  async function exportLg(el) {
+    if (!last) return; const say = t => { $(el).textContent = t; };
+    if (!window.html2canvas || !window.jspdf) { say('Chưa tải được thư viện tạo PDF. Kiểm tra kết nối mạng rồi thử lại.'); return; }
+    const g = await gate('pdf', say); if (!g) return;
+    say(g.countedPdf ? 'Đã dùng 1 lượt luận giải · đang tạo PDF…' : 'Đang tạo PDF luận giải…');
+    let blob; try { const cv = await shoot(); blob = await TKLuanGiai.makePdf(last, cv); } catch (e) { console.error(e); say('Không tạo được PDF: ' + e.message); return; }
+    const ok = await save(blob, `${slug(last.name)}_${pad(last.d)}_${pad(last.m)}_${last.y}_LUAN_GIAI_6_CHU_VANG.pdf`, say);
+    if (ok) loadHist();
+  }
+  $('lgBtn').onclick = () => exportLg('msg3');
+  $('lgTop').onclick = () => exportLg('msg2');
+  $('pngBtn').onclick = async () => {
+    if (!last) return; const say = t => { $('msg2').textContent = t; };
+    if (!window.html2canvas) { say('Chưa tải được thư viện tạo ảnh. Kiểm tra kết nối mạng rồi thử lại.'); return; }
+    if (!(await gate('png', say))) return;
+    say('Đang tạo ảnh…'); try { const cv = await shoot(); const blob = await new Promise(r => cv.toBlob(r, 'image/png')); await save(blob, fileBase() + '.png', say); } catch (e) { say('Không tạo được ảnh: ' + e.message); }
+  };
+  $('copyBtn').onclick = async () => {
+    if (!last) return; const t = asText(last);
+    try { await navigator.clipboard.writeText(t); $('msg2').textContent = 'Đã sao chép. Dán vào Claude để luận giải.'; $('out').hidden = true; }
+    catch (e) { const o = $('out'); o.value = t; o.hidden = false; o.focus(); o.select(); $('msg2').textContent = 'Trình duyệt chặn sao chép tự động. Văn bản đã được bôi đen bên dưới, hãy nhấn Ctrl+C.'; }
+  };
+
+  show({ name: 'Đào Đức Đắc', d: 14, m: 2, y: 1985, vd: todayISO() });
+  try { document.fonts.ready.then(() => { if (last) renderSheet(last); }); } catch (e) { }
+  initHist();
+  PLAcct.boot();
+})();
+</script>
+
+</body></html>
