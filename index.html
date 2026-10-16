@@ -1069,6 +1069,232 @@ details.acct-menu summary::-webkit-details-marker{display:none}
 
 </script>
 <script>
+/* ===================== BẢN ĐỒ NGUỒN LỰC 1 TRANG (SOP-TK-04 · Kích hoạt 4 tầng) ===================== */
+(function (root) {
+  'use strict';
+  var T = root.TuVi;
+  // 6 cung trụ cột ↔ 6 Chữ Vàng (chỉ số cung theo T.CUNG_TITLE)
+  var TRU = [
+    { k: 0, cung: 'Mệnh', chu: 'TU' }, { k: 4, cung: 'Quan Lộc', chu: 'TÀI' }, { k: 8, cung: 'Tài Bạch', chu: 'TIỀN' },
+    { k: 6, cung: 'Thiên Di', chu: 'TÌNH' }, { k: 2, cung: 'Phúc Đức', chu: 'AN' }, { k: 7, cung: 'Tật Ách', chu: 'KHỎE' }
+  ];
+  var DIEM_SANG = { M: 4, V: 3, 'Đ': 2, B: 1, H: -2 };
+  var SANG_TEN = { M: 'Miếu', V: 'Vượng', 'Đ': 'Đắc', B: 'Bình', H: 'Hãm' };
+  var LUC_CAT = ['Tả Phù', 'Hữu Bật', 'Văn Xương', 'Văn Khúc', 'Thiên Khôi', 'Thiên Việt'];
+  var CAP_CAT = [['Tả Phù', 'Hữu Bật'], ['Văn Xương', 'Văn Khúc'], ['Thiên Khôi', 'Thiên Việt']];
+  var LUC_SAT = ['Kình Dương', 'Đà La', 'Hỏa Tinh', 'Linh Tinh', 'Địa Không', 'Địa Kiếp'];
+  var HOA = { 'Hóa Lộc': 3, 'Hóa Quyền': 2, 'Hóa Khoa': 2, 'Hóa Kị': -3 };
+  var VU_KHI = {
+    'Tử Vi': ['Uy tín, khả năng lãnh đạo, tổ chức', 'đứng đầu một nhóm, một dự án'],
+    'Thiên Cơ': ['Mưu lược, phân tích, lập kế hoạch', 'chiến lược, tư vấn, tối ưu hệ thống'],
+    'Thái Dương': ['Lan tỏa, truyền cảm hứng, minh bạch', 'giảng dạy, truyền thông, việc công'],
+    'Vũ Khúc': ['Thực thi, quản trị tài chính, quyết đoán', 'tài chính, kinh doanh, vận hành'],
+    'Thiên Đồng': ['Hòa giải, dễ mến, phúc hậu', 'chăm sóc khách hàng, dịch vụ, cộng đồng'],
+    'Liêm Trinh': ['Kỷ cương, nguyên tắc, sức hút', 'quản lý quy trình, pháp chế, quan hệ'],
+    'Thiên Phủ': ['Giữ kho, quản trị nguồn lực, bền vững', 'quản lý tài sản, hành chính, tích lũy'],
+    'Thái Âm': ['Tinh tế, tích lũy, chiều sâu cảm xúc', 'bất động sản, nghệ thuật, chữa lành'],
+    'Tham Lang': ['Giao tế, đa tài, khát vọng', 'bán hàng, sự kiện, kết nối'],
+    'Cự Môn': ['Ngôn ngữ, lập luận, đào sâu', 'đào tạo, luật, nghiên cứu, thuyết trình'],
+    'Thiên Tướng': ['Phò tá, chính trực, giữ ấn tín', 'cánh tay phải, quản lý chất lượng'],
+    'Thiên Lương': ['Che chở, bao dung, dạy dỗ', 'giáo dục, y tế, cố vấn'],
+    'Thất Sát': ['Tiên phong, quyết đoán, chịu áp lực', 'mở thị trường, xử lý khủng hoảng'],
+    'Phá Quân': ['Đổi mới, phá cũ dựng mới, dám làm', 'khởi nghiệp, cải tổ, sáng tạo']
+  };
+  var PHU_Y = { 'Lộc Tồn': 'giữ của, tích lũy', 'Văn Khúc': 'học vấn, văn chương', 'Văn Xương': 'học vấn, văn chương', 'Hỏa Tinh': 'nhiệt huyết, tốc độ', 'Linh Tinh': 'nhanh nhạy, bền bỉ' };
+  var SU_MENH = {
+    'Mệnh': 'làm chủ chính mình, trở thành hình mẫu', 'Phụ Mẫu': 'kế thừa và nâng tầm di sản cha mẹ, người thầy',
+    'Phúc Đức': 'gìn giữ phúc phần dòng họ, dẫn dắt đời sống tinh thần', 'Điền Trạch': 'tạo nền tảng tài sản, nơi chốn an cư cho nhiều người',
+    'Quan Lộc': 'dẫn dắt sự nghiệp, tổ chức, doanh nghiệp', 'Nô Bộc': 'xây dựng đội ngũ, cộng đồng, mạng lưới',
+    'Thiên Di': 'mở rộng ra xã hội, thị trường, vươn xa', 'Tật Ách': 'làm chủ sức khỏe và dẫn dắt việc chăm sóc – chữa lành',
+    'Tài Bạch': 'làm chủ dòng tiền, quản trị tài chính', 'Tử Tức': 'nuôi dạy thế hệ sau, học trò, sản phẩm sáng tạo',
+    'Phu Thê': 'đồng hành, xây dựng liên minh với bạn đời, đối tác', 'Huynh Đệ': 'dẫn dắt anh em, cộng sự, nhóm ngang hàng'
+  };
+  var SU_MENH_HOI = {
+    'Mệnh': 'Bạn muốn người khác học gì từ cách bạn sống?', 'Phụ Mẫu': 'Điều quý nhất bạn nhận từ cha mẹ là gì?',
+    'Phúc Đức': 'Dòng họ bạn cần ai đứng ra làm gì?', 'Điền Trạch': 'Bạn muốn xây "ngôi nhà" nào cho mình và người khác?',
+    'Quan Lộc': 'Bạn muốn đứng đầu điều gì trong 5 năm tới?', 'Nô Bộc': 'Đội ngũ trong mơ của bạn trông thế nào?',
+    'Thiên Di': 'Bạn muốn tầm ảnh hưởng của mình đi đến đâu?', 'Tật Ách': 'Cơ thể bạn đang dạy bạn điều gì?',
+    'Tài Bạch': 'Bạn muốn tiền của mình phục vụ điều gì?', 'Tử Tức': 'Bạn muốn để lại gì cho thế hệ sau?',
+    'Phu Thê': 'Mối quan hệ nào bạn muốn làm gương?', 'Huynh Đệ': 'Ai đang chờ bạn đứng ra kết nối?'
+  };
+  var THAN_CU = {
+    'Mệnh': ['tự lực, tự quyết, nhất quán trước sau', 'đầu tư mạnh vào phát triển bản thân'],
+    'Phúc Đức': ['phúc phần, tinh thần, dòng họ', 'tu tập, gieo phước là đòn bẩy chính'],
+    'Quan Lộc': ['sự nghiệp, danh phận', 'chọn đúng sự nghiệp quan trọng hơn mọi thứ'],
+    'Thiên Di': ['ra ngoài, xã hội, quý nhân', 'đi xa, mở rộng quan hệ để thành công'],
+    'Tài Bạch': ['tiền bạc, giá trị vật chất', 'kỷ luật tài chính, tích lũy có hệ thống'],
+    'Phu Thê': ['bạn đời, đối tác', 'chọn đúng người đồng hành, xây liên minh']
+  };
+  var NAP_AM = {
+    'Hải Trung Kim': ['vàng dưới biển', 'đào sâu, nghiên cứu; giá trị lộ ra khi đủ độ sâu'],
+    'Lô Trung Hỏa': ['lửa trong lò', 'rèn luyện, biến áp lực thành thành phẩm'],
+    'Đại Lâm Mộc': ['gỗ rừng lớn', 'tầm nhìn dài hạn, xây hệ sinh thái'],
+    'Lộ Bàng Thổ': ['đất ven đường', 'phục vụ số đông, làm nền cho người khác đi'],
+    'Kiếm Phong Kim': ['vàng mũi kiếm', 'sắc bén, quyết đoán, tập trung một mũi nhọn'],
+    'Sơn Đầu Hỏa': ['lửa đỉnh núi', 'nổi bật, dẫn đường, tạo tín hiệu từ xa'],
+    'Giản Hạ Thủy': ['nước khe suối', 'linh hoạt, len lỏi, kiên trì mở đường'],
+    'Thành Đầu Thổ': ['đất tường thành', 'bảo vệ, xây hệ thống phòng thủ, quy chuẩn'],
+    'Bạch Lạp Kim': ['vàng chân đèn', 'tinh luyện, cần môi trường tốt để tỏa sáng'],
+    'Dương Liễu Mộc': ['gỗ cây liễu', 'mềm dẻo, thích nghi, uyển chuyển giao tiếp'],
+    'Tuyền Trung Thủy': ['nước giữa suối', 'nguồn mạch bền, nuôi dưỡng âm thầm'],
+    'Ốc Thượng Thổ': ['đất mái nhà', 'che chở, tạo nơi an toàn cho tập thể'],
+    'Tích Lịch Hỏa': ['lửa sấm sét', 'bứt phá nhanh, tạo cú hích, tạo khoảnh khắc'],
+    'Tùng Bách Mộc': ['gỗ tùng bách', 'bền bỉ, chính trực, đứng vững trong gió'],
+    'Trường Lưu Thủy': ['nước sông dài', 'tầm xa, dòng chảy liên tục, kiên định'],
+    'Sa Trung Kim': ['vàng trong cát', 'sàng lọc, tìm giá trị giữa cái thường'],
+    'Sơn Hạ Hỏa': ['lửa chân núi', 'ấm áp, gần gũi, giữ lửa cho cộng đồng'],
+    'Bình Địa Mộc': ['gỗ đồng bằng', 'mở rộng theo chiều ngang, nhân bản'],
+    'Bích Thượng Thổ': ['đất trên vách', 'chi tiết, hoàn thiện, làm đẹp cấu trúc'],
+    'Kim Bạch Kim': ['vàng pha bạch kim', 'quý giá, chuẩn mực, xây thương hiệu cao cấp'],
+    'Phú Đăng Hỏa': ['lửa ngọn đèn', 'soi sáng, khai trí, dẫn dắt từng người'],
+    'Phúc Đăng Hỏa': ['lửa ngọn đèn', 'soi sáng, khai trí, dẫn dắt từng người'],
+    'Thiên Hà Thủy': ['nước trên trời', 'tầm nhìn lớn, nuôi dưỡng diện rộng'],
+    'Đại Trạch Thổ': ['đất đầm lớn', 'bao dung, chứa đựng, tích hợp nguồn lực'],
+    'Đại Dịch Thổ': ['đất đầm lớn', 'bao dung, chứa đựng, tích hợp nguồn lực'],
+    'Thoa Xuyến Kim': ['vàng trang sức', 'thẩm mỹ, tinh tế, giá trị qua hình ảnh'],
+    'Tang Đố Mộc': ['gỗ cây dâu', 'chăm chỉ, nuôi dưỡng, tạo giá trị liên tục'],
+    'Tang Chá Mộc': ['gỗ cây dâu', 'chăm chỉ, nuôi dưỡng, tạo giá trị liên tục'],
+    'Đại Khê Thủy': ['nước khe lớn', 'năng động, mạnh mẽ, vượt chướng ngại'],
+    'Sa Trung Thổ': ['đất trong cát', 'kiên nhẫn bồi đắp, thành công muộn mà chắc'],
+    'Thiên Thượng Hỏa': ['lửa trên trời', 'lan tỏa rộng, truyền cảm hứng tầm cao'],
+    'Thạch Lựu Mộc': ['gỗ cây lựu', 'kết trái nhiều, sinh sôi, tạo kết quả cụ thể'],
+    'Đại Hải Thủy': ['nước biển lớn', 'bao la, chứa đựng, tư duy toàn cầu']
+  };
+  // Việc làm theo chữ vàng: [hành động mỗi tuần, gieo phước 24h]
+  var VIEC = {
+    'TÀI': ['1 buổi dạy / chia sẻ chuyên môn (Quan Lộc)', 'dạy hoặc chia sẻ miễn phí một bài học, một kỹ năng cho người cần.'],
+    'TÌNH': ['1 lần ra ngoài kết nối đối tác, quý nhân (Thiên Di)', 'gọi hỏi thăm một quý nhân hoặc người bạn lâu chưa liên lạc, nói lời cảm ơn.'],
+    'TU': ['1 buổi học – tu tập, tự soi lại mình (Mệnh)', 'ghi 5 việc vào Sổ Gieo Phước, sám hối đọc Om Benza Satto Hum 21 lần.'],
+    'KHỎE': ['3 buổi vận động, giữ nhịp làm – nghỉ (Tật Ách)', 'đi bộ 30 phút, ngủ trước 23h, rủ một người cùng vận động.'],
+    'TIỀN': ['1 lần rà soát thu – chi, sắp xếp dòng tiền (Tài Bạch)', 'ghi đủ thu – chi trong ngày, hoàn tất một lời hứa còn treo.'],
+    'AN': ['1 việc hiếu kính, tu khẩu, đời sống tâm linh (Phúc Đức)', 'hỏi thăm cha mẹ, thắp hương gia tiên, một ngày không nói lời nặng.']
+  };
+  var KQ90 = {
+    'TÀI': 'đóng gói tri thức hoặc tay nghề thành 1 sản phẩm / dịch vụ rõ ràng; đo bằng số người được phục vụ',
+    'TÌNH': 'kết nối 12 quý nhân, đối tác mới và giữ liên lạc đều; đo bằng số cuộc gặp có ích cho cả hai',
+    'TU': 'giữ nhịp tu tập mỗi ngày đủ 90 ngày; đo bằng số trang Sổ Gieo Phước đã ghi',
+    'KHỎE': 'giữ nhịp vận động – ngủ nghỉ đủ 90 ngày; đo bằng số buổi đã tập',
+    'TIỀN': 'lập kỷ luật thu – chi và một nguồn thu gắn với nghề; đo bằng số tuần ghi chép đủ, không đặt con số tiền hứa hẹn',
+    'AN': 'nuôi nếp hiếu kính, tu khẩu, tâm linh đủ 90 ngày; đo bằng số ngày giữ được nếp'
+  };
+
+  function realStars(c) { return c.stars.filter(function (s) { return s.kind !== 'luu'; }).map(function (s) { return s.name; }); }
+  function cellOfCung(chart, k) { for (var i = 0; i < 12; i++) if (chart.cells[i].cung === k) return chart.cells[i]; }
+  function aScore(c) { return c.chinh.reduce(function (a, s) { return a + (DIEM_SANG[s.dac] || 0); }, 0); }
+  function count(list, arr) { return list.filter(function (n) { return arr.indexOf(n) >= 0; }).length; }
+  // Điểm nhóm B, C, D, E của một cung (dùng cho hội chiếu G)
+  function bcdeOf(c) {
+    var n = realStars(c), v = count(n, LUC_CAT) + (n.indexOf('Lộc Tồn') >= 0 ? 2 : 0) + (n.indexOf('Thiên Mã') >= 0 ? 1 : 0) - 2 * count(n, LUC_SAT);
+    n.forEach(function (x) { if (HOA[x] != null) v += HOA[x]; });
+    return v;
+  }
+  function starPos(chart, name) {
+    for (var i = 0; i < 12; i++) { var c = chart.cells[i]; if (c.chinh.some(function (s) { return s.name === name; }) || realStars(c).indexOf(name) >= 0) return i; }
+    return -1;
+  }
+
+  function score(chart) {
+    var cm = starPos(chart, chart.menhChu), ct = starPos(chart, chart.thanChu);
+    var rows = TRU.map(function (t) {
+      var c = cellOfCung(chart, t.k), chi = c.chi, n = realStars(c), xung = chart.cells[(chi + 6) % 12], note = [];
+      var r = { cung: t.cung, chu: t.chu, chi: chi, cell: c };
+      r.vcd = !c.chinh.length;
+      r.A = r.vcd ? Math.floor(aScore(xung) / 2) : aScore(c);
+      r.B = count(n, LUC_CAT) + CAP_CAT.filter(function (p) { return n.indexOf(p[0]) >= 0 && n.indexOf(p[1]) >= 0; }).length;
+      r.C = (n.indexOf('Lộc Tồn') >= 0 ? 2 : 0) + (n.indexOf('Thiên Mã') >= 0 ? 1 : 0);
+      r.D = n.reduce(function (a, x) { return a + (HOA[x] || 0); }, 0);
+      var tham = c.chinh.filter(function (s) { return s.name === 'Tham Lang' && s.dac !== 'H'; }).length;
+      r.E = n.reduce(function (a, x) {
+        if (LUC_SAT.indexOf(x) < 0) return a;
+        if (tham && (x === 'Hỏa Tinh' || x === 'Linh Tinh')) { note.push(x === 'Hỏa Tinh' ? 'Hỏa Tham' : 'Linh Tham'); return a + 2; }
+        return a - 2;
+      }, 0);
+      r.F = (chart.triet.indexOf(chi) >= 0 ? -3 : 0) + (chart.tuan.indexOf(chi) >= 0 ? -2 : 0);
+      var g = [4, 8, 6].reduce(function (a, d) { return a + bcdeOf(chart.cells[(chi + d) % 12]); }, 0);
+      r.G = Math.round(g / 2);
+      r.H = (chart.thanCung === chi ? 2 : 0) + ((cm === chi || ct === chi) ? 1 : 0);
+      var songLoc = (n.indexOf('Lộc Tồn') >= 0 && (n.indexOf('Hóa Lộc') >= 0 || realStars(xung).indexOf('Hóa Lộc') >= 0)) || (n.indexOf('Hóa Lộc') >= 0 && realStars(xung).indexOf('Lộc Tồn') >= 0);
+      r.S = songLoc ? 1 : 0; if (songLoc) note.push('Song Lộc');
+      r.total = r.A + r.B + r.C + r.D + r.E + r.F + r.G + r.H + r.S;
+      r.mv = c.chinh.filter(function (s) { return s.dac === 'M' || s.dac === 'V'; }).length;
+      r.lq = n.indexOf('Hóa Lộc') >= 0 || n.indexOf('Hóa Quyền') >= 0;
+      r.than = chart.thanCung === chi; r.note = note;
+      return r;
+    });
+    var order = rows.slice().sort(function (a, b) {
+      return b.total - a.total || b.mv - a.mv || (b.lq - a.lq) || (b.than - a.than) || ((b.cung === 'Mệnh') - (a.cung === 'Mệnh'));
+    });
+    var LAB = ['ĐỘNG CƠ', 'ĐỘNG CƠ', 'NỀN', 'GIỮ', 'CẦN BỒI', 'CẦN BỒI'];
+    order.forEach(function (r, i) { r.rank = i + 1; r.group = LAB[i]; r.scale = to10(r.total); });
+    return { rows: rows, order: order };
+  }
+  function to10(t) {
+    if (t >= 12) return 10; if (t >= 11) return 9; if (t >= 9) return 8; if (t >= 7) return 7; if (t >= 5) return 6;
+    if (t >= 4) return 5; if (t >= 2) return 4; if (t >= 1) return 3; if (t >= -1) return 2; return 1;
+  }
+  function starTxt(s) { return s.name + (s.dac ? ' (' + (SANG_TEN[s.dac] || s.dac) + ')' : ''); }
+  function hoaTxt(c) { return realStars(c).filter(function (x) { return HOA[x] != null || x === 'Lộc Tồn'; }); }
+  function lower1(s) { return s.charAt(0).toLowerCase() + s.slice(1); }
+  function tamHopCung(a, b) { return (a.chi - b.chi + 12) % 4 === 0; }
+
+  function build(chart) {
+    var S = score(chart), o = S.order, top = o[0], sec = o[1];
+    // Chữ vàng ưu tiên: trong 2 cung Cần bồi, ưu tiên cung cùng tam hợp với cung mạnh nhất (kho mở bằng chìa khóa); nếu không có thì lấy cung điểm thấp nhất
+    var bo = [o[4], o[5]], weak = bo.filter(function (w) { return tamHopCung(w, top); })[0] || (o[5].total <= o[4].total ? o[5] : o[4]), weak2 = bo[0] === weak ? bo[1] : bo[0];
+    // Tầng 1
+    var src = top.vcd ? chart.cells[(top.chi + 6) % 12].chinh : top.cell.chinh;
+    var main = src.filter(function (s) { return VU_KHI[s.name]; });
+    var phu = hoaTxt(top.cell);
+    var t1a = top.cung + ' (' + top.total + ' điểm) – ' + (top.vcd ? 'Vô chính diệu, mượn ' : '') + (main.map(starTxt).join(' + ') || 'chính tinh cung xung chiếu') + (phu.length ? ' · ' + phu.join(', ') : '') + ':';
+    var vk = main.length ? main.map(function (s) { return lower1(VU_KHI[s.name][0]); }).join('; ') : 'nguồn lực mượn từ cung đối diện';
+    var vai = main.length ? main.map(function (s) { return VU_KHI[s.name][1]; }).join('; ') : '';
+    var t1b = '"Vũ khí chủ lực: ' + vk + '."' + (vai ? ' Hợp vai trò: ' + vai + '.' : '');
+    // Tầng 2
+    var grp = {}; o.forEach(function (r) { (grp[r.group] = grp[r.group] || []).push(r.cung); });
+    var t2a = 'Động cơ: ' + grp['ĐỘNG CƠ'].join(', ') + ' · Nền: ' + grp['NỀN'].join(', ') + ' · Giữ: ' + grp['GIỮ'].join(', ') + ' · Cần bồi: ' + grp['CẦN BỒI'].join(', ') + '.';
+    var tam = [weak, weak2].filter(function (w) { return tamHopCung(w, top) && w !== top; })[0];
+    var t2b = top.cung + ' (' + top.chu + ') là động cơ kéo cả lá số, ' + sec.cung + ' (' + sec.chu + ') tiếp sức; dùng chính hai nguồn lực ấy để bồi ' + weak.chu + ' (' + weak.cung + ') và ' + weak2.chu + ' (' + weak2.cung + ').' +
+      (tam ? ' ' + top.cung + ' và ' + tam.cung + ' cùng tam hợp: kho ' + tam.chu + ' mở bằng chìa khóa ' + top.chu + '.' : '');
+    // Tầng 3
+    var tvChi = starPos(chart, 'Tử Vi'), tvCell = chart.cells[tvChi], tvCung = T.CUNG_TITLE[tvCell.cung];
+    var tv = tvCell.chinh.filter(function (s) { return s.name === 'Tử Vi'; })[0];
+    var dong = tvCell.chinh.filter(function (s) { return s.name !== 'Tử Vi'; }).map(function (s) { return s.name; });
+    var tvHoa = realStars(tvCell).filter(function (x) { return HOA[x] != null; });
+    var trieu = [4, 8, 6, 0].reduce(function (a, d) { return a + count(realStars(chart.cells[(tvChi + d) % 12]), LUC_CAT); }, 0);
+    var thu = (chart.triet.indexOf(tvChi) >= 0 ? ['Triệt'] : []).concat(chart.tuan.indexOf(tvChi) >= 0 ? ['Tuần'] : []);
+    var t3a = 'Tử Vi ' + (SANG_TEN[tv.dac] || '').toLowerCase() + (tvHoa.length ? ' ' + tvHoa.map(lower1).join(', ') : '') + (dong.length ? ' đồng cung ' + dong.join(', ') : ' độc tọa') + ' cư ' + tvCung + ': ' + SU_MENH[tvCung] +
+      (trieu >= 3 ? '; có cát tinh phò tá (' + trieu + ' sao lục cát hội về).' : '; cần tự xây đội phò tá.') + (thu.length ? ' Gặp ' + thu.join(', ') + ': đường làm vua phải qua thử thách.' : '');
+    var t3b = '"Tôi sinh ra để ' + SU_MENH[tvCung] + ', bằng nguồn lực ' + top.cung + ' – ' + sec.cung + ' và tư duy chiến lược Tâm Không."';
+    var t3c = 'Câu hỏi khai mở: ' + SU_MENH_HOI[tvCung] + ' – tự viết lại tuyên ngôn dưới 20 chữ.';
+    // Tầng 4
+    var na = NAP_AM[chart.banMenh] || [chart.banMenh, ''];
+    var thanTen = chart.thanCung === chart.menhCung ? 'Mệnh' : T.CUNG_TITLE[chart.cells[chart.thanCung].cung];
+    var tc = THAN_CU[thanTen] || ['những gì cung ' + thanTen + ' đại diện', 'dồn sức có chọn lọc vào cung ' + thanTen];
+    function yNghia(sao) { return VU_KHI[sao] ? lower1(VU_KHI[sao][0]) : (PHU_Y[sao] || ''); }
+    var t4a = capFirst(na[0]) + ' – ' + na[1] + '; ' + (thanTen === 'Mệnh' ? 'Thân Mệnh đồng cung' : 'Thân cư ' + thanTen) + ' – ' + tc[1] + '; Chủ mệnh ' + chart.menhChu + ' – ' + yNghia(chart.menhChu) + '; Chủ thân ' + chart.thanChu + ' – ' + yNghia(chart.thanChu) + '.';
+    var t4b = 'Bạn là ' + chart.banMenh + ' – ' + na[0] + ' – nên cách bạn thắng là ' + na[1].split(';')[0] + '. Sức lực đời bạn dồn về ' + tc[0] + '. Chủ mệnh ' + chart.menhChu + ' cho bạn ' + yNghia(chart.menhChu) + '; Chủ thân ' + chart.thanChu + ' nhắc bạn hành động bằng ' + yNghia(chart.thanChu) + '.';
+    // Chữ vàng ưu tiên 90 ngày
+    var uu = weak.chu, gan = tamHopCung(weak, top) ? ' – ' + top.cung + ' và ' + weak.cung + ' cùng tam hợp: kho ' + weak.chu + ' mở bằng chìa khóa ' + top.chu : '';
+    var de = uu + ' (dùng ' + top.chu + ' để vá)' + gan + '.';
+    var steps = [
+      '**Ngày 1 – Đo mốc:** tự chấm 6 chữ vàng (thang 1–10), ghi điểm ' + uu + ' và ' + weak2.chu + ' hiện tại.',
+      '**R – Kết quả 90 ngày:** ' + KQ90[uu] + '.',
+      '**P – Lý do:** viết 1 câu "Tôi làm vì ..." gắn với người thương và cộng đồng.',
+      '**M – Mỗi tuần:** ' + VIEC[top.chu][0] + ' · ' + VIEC[sec.chu][0] + '.',
+      '**Mỗi ngày:** ghi Sổ Gieo Phước 5 việc, ít nhất 1 việc cho chữ ' + uu + ' và 1 việc cho chữ ' + weak2.chu + '.',
+      '**Ngày 30 – 60 – 90:** chấm lại ' + uu + ' và ' + weak2.chu + ', so với mốc, điều chỉnh MAP.'
+    ];
+    var ba = [top.chu, uu, weak2.chu].filter(function (x, i, a) { return a.indexOf(x) === i; });
+    if (ba.length < 3) ba.push(sec.chu);
+    var act = ba.slice(0, 3).map(function (x) { return '**' + x + ':** ' + VIEC[x][1]; });
+    return { S: S, tiles: o, t1: [t1a, t1b], t2: [t2a, t2b], t3: [t3a, t3b, t3c], t4: [t4a, t4b], uu: de, steps: steps, act: act };
+  }
+  function capFirst(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  root.NguonLuc = { score: score, build: build, to10: to10 };
+})(typeof window !== 'undefined' ? window : this);
+</script>
+<script>
 /*!
  * Phước Lộc – Luận giải Tử Vi theo 6 Chữ Vàng (Khỏe · Tiền · Tài · Tình · Tu · An)
  * Theo mẫu Cộng Đồng Tâm Không. Phân tích lá số (TuVi.lapLaSo) → bản luận giải → PDF (A4).
@@ -1706,6 +1932,121 @@ details.acct-menu summary::-webkit-details-marker{display:none}
     pg.y += 22;
   }
 
+
+  /* ---------- Trang cuối: KÍCH HOẠT SỨC MẠNH TỬ VI – BẢN ĐỒ NGUỒN LỰC 1 TRANG (SOP-TK-04) ---------- */
+  var NL = { red: '#7f1d1d', red2: '#9b2c2c', gold: '#b8860b', goldL: '#e8c76a', brown: '#6b4423', orange: '#b5651d', ochre: '#c9a227',
+    cream: '#fbf5e6', pink: '#fbeaea', line: '#d9c9a8', ink: '#1f2328', mute: '#7a6a55' };
+  var NL_TILE = { 'ĐỘNG CƠ': NL.red, 'NỀN': NL.orange, 'GIỮ': NL.ochre, 'CẦN BỒI': NL.brown };
+  function nlRect(ctx, x, y, w, h, fill, stroke, lw) { if (fill) { ctx.fillStyle = fill; ctx.fillRect(x, y, w, h); } if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1.5; ctx.strokeRect(x, y, w, h); } }
+  function nlText(ctx, rich, x, y, w, size, lh, color, align, base) {
+    var ls = layout(ctx, parseRich(rich), w, size, base); drawLines(ctx, ls, x, y, lh, size, color, align || 'left', w); return ls.length * lh;
+  }
+  function nlMeasure(ctx, rich, w, size, lh, base) { return layout(ctx, parseRich(rich), w, size, base).length * lh; }
+  function nlList(ctx, items, x, y, w, size, lh, color, numbered, dry) {
+    var h = 0;
+    items.forEach(function (it, i) {
+      var ls = layout(ctx, parseRich(it), w - 34, size);
+      if (!dry) { txtL(ctx, numbered ? (i + 1) + '.' : '◆', x + 2, y + h + size * 0.98, (numbered ? '700 ' : '400 ') + (numbered ? size : size * 0.8) + 'px ' + SERIF, numbered ? color : NL.gold); drawLines(ctx, ls, x + 34, y + h, lh, size, color); }
+      h += ls.length * lh + 4;
+    });
+    return h;
+  }
+  function drawNguonLuc(chart) {
+    if (!root.NguonLuc) return null;
+    var N = root.NguonLuc.build(chart);
+    var cv = document.createElement('canvas'); cv.width = PW; cv.height = PH;
+    var ctx = cv.getContext('2d');
+    var X = 70, W = PW - 140, now = new Date();
+    var sub = (chart.name || 'Khách hàng') + ' · ' + chart.canChi.nam + ' ' + chart.lunar.year + ' · Mệnh ' + chart.banMenh + ' · ' + chart.cucTen + ' · ' +
+      (chart.thanCung === chart.menhCung ? 'Thân Mệnh đồng cung' : chart.thanCu) + ' · Chủ mệnh ' + chart.menhChu + ' · Chủ thân ' + chart.thanChu;
+    var rows = [
+      ['1. Vũ khí chủ lực', 'Tầng 1 · Cung mạnh nhất', [N.t1[0], '{r:**' + N.t1[1] + '**}']],
+      ['2. Tổng nguồn lực 6 cung', 'Tầng 2 · Mệnh, Quan Lộc, Tài Bạch, Thiên Di, Phúc Đức, Tật Ách', [N.t2[0], '{r:**Thông điệp:**} *' + N.t2[1] + '*']],
+      ['3. Sứ mệnh phụng sự', 'Tầng 3 · Cung sao Tử Vi tọa', [N.t3[0], '{r:**Sứ mệnh:**} {r:**' + N.t3[1] + '**}', '*' + N.t3[2] + '*']],
+      ['4. Tư duy chiến lược', 'Tầng 4 · Nạp âm, Thân, Chủ mệnh, Chủ thân', [N.t4[0], '{r:**Thông điệp:**} *' + N.t4[1] + '*']]
+    ];
+    function render(sz, dry) {
+      var lh = Math.round(sz * 1.36), y = 52;
+      // Dải tiêu đề
+      var bandH = 128 + Math.max(0, nlMeasure(ctx, '*' + sub + '*', W - 60, sz - 3, lh - 4) - (lh - 4));
+      if (!dry) {
+        nlRect(ctx, 0, 0, PW, PH, '#ffffff');
+        nlRect(ctx, X, y, W, bandH, NL.red); nlRect(ctx, X + 6, y + 6, W - 12, bandH - 12, null, NL.goldL, 1.5);
+        txtC(ctx, 'T Â M   K H Ô N G   ·   K Í C H   H O Ạ T   S Ứ C   M Ạ N H   T Ử   V I', PW / 2, y + 34, '700 17px ' + SERIF, NL.goldL);
+        txtC(ctx, 'BẢN ĐỒ NGUỒN LỰC 1 TRANG', PW / 2, y + 78, '700 38px ' + SERIF, '#ffffff');
+        nlText(ctx, '*' + sub + '*', X + 30, y + 92, W - 60, sz - 3, lh - 4, '#f6e7c8', 'center');
+      }
+      y += bandH + 22;
+      // 6 ô điểm
+      var tw = (W - 5 * 8) / 6, th = 112;
+      if (!dry) N.tiles.forEach(function (r, i) {
+        var tx = X + i * (tw + 8);
+        nlRect(ctx, tx, y, tw, th, NL_TILE[r.group] || NL.brown);
+        txtC(ctx, r.group, tx + tw / 2, y + 26, '700 16px ' + SERIF, '#f8e6b8');
+        txtC(ctx, (r.total > 0 ? '' : r.total < 0 ? '−' : '') + Math.abs(r.total), tx + tw / 2, y + 66, '700 36px ' + SERIF, '#ffffff');
+        txtC(ctx, r.cung + ' · ' + r.chu, tx + tw / 2, y + 94, '700 17px ' + SERIF, '#ffffff');
+      });
+      y += th + 8;
+      if (!dry) txtC(ctx, 'Điểm cung theo Phiếu Xác Định Cung Mạnh Nhất (thang điểm thực hành Tâm Không) · thang 1–10: ' + N.tiles.map(function (r) { return r.cung + ' ' + r.scale; }).join(' · '), PW / 2, y + 16, 'italic 400 15px ' + SERIF, NL.mute);
+      y += 34;
+      // Bảng 4 tầng + chữ vàng ưu tiên
+      var c1 = Math.round(W * 0.25), c2 = W - c1, pad = 14;
+      var headH = 40;
+      if (!dry) { nlRect(ctx, X, y, W, headH, NL.red); txtL(ctx, 'Tầng', X + pad, y + 27, '700 19px ' + SERIF, '#fff'); txtL(ctx, 'Kết luận', X + c1 + pad, y + 27, '700 19px ' + SERIF, '#fff'); }
+      y += headH;
+      var all = rows.concat([['★. Chữ Vàng ưu tiên 90 ngày cần kích hoạt', '', null]]);
+      all.forEach(function (r, i) {
+        var leftH = nlMeasure(ctx, '**' + r[0] + '**', c1 - pad * 2, sz + 1, lh) + (r[1] ? nlMeasure(ctx, '*' + r[1] + '*', c1 - pad * 2, sz - 4, lh - 6) + 4 : 0);
+        var rightH = 0;
+        if (r[2]) r[2].forEach(function (t) { rightH += nlMeasure(ctx, t, c2 - pad * 2, sz, lh) + 6; });
+        else {
+          rightH += nlMeasure(ctx, '{r:**Đề xuất:**} ' + N.uu, c2 - pad * 2, sz, lh) + 6 + lh + 2;
+          rightH += nlList(ctx, N.steps, 0, 0, c2 - pad * 2, sz, lh, NL.ink, true, true);
+        }
+        var h = Math.max(leftH, rightH) + pad * 2 - 6;
+        if (!dry) {
+          nlRect(ctx, X, y, c1, h, NL.cream); nlRect(ctx, X + c1, y, c2, h, '#ffffff');
+          nlRect(ctx, X, y, W, h, null, NL.line, 1.5); ctx.beginPath(); ctx.moveTo(X + c1, y); ctx.lineTo(X + c1, y + h); ctx.stroke();
+          var ly = y + (r[2] ? pad : (h - leftH) / 2);
+          ly += nlText(ctx, '**' + r[0] + '**', X + pad, ly, c1 - pad * 2, sz + 1, lh, NL.red2);
+          if (r[1]) nlText(ctx, '*' + r[1] + '*', X + pad, ly + 2, c1 - pad * 2, sz - 4, lh - 6, NL.mute);
+          var ry = y + pad - 2;
+          if (r[2]) r[2].forEach(function (t) { ry += nlText(ctx, t, X + c1 + pad, ry, c2 - pad * 2, sz, lh, NL.ink) + 6; });
+          else {
+            ry += nlText(ctx, '{r:**Đề xuất:**} ' + N.uu, X + c1 + pad, ry, c2 - pad * 2, sz, lh, NL.ink) + 6;
+            txtL(ctx, 'Hướng dẫn cách làm:', X + c1 + pad, ry + sz, '700 ' + sz + 'px ' + SERIF, NL.red2); ry += lh + 2;
+            nlList(ctx, N.steps, X + c1 + pad, ry, c2 - pad * 2, sz, lh, NL.ink, true, false);
+          }
+        }
+        y += h;
+      });
+      y += 22;
+      // Khung dưới: 3 hành động 24h + cam kết
+      var bw1 = Math.round(W * 0.62), bw2 = W - bw1, bp = 18;
+      var actH = nlList(ctx, N.act, 0, 0, bw1 - bp * 2, sz, lh, NL.ink, false, true);
+      var camT = '*Tôi kích hoạt nguồn lực của mình để Lợi Cộng Đồng – Lợi Người Khác – Lợi Mình.*';
+      var camH = nlMeasure(ctx, camT, bw2 - bp * 2, sz - 1, lh - 2) + (lh + 6) * 2;
+      var bh = Math.max(actH, camH) + bp * 2 + 34;
+      if (!dry) {
+        nlRect(ctx, X, y, bw1, bh, NL.pink, NL.red2, 2); nlRect(ctx, X + bw1, y, bw2, bh, NL.cream, NL.red2, 2);
+        txtL(ctx, '3 HÀNH ĐỘNG GIEO PHƯỚC TRONG 24H', X + bp, y + bp + 18, '700 19px ' + SERIF, NL.red2);
+        nlList(ctx, N.act, X + bp, y + bp + 32, bw1 - bp * 2, sz, lh, NL.ink, false, false);
+        txtL(ctx, 'CAM KẾT', X + bw1 + bp, y + bp + 18, '700 19px ' + SERIF, NL.red2);
+        var cy = y + bp + 32; cy += nlText(ctx, camT, X + bw1 + bp, cy, bw2 - bp * 2, sz - 1, lh - 2, NL.ink) + 8;
+        txtL(ctx, 'Ngày bắt đầu: ....... / ....... / ' + now.getFullYear(), X + bw1 + bp, cy + sz, '400 ' + (sz - 1) + 'px ' + SERIF, NL.ink); cy += lh + 6;
+        txtL(ctx, 'Ký tên: ......................................', X + bw1 + bp, cy + sz, '400 ' + (sz - 1) + 'px ' + SERIF, NL.ink);
+      }
+      y += bh + 18;
+      if (!dry) txtC(ctx, 'Lập tự động theo SOP-TK-04 · Kích hoạt 4 tầng · ' + pad2(now.getDate()) + '/' + pad2(now.getMonth() + 1) + '/' + now.getFullYear() + ' · phuocloc.vn — Bản đồ dùng để định hướng tu tập và hành động, không thay chẩn đoán y khoa hay tư vấn tài chính.', PW / 2, y + 6, 'italic 400 14px ' + SERIF, NL.gold);
+      return y + 20;
+    }
+    var sz = 21;
+    while (sz > 15 && render(sz, true) > PH - 40) sz--;
+    render(sz, false);
+    return cv;
+  }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
   function renderPages(chart, A, opts) {
     opts = opts || {};
     var pg = new Pager();
@@ -1730,6 +2071,8 @@ details.acct-menu summary::-webkit-details-marker{display:none}
       var hh = drawBlock(pg, b, false);
       pg.y += hh;
     });
+    // Trang cuối: Kích hoạt sức mạnh Tử Vi – Bản đồ nguồn lực 1 trang
+    try { var nlPage = drawNguonLuc(chart); if (nlPage) pg.pages.push(nlPage); } catch (e) { if (root.console) console.error(e); }
     // Số trang
     var N = pg.pages.length;
     pg.pages.forEach(function (p, i) {
