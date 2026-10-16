@@ -152,7 +152,7 @@ table.ct tr.grp td{background:var(--soft);font-weight:bold;color:var(--accent);f
       <textarea id="out" hidden readonly style="min-height:200px;margin-bottom:10px"></textarea>
       <div class="stage" id="stage"><div class="scaler" id="scaler"><div id="sheet"></div></div></div>
     </div>
-    <div class="panel">
+    <div class="panel" id="csPanel" hidden>
       <h2>Các chỉ số và cách tính</h2>
       <p class="sub" style="margin-bottom:10px">Từng chỉ số trên Bản đồ Tâm Không, kèm phép tính cụ thể theo họ tên và ngày sinh ở trên.</p>
       <div class="tbl"><table class="ct" id="ct"></table></div>
@@ -903,6 +903,8 @@ Ngày chủ đạo: ${R.days.map(x => pad(x.d) + '/' + pad(x.m) + '|' + x.v).joi
   show({ name: 'Đào Đức Đắc', d: 14, m: 2, y: 1985, vd: todayISO() });
   try { document.fonts.ready.then(() => { if (last) renderSheet(last); }); } catch (e) { }
   initHist();
+  // Bảng "Các chỉ số và cách tính" chỉ hiện với tài khoản quản trị (admin)
+  PLAcct.onChange(u => { const p = document.getElementById('csPanel'); if (p) p.hidden = !(u && u.role === 'admin'); });
   PLAcct.boot();
 })();
 </script>
