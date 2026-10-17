@@ -11,7 +11,8 @@ Cloudflare Worker xử lý đăng nhập, tài khoản thành viên, hạn mức
 |---|---|
 | `src/index.js` | Toàn bộ mã Worker |
 | `wrangler.toml` | Cấu hình: tên Worker, cơ sở dữ liệu D1, tên miền được phép gọi (`ALLOWED_ORIGINS`) |
-| `schema.sql` | Cấu trúc 4 bảng: `users`, `sessions`, `charts`, `logs` (không có dữ liệu thật) |
+| `schema.sql` | Cấu trúc 6 bảng: `users`, `sessions`, `charts`, `logs`, `tp_docs`, `tp_assets` (không có dữ liệu thật) |
+| `migrations/` | Các thay đổi cấu trúc đã/chờ áp dụng lên CSDL thật (chỉ thêm, không xóa) |
 | `package.json` | Lệnh tiện dụng: `npm run dev`, `npm run check`, `npm run deploy` |
 
 **Khóa bí mật `SETUP_KEY` không nằm ở đây** — nó được lưu trên Cloudflare. Kho GitHub là công khai, tuyệt đối không ghi mật khẩu, khóa, token vào bất kỳ file nào.
@@ -26,10 +27,14 @@ Cloudflare Worker xử lý đăng nhập, tài khoản thành viên, hạn mức
 | GET | `/api/me` | đã đăng nhập | Thông tin tài khoản, lượt còn lại |
 | POST | `/api/password` | đã đăng nhập | Đổi mật khẩu |
 | POST | `/api/chart`, `/api/png`, `/api/pdf` | đã đăng nhập | Ghi nhận lập/tải lá số và trừ lượt (mở lại lá số cũ không trừ lượt) |
-| GET | `/api/history` | đã đăng nhập | Lịch sử lá số của tài khoản |
+| GET | `/api/history` | đã đăng nhập | Lịch sử lá số của tài khoản (rỗng nếu tài khoản không có quyền Tử Vi) |
+| POST | `/api/tp/doc` | quyền Tạo Phước | Ghi nhận bộ bài Tạo Phước, trừ 1 lượt cho người đọc mới (bộ cũ không trừ) |
+| GET | `/api/tp/history` | quyền Tạo Phước | Lịch sử bộ bài Tạo Phước |
+| GET | `/api/tp/engine` | quyền Tạo Phước | Nội dung các bài tu (lưu ở bảng `tp_assets`, không có trong kho) |
 | GET/POST | `/api/admin/users` | admin, manager | Danh sách / tạo thành viên |
 | PATCH/DELETE | `/api/admin/users/:id` | admin, manager | Sửa / xóa thành viên |
 | GET | `/api/admin/users/:id/charts` | admin, manager | Lá số của một thành viên |
+| GET | `/api/admin/users/:id/tp` | admin, manager | Bộ bài Tạo Phước của một thành viên |
 | GET | `/api/admin/logs` | admin, manager | Nhật ký hoạt động |
 
 ## Triển khai tự động (GitHub → Cloudflare)
