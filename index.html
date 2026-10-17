@@ -213,7 +213,7 @@ details.acct-menu summary::-webkit-details-marker{display:none}
           <summary>Tùy chọn an sao (theo trường phái)</summary>
           <div class="grid">
             <label class="f">Giờ Tý muộn (23h–24h)
-              <select id="o-tyMuon"><option value="0">Vẫn tính ngày hôm đó</option><option value="1">Tính sang ngày hôm sau</option></select></label>
+              <select id="o-tyMuon"><option value="1" selected>Tính sang ngày hôm sau (mặc định)</option><option value="0">Vẫn tính ngày hôm đó</option></select></label>
             <label class="f">Sinh tháng nhuận
               <select id="o-nhuan"><option value="tach15">Trước rằm tính tháng trước, từ 16 tính tháng sau</option><option value="thangtruoc">Luôn tính tháng trước</option><option value="thangsau">Luôn tính tháng sau</option></select></label>
             <label class="f">Tứ hóa tuổi Canh
@@ -544,7 +544,7 @@ details.acct-menu summary::-webkit-details-marker{display:none}
   function tamHop(chi) { return mod(chi, 4); } // 0: Thân Tý Thìn, 1: Tỵ Dậu Sửu, 2: Dần Ngọ Tuất, 3: Hợi Mão Mùi
 
   var DEFAULTS = {
-    gioTyMuonSangNgay: false,  // true: 23h–24h tính sang ngày hôm sau
+    gioTyMuonSangNgay: true,   // mặc định: 23h–23h59 cộng 1 ngày dương lịch rồi mới đổi âm lịch và an sao (giờ vẫn là Tý)
     thangNhuan: 'tach15',       // 'tach15' | 'thangtruoc' | 'thangsau'
     tuHoaCanh: 'A',            // A: Nhật Vũ Âm Đồng; B: Nhật Vũ Đồng(Khoa) Âm(Kị)
     tuHoaTan: 'A',             // A: Thái Dương Hóa Quyền; B: Thiên Lương Hóa Quyền
@@ -580,7 +580,8 @@ details.acct-menu summary::-webkit-details-marker{display:none}
     }
     var jd = jdFromDate(solar.day, solar.month, solar.year);
     var jdTinh = jd;
-    if (hour >= 23 && o.gioTyMuonSangNgay) jdTinh = jd + 1;
+    var tyMuon = hour >= 23 && o.gioTyMuonSangNgay;
+    if (tyMuon) jdTinh = jd + 1;
     var sd = jdToDate(jdTinh);
     lunar = solar2lunar(sd[0], sd[1], sd[2], 7);
     if (input.calendar === 'am' && !(hour >= 23 && o.gioTyMuonSangNgay)) {
@@ -818,6 +819,8 @@ details.acct-menu summary::-webkit-details-marker{display:none}
       gender: nam ? 'Nam' : 'Nữ',
       solar: solar, lunar: { day: lunar.day, month: lunar.month, year: lunar.year, leap: lunar.leap },
       hour: hour, minute: minute, gioChi: h,
+      // Giờ Tý muộn: ngày dương lịch đã dùng để đổi âm lịch và an sao (null nếu không áp dụng)
+      tyMuon: tyMuon ? { day: sd[0], month: sd[1], year: sd[2] } : null,
       canChi: {
         nam: CAN[yCan] + ' ' + CHI[yChi], thang: CAN[monthCan] + ' ' + CHI[monthChi],
         ngay: CAN[dayCan] + ' ' + CHI[dayChi], gio: CAN[hourCan] + ' ' + CHI[h]
@@ -1067,6 +1070,11 @@ details.acct-menu summary::-webkit-details-marker{display:none}
       if (r[2]) txt(ctx, r[2], C, y, '400 32px ' + FONT, P.ink, 'left');
       y += lh;
     });
+    if (chart.tyMuon) {
+      var tm = chart.tyMuon;
+      txt(ctx, 'Giờ Tý muộn → tính ngày ' + tm.day + '/' + tm.month + '/' + tm.year + ' dương lịch', cx, y - 8, '700 26px ' + FONT, P.cungTitle, 'center');
+      y += 30;
+    }
     y += 10;
     txt(ctx, 'Năm xem:', L, y, '700 32px ' + FONT, P.ink, 'left');
     txt(ctx, String(chart.viewYear), V, y, '400 32px ' + FONT, P.ink, 'left');
@@ -1621,7 +1629,8 @@ details.acct-menu summary::-webkit-details-marker{display:none}
     B.push({ type: 'kv', rows: [
       ['Họ và tên', '**' + (c.name || '—') + '** (' + c.gender + ')'],
       ['Sinh dương lịch', s.day + '/' + s.month + '/' + s.year + ' lúc ' + pad(c.hour) + ':' + pad(c.minute)],
-      ['Sinh âm lịch', 'Ngày ' + l.day + ' tháng ' + l.month + (l.leap ? ' (nhuận)' : '') + ' năm ' + c.canChi.nam + ' · giờ ' + c.canChi.gio],
+      ['Sinh âm lịch', 'Ngày ' + l.day + ' tháng ' + l.month + (l.leap ? ' (nhuận)' : '') + ' năm ' + c.canChi.nam + ' · giờ ' + c.canChi.gio
+        + (c.tyMuon ? ' · **Giờ Tý muộn → tính ngày ' + c.tyMuon.day + '/' + c.tyMuon.month + '/' + c.tyMuon.year + '**' : '')],
       ['Năm xem', c.viewYear + ' (' + c.viewCanChi + ') · ' + c.tuoi + ' tuổi']
     ] });
 
