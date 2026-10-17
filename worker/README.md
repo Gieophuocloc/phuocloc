@@ -36,7 +36,19 @@ Cloudflare Worker xử lý đăng nhập, tài khoản thành viên, hạn mức
 
 Sau khi bật **Workers Builds** (hướng dẫn bên dưới), mỗi lần gộp code vào nhánh `main` có thay đổi trong thư mục `worker/`, Cloudflare sẽ tự build và cập nhật Worker. Không cần chạy lệnh tay.
 
-### Bật Workers Builds (làm một lần)
+### Trạng thái: ĐÃ BẬT (17/10/2026)
+
+Cấu hình hiện tại trên Cloudflare (Workers & Pages → phuocloc-api → Settings → Builds):
+
+- Kho: `Gieophuocloc/phuocloc`, nhánh production: `main`
+- Root directory: `/worker`, Build watch paths: mọi file trong `worker/`
+- Build command: trống · Deploy command: `npx wrangler deploy`
+- **Preview builds: TẮT** — vì bản xem trước dùng chung CSDL thật với khách hàng. Không bật lại.
+- Ứng dụng GitHub "Cloudflare Workers and Pages" chỉ được cấp quyền cho kho `phuocloc`.
+
+Xem kết quả mỗi lần triển khai: Cloudflare → phuocloc-api → **Deployments**. Nếu một lần triển khai lỗi, Worker vẫn giữ bản cũ đang chạy.
+
+### Cách bật lại (nếu bị ngắt kết nối)
 
 1. Vào Cloudflare → **Workers & Pages** → **phuocloc-api** → **Settings** → **Build**.
 2. Ở **Git repository**, bấm **Connect** → chọn GitHub → chọn kho `Gieophuocloc/phuocloc`.
