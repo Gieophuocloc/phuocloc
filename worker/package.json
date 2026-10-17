@@ -1,0 +1,13 @@
+{
+  "name": "phuocloc-api",
+  "private": true,
+  "description": "Máy chủ tài khoản thành viên phuocloc.vn (Cloudflare Worker + D1)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run --outdir=dist"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}

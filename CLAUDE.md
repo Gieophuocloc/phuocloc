@@ -20,18 +20,23 @@ Hướng dẫn cho Claude Code khi làm việc trong kho này. Đọc hết trư
 | `admin.html` | Trang quản trị tài khoản thành viên, hạn mức, nhật ký |
 | `config.js` | Cấu hình chung: `window.PL_API` (địa chỉ Worker), `window.PL_CONTACT` (liên hệ Zalo) |
 | `CNAME` | Tên miền GitHub Pages — **không sửa, không xóa** |
+| `worker/` | Mã máy chủ tài khoản (Cloudflare Worker + D1), xem mục 3 |
 
-**Không có bước build, không có npm, không có framework.** Mỗi trang là một file HTML tự chứa (HTML + CSS + JS thuần trong cùng file). Giữ nguyên kiểu này: không tách file, không thêm bundler, không thêm React/Vue trừ khi chủ dự án yêu cầu rõ.
+**Phần web không có bước build, không có npm, không có framework** (npm chỉ dùng trong `worker/`). Mỗi trang là một file HTML tự chứa (HTML + CSS + JS thuần trong cùng file). Giữ nguyên kiểu này: không tách file, không thêm bundler, không thêm React/Vue trừ khi chủ dự án yêu cầu rõ.
 
 Thư viện ngoài chỉ nạp từ `cdnjs.cloudflare.com`; font chỉ từ Google Fonts.
 
-## 3. Máy chủ tài khoản (Cloudflare Worker)
+## 3. Máy chủ tài khoản (Cloudflare Worker) — thư mục `worker/`
 
+- Mã nguồn: `worker/src/index.js`; cấu hình `worker/wrangler.toml`; cấu trúc CSDL `worker/schema.sql`. Đọc `worker/README.md` trước khi sửa.
 - Địa chỉ: `https://phuocloc-api.gieophuocloc.workers.dev`, mọi lệnh gọi qua tiền tố `/api`
-- **Mã nguồn Worker không nằm trong kho này.** Nếu một tính năng cần sửa phía máy chủ, hãy nói rõ và đề xuất mã cho Worker riêng — đừng giả định endpoint mới đã tồn tại.
-- Endpoint trang đang dùng:
-  - Chung: `POST /login`, `POST /logout`, `POST /password`, `POST /setup`, `GET /me`, `GET /history?limit=…`, `POST /consume` (trừ lượt, `kind: 'chart'`)
-  - Quản trị: `GET/POST /admin/users`, `GET/PATCH/DELETE /admin/users/:id`, `GET /admin/logs?limit=…&userId=…`
+- Cơ sở dữ liệu **D1 `phuocloc`** (binding `DB`), 4 bảng: `users`, `sessions`, `charts`, `logs`. Chứa tài khoản khách thật: **không chạy lệnh ghi lên CSDL thật** khi chưa được duyệt; thay đổi cấu trúc chỉ qua file migration mới, chỉ thêm, không xóa.
+- Khóa bí mật `SETUP_KEY` lưu trên Cloudflare, không bao giờ ghi vào kho.
+- Triển khai: gộp vào `main` → Cloudflare Workers Builds tự triển khai thư mục `worker/` (khi đã bật, xem `worker/README.md`). Trước khi mở PR, chạy `cd worker && npm run check` và chạy thử cục bộ bằng `wrangler dev --local`.
+- Endpoint:
+  - Chung: `GET /ping`, `POST /setup`, `POST /login`, `POST /logout`, `GET /me`, `POST /password`, `POST /chart` · `/png` · `/pdf` (ghi nhận và trừ lượt; mở lại lá số cũ không trừ), `GET /history?limit=…`
+  - Quản trị (admin, manager): `GET/POST /admin/users`, `PATCH/DELETE /admin/users/:id`, `GET /admin/users/:id/charts`, `GET /admin/logs?limit=…&userId=…`
+- Một tính năng cần cả web và máy chủ thì sửa cả hai trong cùng một Pull Request, và đảm bảo bản web cũ vẫn chạy được với máy chủ mới (không đổi tên trường đang dùng).
 - Vai trò: `admin` (toàn quyền), `manager` (quản lý thành viên), `member` (bị giới hạn lượt lập/tải lá số và luận giải theo số lượng và thời hạn).
 - Nội dung chỉ dành cho admin (ví dụ bảng "Các chỉ số và cách tính") phải ẩn với `member`. Nhớ rằng ẩn ở giao diện không phải bảo mật thật — dữ liệu nhạy cảm cần chặn ở Worker.
 
