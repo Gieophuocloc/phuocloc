@@ -104,14 +104,14 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
 <body>
 <div class="wrap">
   <header>
-    <a class="mark" href="./"><span class="seal" aria-hidden="true">PL</span><span><h1>Quản trị Phước Lộc</h1><small>Tài khoản · Gói · Hạn mức</small></span></a>
+    <a class="mark" href="./"><span class="seal" aria-hidden="true">PL</span><span><h1>Quản trị Phước Lộc</h1><small>Tài khoản · Gói · Hạn mức · Tạo Phước</small></span></a>
     <div class="who" id="who"></div>
   </header>
 
   <!-- Đăng nhập -->
   <section class="panel login" id="loginBox" hidden>
     <h2>Đăng nhập quản trị</h2>
-    <p class="hint">Dành cho Admin và Quản lý. Thành viên đăng nhập tại <a href="./">trang lập lá số</a>.</p>
+    <p class="hint">Dành cho Admin và Quản lý. Thành viên đăng nhập tại <a href="./">trang lập lá số</a> hoặc <a href="taophuoc.html">trang Tạo Phước</a>.</p>
     <form id="loginForm" novalidate>
       <label class="f">Tên đăng nhập<input name="u" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
       <label class="f">Mật khẩu<input name="p" type="password" autocomplete="current-password"></label>
@@ -134,7 +134,8 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
   <main id="app" hidden>
     <div class="stats" id="stats"></div>
     <div class="tabs" role="tablist">
-      <button role="tab" aria-selected="true" data-tab="users">Tài khoản</button>
+      <button role="tab" aria-selected="true" data-tab="users" data-app="tuvi">Tử Vi &amp; Tâm Không</button>
+      <button role="tab" aria-selected="false" data-tab="users" data-app="taophuoc">Tạo Phước</button>
       <button role="tab" aria-selected="false" data-tab="logs">Nhật ký hoạt động</button>
     </div>
     <section id="tab-users">
@@ -144,7 +145,7 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
         <button class="btn primary" type="button" id="btnNew">+ Tạo tài khoản</button>
       </div>
       <div class="tbl"><table>
-        <thead><tr><th>Tài khoản</th><th>Vai trò</th><th>Hạn sử dụng</th><th>Lá số</th><th>Luận giải PDF</th><th>Đăng nhập gần nhất</th><th>Thao tác</th></tr></thead>
+        <thead id="uh"></thead>
         <tbody id="ub"></tbody>
       </table></div>
     </section>
@@ -163,7 +164,7 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
   'use strict';
   var API = String(window.PL_API || '').replace(/\/+$/, '');
   var TK = 'phuocloc.token.v1';
-  var S = { token: null, me: null, users: [], filter: 'all' };
+  var S = { token: null, me: null, users: [], filter: 'all', app: 'tuvi' };
   try { S.token = localStorage.getItem(TK); } catch (e) { }
   var $ = function (id) { return document.getElementById(id); };
   var ROLE = { admin: 'Admin', manager: 'Quản lý', member: 'Thành viên' };
@@ -174,6 +175,17 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
     { ten: '1 năm', days: 365, chart: 300, pdf: 150 },
     { ten: 'Không giới hạn', days: '', chart: '', pdf: '' }
   ];
+  // Gói Tạo Phước: tp = số bộ bài (mỗi người đọc = 1 bộ, tải lại không trừ)
+  var PRESETS_TP = [
+    { ten: 'Dùng thử 7 ngày', days: 7, tp: 2 },
+    { ten: '1 tháng', days: 30, tp: 20 },
+    { ten: '3 tháng', days: 90, tp: 60 },
+    { ten: '1 năm', days: 365, tp: 300 },
+    { ten: 'Không giới hạn', days: '', tp: '' }
+  ];
+  var APP = { tuvi: 'Tử Vi & Tâm Không', taophuoc: 'Tạo Phước' };
+  function appsOf(u) { return u.role === 'admin' ? ['tuvi', 'taophuoc'] : (u.apps || ['tuvi']); }
+  function isTP() { return S.app === 'taophuoc'; }
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -230,6 +242,10 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
         '<a class="btn ghost small" href="./">Trang lập lá số</a><button class="btn ghost small" type="button" id="btnOut">Đăng xuất</button>';
       $('btnOut').onclick = function () { api('POST', '/logout').catch(function () { }); setToken(null); showLogin(''); };
       if (S.me.role !== 'admin') $('roleFilter').hidden = true;
+      // Quản lý chỉ thấy mục dịch vụ mà mình được cấp
+      var mine = appsOf(S.me);
+      document.querySelectorAll('.tabs [data-app]').forEach(function (b) { b.hidden = mine.indexOf(b.dataset.app) < 0; });
+      if (mine.indexOf(S.app) < 0) { S.app = mine[0] || 'tuvi'; document.querySelectorAll('.tabs button').forEach(function (x) { x.setAttribute('aria-selected', x.dataset.app === S.app); }); }
       render();
     }).catch(function (e) { if (e.status !== 401) showLogin(e.message); });
   }
@@ -242,28 +258,33 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
     if (u.daysLeft != null && u.daysLeft <= 7) return 'soon';
     return 'active';
   }
+  function inApp(u) { return appsOf(u).indexOf(S.app) >= 0; }
   function render() {
-    var members = S.users.filter(function (u) { return u.role === 'member'; });
+    var tp = isTP(), ncol = tp ? 6 : 7;
+    $('uh').innerHTML = '<tr><th>Tài khoản</th><th>Vai trò</th><th>Hạn sử dụng</th>' + (tp ? '<th>Bộ bài Tạo Phước</th>' : '<th>Lá số</th><th>Luận giải PDF</th>') + '<th>Đăng nhập gần nhất</th><th>Thao tác</th></tr>';
+    $('btnNew').textContent = tp ? '+ Tạo tài khoản Tạo Phước' : '+ Tạo tài khoản';
+    var members = S.users.filter(function (u) { return u.role === 'member' && inApp(u); });
     var c = { all: members.length, active: 0, soon: 0, expired: 0, locked: 0 };
     members.forEach(function (u) { c[stateOf(u)]++; });
     var cards = [['all', 'Thành viên', c.all, ''], ['active', 'Đang sử dụng', c.active, ''], ['soon', 'Sắp hết hạn (≤ 7 ngày)', c.soon, 'warn'], ['expired', 'Đã hết hạn', c.expired, 'bad'], ['locked', 'Đang khóa', c.locked, 'bad']];
     $('stats').innerHTML = cards.map(function (x) { return '<button type="button" class="stat ' + x[3] + '" data-f="' + x[0] + '" aria-pressed="' + (S.filter === x[0]) + '"><b>' + x[2] + '</b><span>' + x[1] + '</span></button>'; }).join('');
     var q = $('q').value.trim().toLowerCase(), rf = $('roleFilter').value;
     var list = S.users.filter(function (u) {
+      if (!inApp(u)) return false;
       if (rf && u.role !== rf) return false;
       if (S.filter !== 'all' && (u.role !== 'member' || stateOf(u) !== S.filter)) return false;
       if (q && [u.username, u.fullName, u.phone, u.note].join(' ').toLowerCase().indexOf(q) < 0) return false;
       return true;
     });
-    if (!list.length) { $('ub').innerHTML = '<tr><td colspan="7" class="empty">' + (S.users.length ? 'Không có tài khoản phù hợp.' : 'Chưa có tài khoản nào. Bấm “+ Tạo tài khoản”.') + '</td></tr>'; return; }
+    if (!list.length) { $('ub').innerHTML = '<tr><td colspan="' + ncol + '" class="empty">' + (S.users.length ? 'Không có tài khoản phù hợp.' : 'Chưa có tài khoản nào. Bấm “+ Tạo tài khoản”.') + '</td></tr>'; return; }
     $('ub').innerHTML = list.map(function (u) {
       var st = stateOf(u);
       var hsd = u.expiresAt ? fd(u.expiresAt) + '<div class="sub">' + (u.expired ? 'đã hết hạn' : 'còn ' + u.daysLeft + ' ngày') + '</div>' : '<span class="sub">Không giới hạn</span>';
       var badge = st === 'locked' ? '<span class="chip red">Đang khóa</span>' : st === 'expired' ? '<span class="chip red">Hết hạn</span>' : st === 'soon' ? '<span class="chip gold">Sắp hết hạn</span>' : '';
       return '<tr data-id="' + u.id + '"><td><div class="nm">' + esc(u.username) + '</div><div class="sub">' + esc(u.fullName || '') + (u.phone ? ' · ' + esc(u.phone) : '') + '</div></td>' +
-        '<td><span class="chip ' + (u.role === 'member' ? 'gray' : u.role === 'admin' ? 'red' : 'gold') + '">' + ROLE[u.role] + '</span>' + (S.me.role === 'admin' && u.createdByName ? '<div class="sub">tạo bởi ' + esc(u.createdByName) + '</div>' : '') + '</td>' +
+        '<td><span class="chip ' + (u.role === 'member' ? 'gray' : u.role === 'admin' ? 'red' : 'gold') + '">' + ROLE[u.role] + '</span>' + (u.role !== 'admin' && appsOf(u).length > 1 ? ' <span class="chip">2 dịch vụ</span>' : '') + (S.me.role === 'admin' && u.createdByName ? '<div class="sub">tạo bởi ' + esc(u.createdByName) + '</div>' : '') + '</td>' +
         '<td class="num">' + hsd + (badge ? '<div style="margin-top:3px">' + badge + '</div>' : '') + '</td>' +
-        '<td class="num">' + quota(u.chart) + '</td><td class="num">' + quota(u.pdf) + '</td>' +
+        (tp ? '<td class="num">' + quota(u.tp || { used: 0, limit: null }) + '</td>' : '<td class="num">' + quota(u.chart) + '</td><td class="num">' + quota(u.pdf) + '</td>') +
         '<td class="num">' + (u.lastLogin ? fd(u.lastLogin, true) : '<span class="sub">chưa đăng nhập</span>') + '</td>' +
         '<td><div class="row-actions"><button class="btn ghost small" data-a="edit">Quản lý</button><button class="btn ghost small" data-a="hist">Lịch sử</button></div></td></tr>';
     }).join('');
@@ -284,6 +305,7 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
     var b = ev.target.closest('button[data-tab]'); if (!b) return;
     this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-selected', x === b); });
     $('tab-users').hidden = b.dataset.tab !== 'users'; $('tab-logs').hidden = b.dataset.tab !== 'logs';
+    if (b.dataset.app) { S.app = b.dataset.app; S.filter = 'all'; render(); }
     if (b.dataset.tab === 'logs') loadLogs();
   });
 
@@ -296,48 +318,66 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
     document.addEventListener('keydown', function k(e) { if (e.key === 'Escape') { ov.remove(); document.removeEventListener('keydown', k); } });
     return ov;
   }
-  function presetButtons() { return '<div class="presets">' + PRESETS.map(function (p, i) { return '<button type="button" data-p="' + i + '">' + p.ten + (p.days ? ' · ' + p.chart + ' lá số · ' + p.pdf + ' PDF' : '') + '</button>'; }).join('') + '</div>'; }
+  function presetButtons() {
+    if (isTP()) return '<div class="presets">' + PRESETS_TP.map(function (p, i) { return '<button type="button" data-p="' + i + '">' + p.ten + (p.days ? ' · ' + p.tp + ' bộ bài' : '') + '</button>'; }).join('') + '</div>';
+    return '<div class="presets">' + PRESETS.map(function (p, i) { return '<button type="button" data-p="' + i + '">' + p.ten + (p.days ? ' · ' + p.chart + ' lá số · ' + p.pdf + ' PDF' : '') + '</button>'; }).join('') + '</div>';
+  }
+  function applyPreset(f, p) { f.days.value = p.days; if (isTP()) f.tpLimit.value = p.tp; else { f.chartLimit.value = p.chart; f.pdfLimit.value = p.pdf; } }
   function bindPresets(root, f) {
     root.querySelectorAll('[data-p]').forEach(function (b) {
-      b.onclick = function () { var p = PRESETS[+b.dataset.p]; f.days.value = p.days; f.chartLimit.value = p.chart; f.pdfLimit.value = p.pdf; };
+      b.onclick = function () { applyPreset(f, (isTP() ? PRESETS_TP : PRESETS)[+b.dataset.p]); };
     });
   }
   var PKG_FIELDS = '<div class="grid3"><label class="f">Số ngày sử dụng <small>(trống = không giới hạn)</small><input name="days" type="number" min="1" inputmode="numeric"></label>' +
     '<label class="f">Số lá số <small>(trống = không giới hạn)</small><input name="chartLimit" type="number" min="0" inputmode="numeric"></label>' +
     '<label class="f">Số bản luận giải PDF <small>(trống = không giới hạn)</small><input name="pdfLimit" type="number" min="0" inputmode="numeric"></label></div>';
+  var PKG_FIELDS_TP = '<div class="grid2"><label class="f">Số ngày sử dụng <small>(trống = không giới hạn)</small><input name="days" type="number" min="1" inputmode="numeric"></label>' +
+    '<label class="f">Số bộ bài Tạo Phước <small>(mỗi người đọc = 1 bộ; trống = không giới hạn)</small><input name="tpLimit" type="number" min="0" inputmode="numeric"></label></div>';
+  function pkgFields() { return isTP() ? PKG_FIELDS_TP : PKG_FIELDS; }
 
   $('btnNew').onclick = function () {
     var admin = S.me.role === 'admin';
-    var ov = dialog('<div class="dlg-hd"><h3>Tạo tài khoản mới</h3><button class="btn ghost small" type="button" data-x>Đóng</button></div>' +
+    var tp = isTP();
+    var ov = dialog('<div class="dlg-hd"><h3>' + (tp ? 'Tạo tài khoản Tạo Phước' : 'Tạo tài khoản mới') + '</h3><button class="btn ghost small" type="button" data-x>Đóng</button></div>' +
       '<form novalidate style="display:grid;gap:14px">' +
       '<div class="grid2"><label class="f">Tên đăng nhập <small>(chữ không dấu, số, . _ -)</small><input name="username" autocapitalize="none" spellcheck="false" autocomplete="off"></label>' +
       '<label class="f">Mật khẩu<div class="inline"><input name="password" autocomplete="off" style="flex:1"><button class="btn ghost small" type="button" data-gen>Tạo ngẫu nhiên</button></div></label></div>' +
       '<div class="grid2"><label class="f">Họ tên<input name="fullName"></label><label class="f">Số điện thoại / Zalo<input name="phone" inputmode="tel"></label></div>' +
       '<div class="grid2"><label class="f">Vai trò<select name="role"><option value="member">Thành viên</option>' + (admin ? '<option value="manager">Quản lý (được cấp tài khoản thành viên)</option><option value="admin">Admin (toàn quyền)</option>' : '') + '</select></label>' +
       '<label class="f">Số thiết bị đăng nhập cùng lúc<input name="maxDevices" type="number" min="1" max="20" value="2"></label></div>' +
-      '<fieldset><legend>Gói sử dụng</legend>' + presetButtons() + PKG_FIELDS + '</fieldset>' +
+      '<p class="hint">Tài khoản này chỉ dùng được <b>' + APP[S.app] + '</b>' + (tp ? ' (trang taophuoc.html), không vào được Tử Vi và Tâm Không.' : ', không vào được Tạo Phước.') + ' Có thể cấp thêm dịch vụ sau trong “Quản lý”.</p>' +
+      '<fieldset><legend>Gói sử dụng</legend>' + presetButtons() + pkgFields() + '</fieldset>' +
       '<label class="f">Ghi chú<textarea name="note" placeholder="VD: đã tùy hỉ, khóa học, người giới thiệu…"></textarea></label>' +
       '<p class="err" role="alert"></p><button class="btn primary" type="submit">Tạo tài khoản</button></form>', true);
     var f = ov.querySelector('form');
     f.password.value = genPass();
     ov.querySelector('[data-gen]').onclick = function () { f.password.value = genPass(); };
     bindPresets(ov, f);
-    var p = PRESETS[1]; f.days.value = p.days; f.chartLimit.value = p.chart; f.pdfLimit.value = p.pdf;
-    f.role.onchange = function () { if (f.role.value !== 'member') { f.days.value = ''; f.chartLimit.value = ''; f.pdfLimit.value = ''; } };
+    applyPreset(f, (tp ? PRESETS_TP : PRESETS)[1]);
+    f.role.onchange = function () { if (f.role.value !== 'member') applyPreset(f, { days: '', chart: '', pdf: '', tp: '' }); };
     f.addEventListener('submit', function (ev) {
       ev.preventDefault(); var er = f.querySelector('.err'); er.textContent = '';
       var pw = f.password.value;
-      api('POST', '/admin/users', {
+      var nb = {
         username: f.username.value.trim(), password: pw, fullName: f.fullName.value, phone: f.phone.value, note: f.note.value,
-        role: f.role.value, maxDevices: f.maxDevices.value, days: f.days.value, chartLimit: f.chartLimit.value, pdfLimit: f.pdfLimit.value
-      }).then(function (j) {
+        role: f.role.value, maxDevices: f.maxDevices.value, days: f.days.value, apps: [S.app]
+      };
+      if (tp) nb.tpLimit = f.tpLimit.value; else { nb.chartLimit = f.chartLimit.value; nb.pdfLimit = f.pdfLimit.value; }
+      api('POST', '/admin/users', nb).then(function (j) {
         ov.remove(); reload(); credDialog(j.user, pw, 'Đã tạo tài khoản');
       }).catch(function (e) { er.textContent = e.message; });
     });
   };
 
   function credText(u, pw) {
-    return 'Tài khoản Phước Lộc Tử Vi\nĐăng nhập tại: https://phuocloc.vn\nTên đăng nhập: ' + u.username + '\nMật khẩu: ' + pw +
+    var ap = appsOf(u);
+    if (ap.indexOf('tuvi') < 0) {
+      var t = u.tp || { limit: null };
+      return 'Tài khoản Tạo Phước – Phước Lộc\nĐăng nhập tại: https://phuocloc.vn/taophuoc.html\nTên đăng nhập: ' + u.username + '\nMật khẩu: ' + pw +
+        '\nHạn sử dụng: ' + (u.expiresAt ? 'đến ' + fd(u.expiresAt) : 'không giới hạn') +
+        '\nSố bộ bài tu: ' + (t.limit == null ? 'không giới hạn' : t.limit) + ' (mỗi người đọc 1 bộ, tải lại không trừ)';
+    }
+    return (ap.indexOf('taophuoc') >= 0 ? 'Tạo Phước: https://phuocloc.vn/taophuoc.html\n' : '') + 'Tài khoản Phước Lộc Tử Vi\nĐăng nhập tại: https://phuocloc.vn\nTên đăng nhập: ' + u.username + '\nMật khẩu: ' + pw +
       '\nHạn sử dụng: ' + (u.expiresAt ? 'đến ' + fd(u.expiresAt) : 'không giới hạn') +
       '\nSố lá số: ' + (u.chart.limit == null ? 'không giới hạn' : u.chart.limit) + ' · Bản luận giải PDF: ' + (u.pdf.limit == null ? 'không giới hạn' : u.pdf.limit) +
       '\nVui lòng đổi mật khẩu sau lần đăng nhập đầu tiên (menu Tài khoản → Đổi mật khẩu).';
@@ -354,22 +394,31 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
 
   function editDialog(u) {
     var admin = S.me.role === 'admin', self = u.id === S.me.id, locked = u.status === 'locked';
-    var canPkg = !(self && !admin);
+    var canPkg = !(self && !admin), tp = isTP(), ut = u.tp || { used: 0, limit: null };
+    var mine = appsOf(S.me), ua = appsOf(u);
+    var canApps = !self && u.role !== 'admin' && (admin || mine.length > 0);
     var ov = dialog('<div class="dlg-hd"><h3>' + esc(u.username) + ' · ' + ROLE[u.role] + '</h3><button class="btn ghost small" type="button" data-x>Đóng</button></div>' +
       '<dl class="kv"><div><dt>Họ tên</dt><dd>' + esc(u.fullName || '—') + '</dd></div><div><dt>Hạn sử dụng</dt><dd>' + (u.expiresAt ? fd(u.expiresAt) + (u.expired ? ' (đã hết)' : ' · còn ' + u.daysLeft + ' ngày') : 'Không giới hạn') + '</dd></div>' +
-      '<div><dt>Lá số</dt><dd>' + u.chart.used + ' / ' + (u.chart.limit == null ? '∞' : u.chart.limit) + '</dd></div><div><dt>Luận giải PDF</dt><dd>' + u.pdf.used + ' / ' + (u.pdf.limit == null ? '∞' : u.pdf.limit) + '</dd></div>' +
+      (ua.indexOf('tuvi') >= 0 ? '<div><dt>Lá số</dt><dd>' + u.chart.used + ' / ' + (u.chart.limit == null ? '∞' : u.chart.limit) + '</dd></div><div><dt>Luận giải PDF</dt><dd>' + u.pdf.used + ' / ' + (u.pdf.limit == null ? '∞' : u.pdf.limit) + '</dd></div>' : '') +
+      (ua.indexOf('taophuoc') >= 0 ? '<div><dt>Bộ bài Tạo Phước</dt><dd>' + ut.used + ' / ' + (ut.limit == null ? '∞' : ut.limit) + '</dd></div>' : '') +
+      '<div><dt>Dịch vụ</dt><dd>' + ua.map(function (a) { return APP[a]; }).join(', ') + '</dd></div>' +
       '<div><dt>Trạng thái</dt><dd>' + (locked ? 'Đang khóa' : 'Hoạt động') + '</dd></div><div><dt>Ngày tạo</dt><dd>' + fd(u.createdAt) + '</dd></div></dl>' +
       (canPkg ?
-        '<fieldset><legend>Gia hạn & cộng lượt (giữ nguyên số đã dùng)</legend>' +
-        '<div class="inline"><label class="f">Cộng thêm ngày<input name="addDays" type="number" min="1" placeholder="VD 30"></label><label class="f">Cộng thêm lá số<input name="addCharts" type="number" min="1" placeholder="VD 10"></label><label class="f">Cộng thêm PDF<input name="addPdfs" type="number" min="1" placeholder="VD 5"></label>' +
+        '<fieldset><legend>Gia hạn & cộng lượt ' + APP[S.app] + ' (giữ nguyên số đã dùng)</legend>' +
+        '<div class="inline"><label class="f">Cộng thêm ngày<input name="addDays" type="number" min="1" placeholder="VD 30"></label>' +
+        (tp ? '<label class="f">Cộng thêm bộ bài<input name="addTps" type="number" min="1" placeholder="VD 10"></label>' : '<label class="f">Cộng thêm lá số<input name="addCharts" type="number" min="1" placeholder="VD 10"></label><label class="f">Cộng thêm PDF<input name="addPdfs" type="number" min="1" placeholder="VD 5"></label>') +
         '<button class="btn jade" type="button" data-do="add">Cộng</button></div><p class="hint" style="font-size:12.5px">Gia hạn tính tiếp từ ngày hết hạn hiện tại (nếu đã hết hạn thì tính từ hôm nay). Tài khoản không giới hạn thì giữ nguyên.</p></fieldset>' +
-        '<fieldset><legend>Đăng ký gói mới (bắt đầu từ hôm nay, đặt lại số đã dùng về 0)</legend>' + presetButtons() + PKG_FIELDS +
+        '<fieldset><legend>Đăng ký gói ' + APP[S.app] + ' mới (bắt đầu từ hôm nay, đặt lại số đã dùng về 0)</legend>' + presetButtons() + pkgFields() +
         '<div><button class="btn jade" type="button" data-do="renew">Áp dụng gói mới</button></div></fieldset>' +
         '<fieldset><legend>Sửa hạn mức trực tiếp</legend><div class="grid3">' +
         '<label class="f">Ngày hết hạn <small>(trống = không giới hạn)</small><input name="expiresAt" type="date" value="' + isoDate(u.expiresAt) + '"></label>' +
+        (tp ? '<label class="f">Tổng số bộ bài <small>(trống = không giới hạn)</small><input name="tl" type="number" min="0" value="' + numOrBlank(ut.limit) + '"></label>' :
         '<label class="f">Tổng số lá số<input name="cl" type="number" min="0" value="' + numOrBlank(u.chart.limit) + '"></label>' +
-        '<label class="f">Tổng số PDF<input name="pl" type="number" min="0" value="' + numOrBlank(u.pdf.limit) + '"></label></div>' +
+        '<label class="f">Tổng số PDF<input name="pl" type="number" min="0" value="' + numOrBlank(u.pdf.limit) + '"></label>') + '</div>' +
         '<div class="inline"><button class="btn ghost" type="button" data-do="limits">Lưu hạn mức</button><button class="btn ghost" type="button" data-do="reset">Đặt lại số đã dùng về 0</button></div></fieldset>' : '') +
+      (canApps ? '<fieldset><legend>Quyền dịch vụ</legend><div class="inline" style="gap:18px">' +
+        ['tuvi', 'taophuoc'].map(function (a) { var dis = !admin && mine.indexOf(a) < 0; return '<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="app_' + a + '"' + (ua.indexOf(a) >= 0 ? ' checked' : '') + (dis ? ' disabled' : '') + ' style="width:18px;height:18px">' + APP[a] + '</label>'; }).join('') +
+        '<button class="btn ghost" type="button" data-do="apps">Lưu quyền</button></div><p class="hint" style="font-size:12.5px">Tài khoản chỉ dùng được những dịch vụ được tích. Hạn sử dụng dùng chung; hạn mức mỗi dịch vụ tính riêng.</p></fieldset>' : '') +
       '<fieldset><legend>Thông tin</legend><div class="grid2"><label class="f">Họ tên<input name="fullName" value="' + esc(u.fullName) + '"></label><label class="f">Số điện thoại / Zalo<input name="phone" value="' + esc(u.phone) + '"></label></div>' +
       '<div class="grid2">' + (admin && !self ? '<label class="f">Vai trò<select name="role"><option value="member">Thành viên</option><option value="manager">Quản lý</option><option value="admin">Admin</option></select></label>' : '') +
       '<label class="f">Số thiết bị đăng nhập cùng lúc<input name="maxDevices" type="number" min="1" max="20" value="' + u.maxDevices + '"></label></div>' +
@@ -383,7 +432,7 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
     var q = function (n) { return d.querySelector('[name=' + n + ']'); };
     if (q('role')) q('role').value = u.role;
     if (canPkg) {
-      var fake = { days: q('days'), chartLimit: q('chartLimit'), pdfLimit: q('pdfLimit') };
+      var fake = { days: q('days'), chartLimit: q('chartLimit'), pdfLimit: q('pdfLimit'), tpLimit: q('tpLimit') };
       bindPresets(d, fake);
     }
     d.querySelector('[data-gen]').onclick = function () { q('newPw').value = genPass(); };
@@ -397,16 +446,21 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
       var b = ev.target.closest('[data-do]'); if (!b) return;
       var a = b.dataset.do;
       if (a === 'add') {
-        var body = {}; if (q('addDays').value) body.addDays = +q('addDays').value; if (q('addCharts').value) body.addCharts = +q('addCharts').value; if (q('addPdfs').value) body.addPdfs = +q('addPdfs').value;
+        var body = {}; if (q('addDays').value) body.addDays = +q('addDays').value;
+        if (tp) { if (q('addTps').value) body.addTps = +q('addTps').value; } else { if (q('addCharts').value) body.addCharts = +q('addCharts').value; if (q('addPdfs').value) body.addPdfs = +q('addPdfs').value; }
         if (!Object.keys(body).length) { er.textContent = 'Nhập số ngày hoặc số lượt cần cộng.'; return; }
         patch(body, 'Đã gia hạn / cộng lượt');
       } else if (a === 'renew') {
-        patch({ renew: { days: q('days').value, chartLimit: q('chartLimit').value, pdfLimit: q('pdfLimit').value } }, 'Đã áp dụng gói mới');
+        patch({ renew: tp ? { days: q('days').value, tpLimit: q('tpLimit').value } : { days: q('days').value, chartLimit: q('chartLimit').value, pdfLimit: q('pdfLimit').value } }, 'Đã áp dụng gói mới');
       } else if (a === 'limits') {
-        patch({ expiresAt: q('expiresAt').value || null, chartLimit: q('cl').value, pdfLimit: q('pl').value }, 'Đã lưu hạn mức');
+        patch(tp ? { expiresAt: q('expiresAt').value || null, tpLimit: q('tl').value } : { expiresAt: q('expiresAt').value || null, chartLimit: q('cl').value, pdfLimit: q('pl').value }, 'Đã lưu hạn mức');
       } else if (a === 'reset') {
         if (!b.dataset.ok) { b.dataset.ok = 1; b.textContent = 'Bấm lần nữa để xác nhận'; return; }
-        patch({ resetUsage: true }, 'Đã đặt lại số đã dùng');
+        patch({ resetUsage: tp ? 'tp' : true }, 'Đã đặt lại số đã dùng');
+      } else if (a === 'apps') {
+        var na = ['tuvi', 'taophuoc'].filter(function (x) { return q('app_' + x).checked; });
+        if (!na.length) { er.textContent = 'Hãy tích ít nhất một dịch vụ.'; return; }
+        patch({ apps: na }, 'Đã lưu quyền dịch vụ');
       } else if (a === 'info') {
         var ib = { fullName: q('fullName').value, phone: q('phone').value, note: q('note').value, maxDevices: q('maxDevices').value };
         if (q('role')) ib.role = q('role').value;
@@ -423,8 +477,8 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
     });
   }
 
-  var ACT = { login: 'Đăng nhập', login_fail: 'Đăng nhập sai', chart_new: 'Lập lá số mới', pdf_new: 'Tải luận giải mới', user_create: 'Tạo tài khoản', user_update: 'Cập nhật tài khoản', user_delete: 'Xóa tài khoản', password_change: 'Tự đổi mật khẩu', setup_admin: 'Khởi tạo Admin' };
-  var COLS = { expires_at: 'hạn', chart_limit: 'lá số', pdf_limit: 'PDF', chart_used: 'đã dùng lá số', pdf_used: 'đã dùng PDF', status: 'trạng thái', role: 'vai trò', full_name: 'họ tên', phone: 'SĐT', note: 'ghi chú', max_devices: 'thiết bị', starts_at: 'bắt đầu gói', username: 'tên', name: 'tên', key: '' };
+  var ACT = { tp_new: 'Tạo bộ bài Tạo Phước', login: 'Đăng nhập', login_fail: 'Đăng nhập sai', chart_new: 'Lập lá số mới', pdf_new: 'Tải luận giải mới', user_create: 'Tạo tài khoản', user_update: 'Cập nhật tài khoản', user_delete: 'Xóa tài khoản', password_change: 'Tự đổi mật khẩu', setup_admin: 'Khởi tạo Admin' };
+  var COLS = { expires_at: 'hạn', chart_limit: 'lá số', pdf_limit: 'PDF', chart_used: 'đã dùng lá số', pdf_used: 'đã dùng PDF', status: 'trạng thái', role: 'vai trò', full_name: 'họ tên', phone: 'SĐT', note: 'ghi chú', max_devices: 'thiết bị', starts_at: 'bắt đầu gói', apps: 'dịch vụ', tp_limit: 'bộ bài', tp_used: 'đã dùng bộ bài', username: 'tên', name: 'tên', key: '' };
   function detail(s) {
     var o; try { o = JSON.parse(s); } catch (e) { return esc(s); }
     if (!o || typeof o !== 'object') return '';
@@ -435,6 +489,7 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
       else if (v === null) v = 'không giới hạn';
       if (k === 'status') v = v === 'locked' ? 'khóa' : 'hoạt động';
       if (k === 'role') v = ROLE[v] || v;
+      if (k === 'apps') v = String(v).split(',').map(function (a) { return APP[a] || a; }).join(' + ');
       return esc((COLS[k] || k) + ': ' + v);
     }).join(' · ');
   }
@@ -449,6 +504,7 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
     api('GET', '/admin/logs?limit=400').then(function (j) { $('lb').innerHTML = logRows(j.items, true); }).catch(function (e) { $('lb').innerHTML = '<tr><td colspan="5" class="empty">' + esc(e.message) + '</td></tr>'; });
   }
   function histDialog(u) {
+    if (isTP()) return histTP(u);
     var ov = dialog('<div class="dlg-hd"><h3>Lịch sử · ' + esc(u.username) + '</h3><button class="btn ghost small" type="button" data-x>Đóng</button></div>' +
       '<h2 style="font-size:16px">Lá số đã lập</h2><div class="tbl"><table style="min-width:620px"><thead><tr><th>Người được lập</th><th>Ngày sinh</th><th>Lập lần đầu</th><th>Mở gần nhất</th><th>Tải</th></tr></thead><tbody data-c><tr><td colspan="5" class="empty">Đang tải…</td></tr></tbody></table></div>' +
       '<h2 style="font-size:16px">Hoạt động</h2><div class="tbl"><table style="min-width:620px"><thead><tr><th>Thời gian</th><th>Hoạt động</th><th>Chi tiết</th><th>Người thực hiện</th></tr></thead><tbody data-l><tr><td colspan="4" class="empty">Đang tải…</td></tr></tbody></table></div>', true);
@@ -457,6 +513,21 @@ legend{font-weight:600;font-size:13.5px;padding:0 6px;color:var(--ink)}
         return '<tr><td><div class="nm">' + esc(c.name || '(không tên)') + '</div><div class="sub">' + (c.type === 'tk' ? 'Lá số Tâm Không' : (c.gender === 'nu' ? 'Nữ' : 'Nam') + ' · ' + esc(c.canChi || '')) + '</div></td><td class="num">' + esc(c.solar || '') + (c.lunar ? '<div class="sub">' + esc(c.lunar) + ' ÂL</div>' : '') + '</td>' +
           '<td class="num">' + fd(c.createdAt, true) + '</td><td class="num">' + fd(c.lastAt, true) + '</td><td>' + (c.pngCount ? '<span class="chip gray">PNG ×' + c.pngCount + '</span> ' : '') + (c.hasPdf ? '<span class="chip gold">PDF ×' + c.pdfCount + '</span>' : '') + '</td></tr>';
       }).join('') : '<tr><td colspan="5" class="empty">Chưa lập lá số nào.</td></tr>';
+    }).catch(function (e) { ov.querySelector('[data-c]').innerHTML = '<tr><td colspan="5" class="empty">' + esc(e.message) + '</td></tr>'; });
+    api('GET', '/admin/logs?limit=200&userId=' + u.id).then(function (j) { ov.querySelector('[data-l]').innerHTML = logRows(j.items, false).replace(/colspan="5"/g, 'colspan="4"'); })
+      .catch(function (e) { ov.querySelector('[data-l]').innerHTML = '<tr><td colspan="4" class="empty">' + esc(e.message) + '</td></tr>'; });
+  }
+
+  function histTP(u) {
+    var ov = dialog('<div class="dlg-hd"><h3>Tạo Phước · ' + esc(u.username) + '</h3><button class="btn ghost small" type="button" data-x>Đóng</button></div>' +
+      '<h2 style="font-size:16px">Bộ bài đã tạo</h2><div class="tbl"><table style="min-width:620px"><thead><tr><th>Người đọc</th><th>Gia đình</th><th>Tạo lần đầu</th><th>Mở gần nhất</th><th>Lượt mở/tải</th></tr></thead><tbody data-c><tr><td colspan="5" class="empty">Đang tải…</td></tr></tbody></table></div>' +
+      '<h2 style="font-size:16px">Hoạt động</h2><div class="tbl"><table style="min-width:620px"><thead><tr><th>Thời gian</th><th>Hoạt động</th><th>Chi tiết</th><th>Người thực hiện</th></tr></thead><tbody data-l><tr><td colspan="4" class="empty">Đang tải…</td></tr></tbody></table></div>', true);
+    api('GET', '/admin/users/' + u.id + '/tp').then(function (j) {
+      ov.querySelector('[data-c]').innerHTML = j.items.length ? j.items.map(function (c) {
+        var d = c.data || {};
+        return '<tr><td><div class="nm">' + esc(c.name || '(không tên)') + '</div><div class="sub">' + esc(d.birth || '') + '</div></td><td>' + ((d.family || []).length) + ' người thân</td>' +
+          '<td class="num">' + fd(c.createdAt, true) + '</td><td class="num">' + fd(c.lastAt, true) + '</td><td class="num">' + (c.dlCount || 0) + '</td></tr>';
+      }).join('') : '<tr><td colspan="5" class="empty">Chưa tạo bộ bài nào.</td></tr>';
     }).catch(function (e) { ov.querySelector('[data-c]').innerHTML = '<tr><td colspan="5" class="empty">' + esc(e.message) + '</td></tr>'; });
     api('GET', '/admin/logs?limit=200&userId=' + u.id).then(function (j) { ov.querySelector('[data-l]').innerHTML = logRows(j.items, false).replace(/colspan="5"/g, 'colspan="4"'); })
       .catch(function (e) { ov.querySelector('[data-l]').innerHTML = '<tr><td colspan="4" class="empty">' + esc(e.message) + '</td></tr>'; });

@@ -1,5 +1,5 @@
 -- Cấu trúc cơ sở dữ liệu D1 "phuocloc" (binding DB) của Worker phuocloc-api.
--- Lấy từ cơ sở dữ liệu đang chạy ngày 17/10/2026. Chỉ có cấu trúc bảng, KHÔNG có dữ liệu thành viên.
+-- Lấy từ cơ sở dữ liệu đang chạy ngày 17/10/2026, cộng thêm migrations/0002_tao_phuoc.sql (Tạo Phước). Chỉ có cấu trúc bảng, KHÔNG có dữ liệu thành viên.
 -- Dùng để dựng lại cơ sở dữ liệu khi cần (ví dụ bản thử nghiệm):
 --   npx wrangler d1 execute <ten-csdl> --file=schema.sql
 -- KHÔNG chạy file này lên cơ sở dữ liệu thật "phuocloc" (bảng đã tồn tại).
@@ -25,7 +25,10 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TEXT NOT NULL,
   last_login TEXT,
   fail_count INTEGER NOT NULL DEFAULT 0,
-  fail_until TEXT
+  fail_until TEXT,
+  apps TEXT NOT NULL DEFAULT 'tuvi',
+  tp_limit INTEGER,
+  tp_used INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -60,6 +63,20 @@ CREATE TABLE IF NOT EXISTS logs (
   ip TEXT NOT NULL DEFAULT ''
 );
 
+-- Thêm bởi migrations/0002_tao_phuoc.sql: bộ bài Tạo Phước của từng tài khoản
+CREATE TABLE IF NOT EXISTS tp_docs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  doc_key TEXT NOT NULL,
+  name TEXT NOT NULL DEFAULT '',
+  data TEXT NOT NULL DEFAULT '{}',
+  dl_count INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  last_at TEXT NOT NULL,
+  UNIQUE (user_id, doc_key)
+);
+
+CREATE INDEX IF NOT EXISTS idx_tp_docs_user ON tp_docs (user_id, last_at);
 CREATE INDEX IF NOT EXISTS idx_charts_user ON charts (user_id, last_at);
 CREATE INDEX IF NOT EXISTS idx_logs_at ON logs (at);
 CREATE INDEX IF NOT EXISTS idx_logs_user ON logs (user_id, at);

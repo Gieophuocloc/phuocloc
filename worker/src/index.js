@@ -7,7 +7,9 @@ const SESSION_DAYS = 30,
   PBKDF2_ITER = 1e5,
   MAX_FAILS = 8,
   LOCK_MINUTES = 15,
-  ROLES = ['admin', 'manager', 'member'];
+  ROLES = ['admin', 'manager', 'member'],
+  // Dịch vụ: 'tuvi' = Tử Vi + Tâm Không (mặc định của mọi tài khoản cũ), 'taophuoc' = Tạo Phước (bài tu, bài đọc)
+  APPS = ['tuvi', 'taophuoc'];
 var index_default = {
   async fetch(req, env) {
     const cors = corsHeaders(req, env);
@@ -47,7 +49,10 @@ async function route(req, env) {
   if (p === '/chart' && m === 'POST') return useChart(ctx, 'chart');
   if (p === '/png' && m === 'POST') return useChart(ctx, 'png');
   if (p === '/pdf' && m === 'POST') return useChart(ctx, 'pdf');
-  if (p === '/history' && m === 'GET') return history(ctx, me.id);
+  if (p === '/history' && m === 'GET')
+    return hasApp(me, 'tuvi') ? history(ctx, me.id) : json({ ok: !0, items: [] });
+  if (p === '/tp/doc' && m === 'POST') return useTp(ctx);
+  if (p === '/tp/history' && m === 'GET') return (needApp(me, 'taophuoc'), tpHistory(ctx, me.id));
   if (p.startsWith('/admin/')) {
     if (me.role !== 'admin' && me.role !== 'manager')
       throw err(403, 'forbidden', 'Tài khoản không có quyền quản trị.');
@@ -58,6 +63,8 @@ async function route(req, env) {
     if (mm && m === 'DELETE') return deleteUser(ctx, +mm[1]);
     if (((mm = p.match(/^\/admin\/users\/(\d+)\/charts$/)), mm && m === 'GET'))
       return (await target(ctx, +mm[1]), history(ctx, +mm[1]));
+    if (((mm = p.match(/^\/admin\/users\/(\d+)\/tp$/)), mm && m === 'GET'))
+      return (await target(ctx, +mm[1]), tpHistory(ctx, +mm[1]));
     if (p === '/admin/logs' && m === 'GET') return listLogs(ctx);
   }
   throw err(404, 'not_found', 'Không tìm thấy.');
@@ -184,6 +191,45 @@ function checkPassword(pw) {
   if (typeof pw != 'string' || pw.length < 6 || pw.length > 128)
     throw err(400, 'bad_password', 'Mật khẩu cần từ 6 đến 128 ký tự.');
 }
+/* ---------- quyền dịch vụ (Tử Vi & Tâm Không / Tạo Phước) ---------- */
+function appsOf(u) {
+  if (u.role === 'admin') return APPS.slice();
+  return String(u.apps == null ? 'tuvi' : u.apps)
+    .split(',')
+    .map((s) => s.trim())
+    .filter((x) => APPS.includes(x));
+}
+function hasApp(u, app) {
+  return appsOf(u).includes(app);
+}
+function needApp(u, app) {
+  if (!hasApp(u, app))
+    throw err(
+      403,
+      'no_app',
+      app === 'taophuoc'
+        ? 'Tài khoản này chưa được cấp quyền Tạo Phước. Vui lòng liên hệ quản trị viên.'
+        : 'Tài khoản này chỉ dùng cho Tạo Phước (taophuoc.html), chưa được cấp quyền Tử Vi & Tâm Không. Vui lòng liên hệ quản trị viên.',
+    );
+}
+function parseApps(v) {
+  const list = (Array.isArray(v) ? v : String(v ?? '').split(','))
+    .map((s) => String(s).trim())
+    .filter(Boolean);
+  if (!list.length) throw err(400, 'bad_input', 'Hãy chọn ít nhất một dịch vụ cho tài khoản.');
+  if (list.some((x) => !APPS.includes(x))) throw err(400, 'bad_input', 'Dịch vụ không hợp lệ.');
+  return APPS.filter((x) => list.includes(x)).join(',');
+}
+// Quản lý chỉ được cấp/thu những dịch vụ mà chính mình có
+function checkGrant(me, before, after) {
+  if (me.role === 'admin') return;
+  const mine = appsOf(me),
+    a = before ? before.split(',') : [],
+    b = after.split(',');
+  const changed = APPS.filter((x) => a.includes(x) !== b.includes(x));
+  if (changed.some((x) => !mine.includes(x)))
+    throw err(403, 'forbidden', 'Bạn chỉ được cấp quyền những dịch vụ mà tài khoản của bạn có.');
+}
 function isExpired(u) {
   return !!(u.expires_at && u.expires_at < nowIso());
 }
@@ -203,6 +249,8 @@ function publicUser(u) {
     expired: isExpired(u),
     chart: { used: u.chart_used, limit: u.chart_limit },
     pdf: { used: u.pdf_used, limit: u.pdf_limit },
+    apps: appsOf(u),
+    tp: { used: u.tp_used ?? 0, limit: u.tp_limit ?? null },
     maxDevices: u.max_devices,
     createdBy: u.created_by,
     createdAt: u.created_at,
@@ -328,6 +376,7 @@ async function setup(ctx) {
 async function useChart(ctx, kind) {
   const u = ctx.me,
     DB = ctx.env.DB;
+  needApp(u, 'tuvi');
   if (isExpired(u))
     throw err(
       403,
@@ -438,6 +487,94 @@ async function history(ctx, userId) {
     });
   return json({ ok: !0, items });
 }
+/* ---------- Tạo Phước: mỗi người đọc = 1 bộ bài = 1 lượt; tải lại không trừ ---------- */
+async function useTp(ctx) {
+  const u = ctx.me,
+    DB = ctx.env.DB;
+  needApp(u, 'taophuoc');
+  if (isExpired(u))
+    throw err(
+      403,
+      'expired',
+      'Tài khoản đã hết hạn sử dụng. Vui lòng liên hệ quản trị viên để gia hạn.',
+    );
+  const b = await body(ctx),
+    key = cleanText(b.key, 160);
+  if (!key) throw err(400, 'bad_input', 'Thiếu mã bộ bài.');
+  const entry = b.entry && typeof b.entry == 'object' ? b.entry : {},
+    data = JSON.stringify(entry);
+  if (data.length > 16e3)
+    throw err(413, 'too_large', 'Thông tin bộ bài quá dài, vui lòng rút gọn bớt.');
+  const name = cleanText(entry.name, 80),
+    now = nowIso();
+  let row = await DB.prepare('SELECT * FROM tp_docs WHERE user_id = ? AND doc_key = ?')
+      .bind(u.id, key)
+      .first(),
+    counted = !1;
+  if (!row) {
+    if (
+      !(
+        await DB.prepare(
+          'UPDATE users SET tp_used = tp_used + 1 WHERE id = ? AND (tp_limit IS NULL OR tp_used < tp_limit)',
+        )
+          .bind(u.id)
+          .run()
+      ).meta.changes
+    )
+      throw err(
+        403,
+        'quota_tp',
+        'Bạn đã dùng hết ' +
+          u.tp_limit +
+          ' lượt tạo bộ bài Tạo Phước của gói. Vui lòng liên hệ quản trị viên để cộng thêm.',
+      );
+    (
+      await DB.prepare(
+        'INSERT OR IGNORE INTO tp_docs (user_id, doc_key, name, data, created_at, last_at) VALUES (?,?,?,?,?,?)',
+      )
+        .bind(u.id, key, name, data, now, now)
+        .run()
+    ).meta.changes
+      ? ((counted = !0), await log(ctx, u.id, 'tp_new', { key, name }))
+      : await DB.prepare('UPDATE users SET tp_used = tp_used - 1 WHERE id = ?').bind(u.id).run();
+    row = await DB.prepare('SELECT * FROM tp_docs WHERE user_id = ? AND doc_key = ?')
+      .bind(u.id, key)
+      .first();
+  }
+  await DB.prepare(
+    'UPDATE tp_docs SET last_at = ?, data = ?, name = ?, dl_count = dl_count + 1 WHERE id = ?',
+  )
+    .bind(now, data, name || row.name, row.id)
+    .run();
+  const fresh = await DB.prepare('SELECT * FROM users WHERE id = ?').bind(u.id).first();
+  return json({ ok: !0, counted, user: publicUser(fresh) });
+}
+async function tpHistory(ctx, userId) {
+  const lim = Math.min(2e3, Math.max(1, +ctx.url.searchParams.get('limit') || 1e3)),
+    items = (
+      (
+        await ctx.env.DB.prepare(
+          'SELECT doc_key, name, data, dl_count, created_at, last_at FROM tp_docs WHERE user_id = ? ORDER BY last_at DESC LIMIT ?',
+        )
+          .bind(userId, lim)
+          .all()
+      ).results || []
+    ).map((x) => {
+      let d = {};
+      try {
+        d = JSON.parse(x.data);
+      } catch {}
+      return {
+        key: x.doc_key,
+        name: x.name || d.name || '',
+        data: d,
+        dlCount: x.dl_count,
+        createdAt: x.created_at,
+        lastAt: x.last_at,
+      };
+    });
+  return json({ ok: !0, items });
+}
 async function target(ctx, id) {
   const t = await ctx.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(id).first();
   if (!t) throw err(404, 'not_found', 'Không tìm thấy tài khoản.');
@@ -495,6 +632,7 @@ function packageFields(b, base) {
   return (
     b.chartLimit !== void 0 && (out.chart_limit = intOrNull(b.chartLimit, 'Số lá số')),
     b.pdfLimit !== void 0 && (out.pdf_limit = intOrNull(b.pdfLimit, 'Số bản luận giải')),
+    b.tpLimit !== void 0 && (out.tp_limit = intOrNull(b.tpLimit, 'Số bộ bài Tạo Phước')),
     out
   );
 }
@@ -508,6 +646,8 @@ async function createUser(ctx) {
   if (!ROLES.includes(role)) throw err(400, 'bad_input', 'Vai trò không hợp lệ.');
   if (me.role !== 'admin' && role !== 'member')
     throw err(403, 'forbidden', 'Quản lý chỉ được tạo tài khoản Thành viên.');
+  const apps = b.apps === void 0 ? 'tuvi' : parseApps(b.apps);
+  checkGrant(me, '', apps);
   if (await DB.prepare('SELECT id FROM users WHERE username = ?').bind(username).first())
     throw err(409, 'username_taken', 'Tên đăng nhập "' + username + '" đã có người dùng.');
   const pk = packageFields(b),
@@ -518,7 +658,7 @@ async function createUser(ctx) {
     throw err(400, 'bad_input', 'Số thiết bị đăng nhập cùng lúc từ 1 đến 20.');
   const id = (
     await DB.prepare(
-      'INSERT INTO users (username, pass_hash, salt, full_name, phone, note, role, status, starts_at, expires_at, chart_limit, pdf_limit, max_devices, created_by, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      'INSERT INTO users (username, pass_hash, salt, full_name, phone, note, role, status, starts_at, expires_at, chart_limit, pdf_limit, max_devices, created_by, created_at, apps, tp_limit) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
     )
       .bind(
         username,
@@ -536,6 +676,8 @@ async function createUser(ctx) {
         maxDev,
         me.id,
         now,
+        apps,
+        pk.tp_limit === void 0 ? null : pk.tp_limit,
       )
       .run()
   ).meta.last_row_id;
@@ -545,6 +687,8 @@ async function createUser(ctx) {
     expires_at: pk.expires_at || null,
     chart_limit: pk.chart_limit ?? null,
     pdf_limit: pk.pdf_limit ?? null,
+    apps,
+    tp_limit: pk.tp_limit ?? null,
   });
   const u = await DB.prepare('SELECT * FROM users WHERE id = ?').bind(id).first();
   return json({ ok: !0, user: publicUser(u) });
@@ -574,6 +718,14 @@ async function updateUser(ctx, id) {
     if (self) throw err(400, 'bad_input', 'Không thể tự đổi vai trò của mình.');
     set.role = b.role;
   }
+  if (b.apps !== void 0) {
+    const na = parseApps(b.apps),
+      cur = t.apps == null ? 'tuvi' : t.apps;
+    if (na !== cur) {
+      if (self) throw err(400, 'bad_input', 'Không thể tự đổi quyền dịch vụ của mình.');
+      (checkGrant(me, cur, na), (set.apps = na));
+    }
+  }
   if (b.maxDevices !== void 0) {
     const n = Number(b.maxDevices);
     if (!Number.isInteger(n) || n < 1 || n > 20)
@@ -585,6 +737,8 @@ async function updateUser(ctx, id) {
     me.role !== 'admin' &&
     (b.chartLimit !== void 0 ||
       b.pdfLimit !== void 0 ||
+      b.tpLimit !== void 0 ||
+      b.addTps ||
       b.days !== void 0 ||
       b.expiresAt !== void 0 ||
       b.addDays ||
@@ -596,7 +750,11 @@ async function updateUser(ctx, id) {
     throw err(403, 'forbidden', 'Quản lý không tự sửa hạn mức của mình.');
   if (b.renew) {
     const pk = packageFields(b.renew);
-    Object.assign(set, pk, { starts_at: nowIso(), chart_used: 0, pdf_used: 0 });
+    // Gói mới chỉ đặt lại số đã dùng của dịch vụ được gửi lên (Tử Vi: lá số/PDF; Tạo Phước: bộ bài)
+    (Object.assign(set, pk, { starts_at: nowIso() }),
+      (b.renew.chartLimit !== void 0 || b.renew.pdfLimit !== void 0) &&
+        Object.assign(set, { chart_used: 0, pdf_used: 0 }),
+      b.renew.tpLimit !== void 0 && (set.tp_used = 0));
   } else
     (Object.assign(
       set,
@@ -605,9 +763,14 @@ async function updateUser(ctx, id) {
         expiresAt: b.expiresAt,
         chartLimit: b.chartLimit,
         pdfLimit: b.pdfLimit,
+        tpLimit: b.tpLimit,
       }),
     ),
-      b.resetUsage && Object.assign(set, { chart_used: 0, pdf_used: 0 }));
+      // resetUsage: true = lá số + PDF (như cũ), 'tp' = chỉ bộ bài Tạo Phước, 'all' = tất cả
+      b.resetUsage &&
+        b.resetUsage !== 'tp' &&
+        Object.assign(set, { chart_used: 0, pdf_used: 0 }),
+      (b.resetUsage === 'tp' || b.resetUsage === 'all') && (set.tp_used = 0));
   if (b.addDays) {
     const d = Number(b.addDays);
     if (!Number.isInteger(d) || d < 1 || d > 36500)
@@ -616,7 +779,7 @@ async function updateUser(ctx, id) {
       base = cur && cur > nowIso() ? cur : nowIso();
     set.expires_at = addDaysIso(base, d);
   }
-  ['addCharts:chart_limit', 'addPdfs:pdf_limit'].forEach((pair) => {
+  ['addCharts:chart_limit', 'addPdfs:pdf_limit', 'addTps:tp_limit'].forEach((pair) => {
     const [k, col] = pair.split(':');
     if (!b[k]) return;
     const n = Number(b[k]);
@@ -672,6 +835,7 @@ async function deleteUser(ctx, id) {
     await DB.batch([
       DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id),
       DB.prepare('DELETE FROM charts WHERE user_id = ?').bind(id),
+      DB.prepare('DELETE FROM tp_docs WHERE user_id = ?').bind(id),
       DB.prepare('DELETE FROM users WHERE id = ?').bind(id),
     ]),
     await log(ctx, id, 'user_delete', { username: t.username }),

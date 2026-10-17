@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tạo Phước – Bài tu, bài đọc | Phước Lộc</title>
+<meta name="description" content="Tạo bộ bài tu tập tạo phước (sái tịnh, sám hối, xóa nợ cầu siêu, trả nợ, biếu tiền…) đã điền sẵn tên người đọc và gia đình, tải về dạng Word.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:wght@600;700&display=swap">
+<style>
+/* Màu thương hiệu Phước Lộc, ưu tiên dụng thần Hỏa – Thổ – Kim: đỏ son, vàng kim, vàng đất, nâu, trắng ngà */
+:root{
+  --paper:#f7f4ec; --card:#fffdf8; --ink:#1c1d21; --ink-2:#55585f; --ink-3:#8b8d93;
+  --gold:#a8862f; --gold-soft:#efe5c9; --seal:#9b2a1f; --seal-soft:#f6e1dd; --earth:#7a5a32; --earth-soft:#f1e8d8;
+  --jade:#2f5d3a; --on-seal:#fff8ec; --line:#e2dccd; --line-2:#cfc6b1; --focus:#9b2a1f;
+  --f-display:"Lora","Times New Roman",serif; --f-ui:"Be Vietnam Pro","Segoe UI",system-ui,sans-serif; --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#17150f; --card:#201d16; --ink:#efe9dc; --ink-2:#bdb4a2; --ink-3:#8a8273;
+  --gold:#d6b768; --gold-soft:#3a3220; --seal:#e3806f; --seal-soft:#3d2520; --earth:#d1ad7c; --earth-soft:#2e271c;
+  --jade:#8fc29a; --on-seal:#1c1406; --line:#332e24; --line-2:#463f31; --focus:#e3806f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#17150f; --card:#201d16; --ink:#efe9dc; --ink-2:#bdb4a2; --ink-3:#8a8273;
+  --gold:#d6b768; --gold-soft:#3a3220; --seal:#e3806f; --seal-soft:#3d2520; --earth:#d1ad7c; --earth-soft:#2e271c;
+  --jade:#8fc29a; --on-seal:#1c1406; --line:#332e24; --line-2:#463f31; --focus:#e3806f; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font:15.5px/1.55 var(--f-ui);margin:0}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 56px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;padding:18px 0 14px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.mark{display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;min-width:0}
+.seal{width:44px;height:44px;flex:0 0 44px;border-radius:10px;background:var(--seal);color:var(--on-seal);display:grid;place-items:center;font:700 15px/1 var(--f-display);box-shadow:inset 0 0 0 2px rgba(255,236,200,.35)}
+.mark h1{font:700 23px/1.1 var(--f-display);margin:0;color:var(--seal)}
+.mark small{display:block;font-size:11.5px;color:var(--earth);letter-spacing:.12em;text-transform:uppercase;margin-top:4px}
+.who{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px;color:var(--ink-2)}
+.who b{color:var(--ink)}
+h2{font:600 20px/1.25 var(--f-display);margin:0 0 4px}
+h3{font:600 16.5px/1.3 var(--f-display);margin:0;color:var(--earth)}
+p{margin:0}
+.btn{font:600 14.5px/1 var(--f-ui);border-radius:10px;padding:12px 16px;min-height:44px;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;white-space:nowrap;color:inherit;background:none}
+.btn.primary{background:var(--seal);color:var(--on-seal)}
+.btn.gold{background:var(--gold);color:#1c1406}
+.btn.ghost{border-color:var(--line-2);color:var(--ink);background:var(--card)}
+.btn.ghost:hover{border-color:var(--ink-3)}
+.btn.small{padding:8px 11px;min-height:36px;font-size:13px}
+.btn.link{padding:4px 2px;min-height:0;color:var(--seal);text-decoration:underline;font-weight:500}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.block{width:100%}
+input,select,textarea{font:16px/1.3 var(--f-ui);color:var(--ink);background:var(--paper);border:1px solid var(--line-2);border-radius:9px;padding:10px 11px;width:100%;min-width:0;min-height:44px}
+textarea{resize:vertical;min-height:70px}
+input[type=checkbox],input[type=radio]{width:20px;height:20px;min-height:0;accent-color:var(--seal);margin:0;flex:0 0 auto}
+input:focus-visible,select:focus-visible,textarea:focus-visible,.btn:focus-visible,summary:focus-visible,.tabs button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+label.f{display:grid;gap:5px;font-weight:500;font-size:13.5px;color:var(--ink-2)}
+label.f small{font-weight:400;color:var(--ink-3)}
+.req{color:var(--seal)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+@media (max-width:640px){.grid2,.grid3{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;margin-bottom:14px}
+.card-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.step{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--seal);color:var(--on-seal);font:700 13px/1 var(--f-ui);margin-right:8px;vertical-align:2px}
+.hint{color:var(--ink-2);font-size:13.5px}
+.err{color:var(--seal);font-size:14px;min-height:1em}
+.login{max-width:420px;margin:28px auto}
+.login form{display:grid;gap:14px}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:10px;overflow:hidden}
+.seg label{display:flex;align-items:center;gap:6px;padding:10px 14px;cursor:pointer;font-size:14.5px;min-height:44px}
+.seg label+label{border-left:1px solid var(--line-2)}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.seg label:has(input:checked){background:var(--seal);color:var(--on-seal)}
+.seg label:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:-2px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{font:500 13px/1 var(--f-ui);padding:9px 12px;border-radius:999px;border:1px solid var(--gold);background:var(--gold-soft);color:var(--ink);cursor:pointer;min-height:36px}
+.rows{display:grid;gap:10px}
+.row{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--paper);display:grid;gap:10px}
+.row-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.row-top b{font-size:13px;color:var(--earth);letter-spacing:.04em}
+.fam{display:grid;grid-template-columns:minmax(150px,1.1fr) minmax(0,1.6fr) minmax(110px,.9fr);gap:10px}
+@media (max-width:700px){.fam{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fam .nm{grid-column:1/-1;order:-1}}
+.lin{display:grid;grid-template-columns:90px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.6fr);gap:10px}
+@media (max-width:700px){.lin{grid-template-columns:90px minmax(0,1fr)}.lin .wide{grid-column:1/-1}}
+.checks{display:flex;gap:8px 18px;flex-wrap:wrap}
+.checks label{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;min-height:32px}
+.x{background:none;border:1px solid var(--line-2);color:var(--ink-2);border-radius:8px;width:36px;height:36px;cursor:pointer;font-size:18px;line-height:1;flex:0 0 auto}
+.x:hover{color:var(--seal);border-color:var(--seal)}
+details.more{border:1px solid var(--line);border-radius:var(--r);background:var(--card);margin-bottom:14px}
+details.more>summary{cursor:pointer;padding:16px 18px;font:600 16px/1.3 var(--f-display);color:var(--earth);list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:"＋";color:var(--seal)}
+details.more[open]>summary::after{content:"－"}
+details.more .inner{padding:0 18px 18px;display:grid;gap:14px}
+.tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
+.tabs button{font:600 14px/1 var(--f-ui);padding:11px 16px;border-radius:999px;border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);cursor:pointer;white-space:nowrap;min-height:42px}
+.tabs button[aria-selected=true]{background:var(--seal);border-color:var(--seal);color:var(--on-seal)}
+.quota{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--earth-soft);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14px;margin-bottom:16px}
+.quota b{color:var(--seal)}
+.notice{border-left:4px solid var(--gold);background:var(--gold-soft);padding:12px 14px;border-radius:8px;font-size:14px}
+.notice.red{border-color:var(--seal);background:var(--seal-soft)}
+.sticky{position:sticky;bottom:0;padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--paper) 70%,transparent);z-index:5}
+.result{border:2px solid var(--gold);background:var(--card);border-radius:14px;padding:18px;display:grid;gap:14px;margin-bottom:16px}
+.result h2{color:var(--seal)}
+.dl-main{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.dl-main .btn{flex-direction:column;align-items:flex-start;justify-content:center;white-space:normal;text-align:left;line-height:1.3;padding:14px 16px}
+.dl-main .btn small{display:block;font-weight:400;font-size:12.5px;opacity:.85;margin-top:3px}
+.bai-list{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.bai-list li{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding:6px 0}
+.bai-list li:last-child{border-bottom:0}
+.bai-list .tag{font-size:11.5px;font-weight:700;color:var(--earth);background:var(--earth-soft);border-radius:999px;padding:2px 8px;margin-right:8px;white-space:nowrap}
+.hist{display:grid;gap:10px}
+.hitem{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:12px 14px}
+.hitem .nm{font-weight:600}
+.hitem .sub{font-size:12.5px;color:var(--ink-3)}
+.empty{padding:26px 14px;text-align:center;color:var(--ink-2)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:11px 16px;border-radius:9px;font-size:14px;z-index:60;max-width:calc(100% - 32px)}
+.inapp{background:var(--gold-soft);color:var(--ink);font-size:13.5px;padding:10px 40px 10px 14px;position:relative;border-bottom:1px solid var(--line)}
+.inapp button{position:absolute;right:8px;top:6px;background:none;border:0;font-size:18px;color:var(--ink-2);cursor:pointer;width:30px;height:30px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.sheet{background:var(--card);color:var(--ink);border-radius:14px;max-width:480px;width:100%;padding:18px;display:grid;gap:12px;margin-bottom:env(safe-area-inset-bottom,0px)}
+.sheet .act{display:flex;gap:8px;flex-wrap:wrap}
+.sheet .act .btn{flex:1 1 160px}
+footer{margin-top:26px;font-size:12.5px;color:var(--ink-3);text-align:center}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="mark" href="taophuoc.html"><span class="seal" aria-hidden="true">TP</span><span><h1>Tạo Phước</h1><small>Bài tu · Bài đọc · Biếu tiền</small></span></a>
+    <div class="who" id="who"></div>
+  </header>
+
+  <!-- Cổng đăng nhập / thông báo quyền -->
+  <section class="card login" id="gate" hidden></section>
+
+  <main id="app" hidden>
+    <div class="quota" id="quota"></div>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="tao">Tạo bộ bài tu</button>
+      <button role="tab" aria-selected="false" data-tab="mau">Bài mẫu tải về</button>
+      <button role="tab" aria-selected="false" data-tab="ls">Lịch sử</button>
+    </div>
+
+    <!-- ===== TẠO BỘ BÀI ===== -->
+    <section id="tab-tao">
+      <div id="result"></div>
+      <form id="f" novalidate autocomplete="off">
+        <div class="card">
+          <div class="card-hd"><h2><span class="step">1</span>Người đọc bài</h2></div>
+          <div class="grid3">
+            <label class="f"><span>Họ và tên <span class="req">*</span></span><input name="ten" autocapitalize="words" placeholder="VD: Lê Thị B"></label>
+            <label class="f"><span>Ngày sinh <small>(không bắt buộc)</small></span><input name="birth" inputmode="numeric" placeholder="dd/mm/yyyy"></label>
+            <div class="f" style="display:grid;gap:5px"><span style="font-weight:500;font-size:13.5px;color:var(--ink-2)">Giới tính</span>
+              <div class="seg" role="radiogroup" aria-label="Giới tính"><label><input type="radio" name="gender" value="nam" checked>Nam</label><label><input type="radio" name="gender" value="nu">Nữ</label></div></div>
+          </div>
+          <p class="hint" id="histHint" hidden></p>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><div><h2><span class="step">2</span>Thành viên trong gia đình</h2>
+            <p class="hint">Không chọn mối quan hệ thì bài sẽ ghi là <b>Người thân</b>. Tích <b>Kêu thay</b> để bài trả nợ và phóng sinh có phần kêu thay cho người đó.</p></div></div>
+          <div class="chips" id="quick"></div>
+          <div class="rows" id="famRows"></div>
+          <div><button type="button" class="btn ghost" id="addFam">+ Thêm người</button></div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><div><h2><span class="step">3</span>Dòng họ</h2>
+            <p class="hint">Tự điền theo người đọc, mẹ đẻ, vợ/chồng, mẹ vợ/chồng (chưa có gia đình thì 2 họ bố – mẹ). Có thể sửa, thêm, bớt.</p></div>
+            <button type="button" class="btn ghost small" id="reLin">Tự điền lại</button></div>
+          <div class="rows" id="linRows"></div>
+          <div><button type="button" class="btn ghost" id="addLin">+ Thêm dòng họ</button></div>
+        </div>
+
+        <div class="card">
+          <div class="card-hd"><div><h2><span class="step">4</span>Địa chỉ đất</h2>
+            <p class="hint">Địa chỉ đầu tiên là nơi ở / nơi làm lễ. Thêm công ty, cửa hàng… nếu có.</p></div></div>
+          <div class="rows" id="addrRows"></div>
+          <div><button type="button" class="btn ghost" id="addAddr">+ Thêm địa chỉ</button></div>
+        </div>
+
+        <details class="more" id="more">
+          <summary>Thông tin thêm (phóng sinh, duyên âm, người đốt mã…)</summary>
+          <div class="inner">
+            <div class="grid2">
+              <label class="f">Sông / hồ / ao nơi phóng sinh<input name="song" placeholder="VD: sông Cầu, đoạn cầu Đáp Cầu"></label>
+              <label class="f">Con vật phóng sinh <small>(mỗi dòng một loại)</small><textarea name="animals" rows="2" placeholder="VD: 10 con cá chép"></textarea></label>
+            </div>
+            <div class="rows" id="daRows"></div>
+            <div><button type="button" class="btn ghost" id="addDa">+ Thêm duyên âm</button> <span class="hint">Không thêm thì bài duyên âm để trống tên cho tự điền.</span></div>
+            <div class="grid2">
+              <label class="f">Người đốt mã giúp <small>(nếu nhờ)</small><input name="burnerName"></label>
+              <label class="f">Địa chỉ người đốt mã<input name="burnerAddr"></label>
+            </div>
+            <label class="f">Địa chỉ độ sinh <small>(bài Độ sinh, mỗi dòng một địa chỉ; trống thì để chỗ tự điền)</small><textarea name="doSinh" rows="2"></textarea></label>
+            <div class="grid2">
+              <label class="f">Năm dương lịch ghi trong bài<input name="year" inputmode="numeric"></label>
+              <label class="f">Năm âm lịch<input name="yearAL"></label>
+            </div>
+          </div>
+        </details>
+
+        <p class="err" id="formErr" role="alert"></p>
+        <div class="sticky"><button class="btn primary block" type="submit" id="go">Tạo bộ bài tu (Word)</button></div>
+      </form>
+    </section>
+
+    <!-- ===== BÀI MẪU ===== -->
+    <section id="tab-mau" hidden>
+      <div class="card">
+        <h2>Hướng dẫn quy trình</h2>
+        <p class="hint">Bảng quy trình Phần 1 (3 bài, 3–5 ngày, Xóa nợ cầu siêu đọc đủ 49 ngày) và Phần 2 (8 bài + viết Sổ Gieo Phước).</p>
+        <div><button class="btn ghost" data-mau="guide">Tải hướng dẫn quy trình (.docx)</button></div>
+      </div>
+      <div class="card">
+        <h2>Bộ bài mẫu để trống</h2>
+        <p class="hint">Đủ 11 bài, chỗ tên và địa chỉ để “............” để in ra điền tay.</p>
+        <div class="dl-main">
+          <button class="btn gold" data-mau="blank-all">Bài tổng hợp để trống<small>1 file Word, đủ 11 bài + bảng kê</small></button>
+          <button class="btn ghost" data-mau="blank-zip">Từng bài để trống (.zip)<small>11 file Word riêng</small></button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Bộ bài ví dụ đã điền</h2>
+        <p class="hint">Ví dụ gia đình chị Lê Thị B (giống file quy trình) để xem bài sau khi điền trông thế nào.</p>
+        <div class="dl-main">
+          <button class="btn ghost" data-mau="ex-all">Bài tổng hợp ví dụ<small>Người đọc Lê Thị B và gia đình</small></button>
+          <button class="btn ghost" data-mau="ex-ke">Bảng kê biếu tiền ví dụ<small>Tự tính theo số người, dòng họ, địa chỉ</small></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== LỊCH SỬ ===== -->
+    <section id="tab-ls" hidden>
+      <div class="card" style="gap:10px">
+        <p class="hint">Bộ bài đã tạo. Mở lại hoặc tải lại <b>không trừ lượt</b>; có thể sửa thông tin gia đình rồi tạo lại.</p>
+        <input type="search" id="hq" placeholder="Tìm theo tên người đọc…" aria-label="Tìm trong lịch sử">
+      </div>
+      <div class="hist" id="hist"></div>
+    </section>
+  </main>
+  <footer>Phước Lộc · Tâm Không — Lợi Cộng Đồng · Lợi Người Khác · Lợi Mình</footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ---------- Bộ tạo file Word (.docx) tối giản: tự viết XML + nén ZIP kiểu lưu trữ, không cần thư viện ngoài ---------- */
+const DOCX = (function () {
+  const enc = new TextEncoder();
+  const CRC = (function () { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  function crc32(b) { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+  // Nén ZIP (không nén dữ liệu, chỉ đóng gói) — files: [{name, data: string|Uint8Array}]
+  function zip(files) {
+    const parts = [], central = []; let off = 0;
+    const d = new Date(), dt = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate(), tm = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+    files.forEach(f => {
+      const nm = enc.encode(f.name), data = typeof f.data === 'string' ? enc.encode(f.data) : f.data, crc = crc32(data);
+      const h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+      h.setUint16(10, tm, true); h.setUint16(12, dt, true); h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true);
+      h.setUint16(26, nm.length, true); h.setUint16(28, 0, true);
+      parts.push(new Uint8Array(h.buffer), nm, data);
+      const c = new DataView(new ArrayBuffer(46));
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+      c.setUint16(12, tm, true); c.setUint16(14, dt, true); c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true);
+      c.setUint16(28, nm.length, true); c.setUint32(42, off, true);
+      central.push(new Uint8Array(c.buffer), nm);
+      off += 30 + nm.length + data.length;
+    });
+    const csize = central.reduce((s, x) => s + x.length, 0);
+    const e = new DataView(new ArrayBuffer(22));
+    e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, csize, true); e.setUint32(16, off, true);
+    const all = parts.concat(central, [new Uint8Array(e.buffer)]);
+    const out = new Uint8Array(all.reduce((s, x) => s + x.length, 0)); let p = 0;
+    all.forEach(x => { out.set(x, p); p += x.length; });
+    return out;
+  }
+  const X = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+  // Màu theo dụng thần Hỏa – Thổ – Kim
+  const C = { seal: '9B2A1F', gold: '8A6A1F', earth: '6B4E2E', ink: '1C1D21', soft: 'F6EEDC', line: 'C9A961', mark: 'FBE9B7' };
+  // Chữ có định dạng nhanh: **đậm**, *nghiêng*, ==tô nền==
+  function runs(text, base) {
+    base = base || {};
+    const out = []; const re = /(\*\*[^*]+\*\*|==[^=]+==|\*[^*]+\*)/g; let last = 0, m;
+    const s = String(text == null ? '' : text);
+    while ((m = re.exec(s))) {
+      if (m.index > last) out.push(run(s.slice(last, m.index), base));
+      const t = m[0];
+      if (t.startsWith('**')) out.push(run(t.slice(2, -2), Object.assign({}, base, { b: true })));
+      else if (t.startsWith('==')) out.push(run(t.slice(2, -2), Object.assign({}, base, { mark: true, b: true })));
+      else out.push(run(t.slice(1, -1), Object.assign({}, base, { i: true })));
+      last = m.index + t.length;
+    }
+    if (last < s.length) out.push(run(s.slice(last), base));
+    return out.join('');
+  }
+  function run(t, o) {
+    const pr = (o.b ? '<w:b/><w:bCs/>' : '') + (o.i ? '<w:i/><w:iCs/>' : '') + (o.color ? '<w:color w:val="' + o.color + '"/>' : '') +
+      (o.sz ? '<w:sz w:val="' + o.sz + '"/><w:szCs w:val="' + o.sz + '"/>' : '') + (o.mark ? '<w:shd w:val="clear" w:color="auto" w:fill="' + C.mark + '"/>' : '') + (o.caps ? '<w:caps/>' : '');
+    return String(t).split('\n').map((ln, i) => (i ? '<w:r><w:br/></w:r>' : '') + '<w:r>' + (pr ? '<w:rPr>' + pr + '</w:rPr>' : '') + '<w:t xml:space="preserve">' + X(ln) + '</w:t></w:r>').join('');
+  }
+  function para(inner, o) {
+    o = o || {};
+    const ppr = (o.style ? '<w:pStyle w:val="' + o.style + '"/>' : '') + (o.keep ? '<w:keepNext/>' : '') + (o.pb ? '<w:pageBreakBefore/>' : '') +
+      '<w:spacing w:before="' + (o.before || 0) + '" w:after="' + (o.after == null ? 80 : o.after) + '"/>' +
+      (o.ind ? '<w:ind w:left="' + o.ind + '"' + (o.hang ? ' w:hanging="' + o.hang + '"' : '') + '/>' : '') + (o.jc ? '<w:jc w:val="' + o.jc + '"/>' : '');
+    return '<w:p><w:pPr>' + ppr + '</w:pPr>' + inner + '</w:p>';
+  }
+  const W = 9638; // bề rộng vùng chữ A4 lề 2 cm (twip)
+  function cell(inner, w, fill, o) {
+    o = o || {};
+    return '<w:tc><w:tcPr><w:tcW w:w="' + w + '" w:type="dxa"/>' + (fill ? '<w:shd w:val="clear" w:color="auto" w:fill="' + fill + '"/>' : '') +
+      (o.mar ? '<w:tcMar><w:top w:w="120" w:type="dxa"/><w:left w:w="200" w:type="dxa"/><w:bottom w:w="80" w:type="dxa"/><w:right w:w="200" w:type="dxa"/></w:tcMar>' : '') +
+      '<w:vAlign w:val="top"/></w:tcPr>' + (inner || para('')) + '</w:tc>';
+  }
+  function table(widths, rows, o) {
+    o = o || {};
+    const b = o.border || C.line, bw = o.bw || 6;
+    const borders = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(k => '<w:' + k + ' w:val="single" w:sz="' + bw + '" w:space="0" w:color="' + b + '"/>').join('');
+    return '<w:tbl><w:tblPr><w:tblW w:w="' + widths.reduce((a, x) => a + x, 0) + '" w:type="dxa"/><w:tblBorders>' + borders + '</w:tblBorders><w:tblLayout w:type="fixed"/>' +
+      '<w:tblCellMar><w:top w:w="60" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:bottom w:w="60" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tblCellMar></w:tblPr>' +
+      '<w:tblGrid>' + widths.map(w => '<w:gridCol w:w="' + w + '"/>').join('') + '</w:tblGrid>' +
+      rows.map((r, ri) => '<w:tr>' + (ri === 0 && o.head ? '<w:trPr><w:cantSplit/><w:tblHeader/></w:trPr>' : '') + r.map((c, ci) => cell(c, widths[ci], ri === 0 && o.head ? C.soft : (o.fill || ''), { mar: o.mar })).join('') + '</w:tr>').join('') +
+      '</w:tbl>' + para('', { after: 60 });
+  }
+  /* Chuyển danh sách khối nội dung thành XML thân văn bản.
+     Khối: title, sub, part, h, p, c (căn giữa), li (thụt lề), mantra (thần chú nghiêng), box (ô ý nghĩa), note, table, pb (sang trang) */
+  function blocks(list) {
+    return list.map(bk => {
+      switch (bk.k) {
+        case 'title': return para(runs(bk.text, { b: true, color: C.seal, sz: 32 }), { jc: 'center', before: 120, after: 80, keep: true, pb: bk.pb });
+        case 'sub': return para(runs(bk.text, { i: true, color: C.earth, sz: 24 }), { jc: 'center', after: 140, keep: true });
+        case 'part': return para(runs(bk.text, { b: true, color: C.seal, sz: 28 }), { jc: 'center', before: 120, after: 160, keep: true, pb: bk.pb });
+        case 'h': return para(runs(bk.text, { b: true, color: C.gold }), { before: 140, after: 60, keep: true });
+        case 'p': return para(runs(bk.text), { jc: bk.jc || 'both', after: 100 });
+        case 'c': return para(runs(bk.text), { jc: 'center', after: 40 });
+        case 'li': return para(runs(bk.text, bk.i ? { i: true } : {}), { ind: 360 * (bk.lvl || 1), after: 40 });
+        case 'mantra': return para(runs(bk.text, { i: true }), { ind: 360 * (bk.lvl || 1), after: 40 });
+        case 'note': return table([W], [[para(runs(bk.text, { color: C.earth }), { after: 40 })]], { border: C.line, fill: C.mark, mar: true });
+        case 'box': {
+          const inner = (bk.groups || []).map(g => para(runs(g.title, { b: true, color: C.seal, sz: 24 }), { before: 40, after: 40, keep: true }) +
+            g.items.map(it => para(runs('• ' + it, { i: true }), { ind: 200, after: 30 })).join('')).join('');
+          return table([W], [[inner]], { border: C.gold, bw: 8, fill: C.soft, mar: true });
+        }
+        case 'table': {
+          const ws = bk.widths || bk.head.map(() => Math.floor(W / bk.head.length));
+          const rows = [bk.head.map(h => para(runs(h, { b: true, color: C.earth }), { after: 0, jc: 'center' }))].concat(
+            bk.rows.map(r => r.map((c, i) => [].concat(c).map(x => para(runs(x), { after: 20, jc: bk.center && bk.center[i] ? 'center' : 'left' })).join(''))));
+          return table(ws, rows, { head: true });
+        }
+        case 'pb': return '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+        case 'sp': return para('', { after: bk.n || 120 });
+        default: return '';
+      }
+    }).join('');
+  }
+  const NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+  function build(list, meta) {
+    meta = meta || {};
+    const body = blocks(list);
+    const doc = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ' + NS + '><w:body>' + body +
+      '<w:sectPr><w:footerReference w:type="default" r:id="rIdF"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>';
+    const styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles ' + NS + '><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:color w:val="' + C.ink + '"/><w:sz w:val="26"/><w:szCs w:val="26"/><w:lang w:val="vi-VN"/></w:rPr></w:rPrDefault>' +
+      '<w:pPrDefault><w:pPr><w:spacing w:after="80" w:line="288" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>' +
+      '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>' +
+      '<w:style w:type="table" w:default="1" w:styleId="TableNormal"><w:name w:val="Normal Table"/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/><w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="108" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="108" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style></w:styles>';
+    const footer = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr ' + NS + '>' +
+      para(run((meta.footer || 'Phước Lộc · Tạo Phước') + ' · trang ', { color: C.earth, sz: 18 }) +
+        '<w:r><w:rPr><w:color w:val="' + C.earth + '"/><w:sz w:val="18"/></w:rPr><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:rPr><w:color w:val="' + C.earth + '"/><w:sz w:val="18"/></w:rPr><w:instrText xml:space="preserve"> PAGE </w:instrText></w:r><w:r><w:rPr><w:color w:val="' + C.earth + '"/><w:sz w:val="18"/></w:rPr><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:rPr><w:color w:val="' + C.earth + '"/><w:sz w:val="18"/></w:rPr><w:t>1</w:t></w:r><w:r><w:rPr><w:color w:val="' + C.earth + '"/><w:sz w:val="18"/></w:rPr><w:fldChar w:fldCharType="end"/></w:r>',
+        { jc: 'center', after: 0 }) + '</w:ftr>';
+    const now = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+    const files = [
+      { name: '[Content_Types].xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>' },
+      { name: '_rels/.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>' },
+      { name: 'docProps/core.xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>' + X(meta.title || 'Tạo Phước') + '</dc:title><dc:creator>phuocloc.vn</dc:creator><dc:language>vi-VN</dc:language><dcterms:created xsi:type="dcterms:W3CDTF">' + now + '</dcterms:created></cp:coreProperties>' },
+      { name: 'word/_rels/document.xml.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdS" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdF" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/></Relationships>' },
+      { name: 'word/document.xml', data: doc },
+      { name: 'word/styles.xml', data: styles },
+      { name: 'word/footer1.xml', data: footer }
+    ];
+    return zip(files);
+  }
+  return { build, zip, MIME: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' };
+})();
+
+/* ---------- Nội dung các bài tu theo "Quy trình tu tập tạo phước lớn cho người mới" ---------- */
+const BAI = (function () {
+  const DOTS = '............', D = '......';
+  const CAN = ['Canh', 'Tân', 'Nhâm', 'Quý', 'Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ'];
+  const CHI = ['Thân', 'Dậu', 'Tuất', 'Hợi', 'Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi'];
+  const canChiNam = y => (y = parseInt(y, 10)) > 0 ? CAN[y % 10] + ' ' + CHI[y % 12] : '';
+  const SO = ['Không', 'Một', 'Hai', 'Ba', 'Bốn', 'Năm', 'Sáu', 'Bảy', 'Tám', 'Chín', 'Mười'];
+  const soChu = n => SO[n] || String(n);
+  const lower1 = s => s ? s.charAt(0).toLowerCase() + s.slice(1) : s;
+  const fmtN = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  /* ---------- các đoạn dùng chung ---------- */
+  const CHU20 = ['Om A Hum', 'Om A Hum Vai ra Gu ru Pát ma Si đi Hum', 'Om Ma ni Pát mê Hum', 'Om A Mi Đề Wa Si', 'Om Ben za Sát tô Hum',
+    'Tay a tha Om Mu ni Mu ni Ma ha Mu ni y ê So ha', 'Om Ta rê Tut ta rê Tu rê So ha', 'Om Jăm ba la Ja len đây a So ha',
+    'Tay a tha Om Cha lê Chu lê Chun đê So ha', 'Tay a tha Om Bê kan zê Bê kan zê Ma ha Bê kan zê Ra ra Sam mu ga tê So ha',
+    'Om A Ra Pa Tra Na Đi', 'Om Vai Ja Pa ni Hum', 'Om Sa may a Sa pa y o', 'Om Vai rô cha na Hum', 'Om A sô by a Hum',
+    'Om Rát na sam bha va Tram', 'Om A mô ga sid đi A Hum', 'Om Ben za Dha ra Hum Hum', 'Om Ma ri chi Mam So ha', 'Om Đờ Rum So ha.'];
+  const chu20 = () => CHU20.map((t, i) => ({ k: 'mantra', text: (i + 1) + '. ' + t }));
+  const tamChu = () => [{ k: 'mantra', text: '• Om A Mi Đề Wa Si: 3 lần' }, { k: 'mantra', text: '• Om Ben za Sát tô Hum: 3 lần' }, { k: 'mantra', text: '• Tay a tha Om Cha lê Chu lê Chun đê So ha: 3 lần' }];
+  const thatPhat = () => [
+    { k: 'h', text: 'Thất Phật diệt tội chân ngôn (Thần chú hóa giải nghiệp)' },
+    { k: 'mantra', text: '(Ly bà ly bà đế, Cầu ha cầu ha đế,\nĐà ra ni đế, Ni ha ra đế,\nTỳ lê nễ đế, Ma ha già đế,\nChân lăng càn đế, Ta bà ha): 3 lần' },
+    { k: 'mantra', text: 'Om Ben za Sát tô Hum: 3 lần' }];
+  const taOn = (so) => [{ k: 'p', text: '**' + (so ? so + '. ' : '') + 'Xin tạ ơn** công đức vô lượng của các Ngài.' },
+    { k: 'p', text: 'Xin cho Thập pháp giới chúng sinh Hòa bình, An Lạc, Hoan hỷ và Hạnh phúc.' }].concat(tamChu());
+  const KHAI_DAI = 'khai phong ấn, khai trấn yểm, khai long mạch, khai khí mạch, khai huyết mạch, khai địa mạch, khai thủy mạch, khai Thần mạch, khai Thánh mạch, khai Quan mạch, Khai thông các Thánh, các Quan, các Thần, Khai mạch Thập pháp giới chúng sinh, khai thông Thập Pháp giới chúng sinh, khai toàn bộ các luân xa của trái đất, khai thông các cõi pháp giới chúng sinh, khai tam giới, khai toàn bộ vong linh các anh hùng liệt sĩ, các anh chị thanh niên xung phong, khai các vong linh oán khí nặng, khai toàn bộ vong binh lính, dân thường già trẻ trai gái phản quốc, khai toàn bộ vong linh binh lính tướng sĩ Tàu, vong linh binh lính tướng sĩ nước ngoài tử trận tại Việt Nam, khai toàn bộ bùa chú, khai toàn bộ bạn Quỷ, Thần Quỷ, Chúa Quỷ, Vua Quỷ, tất cả bạn Atula, Thần Atula, Chúa Atula, Vua Atula nhiều đời nhiều kiếp đến nay';
+  const KEU_THAY = 'Con xin kêu cho bản thân, kêu thay tấu đỡ** cho những vong linh và tất cả các cõi pháp giới chúng sinh đã khai quang bên trên không tự đọc khấn được, cũng như mời các vong linh và tất cả các cõi pháp giới chúng sinh đã khai quang bên trên từ nhiều đời nhiều kiếp, ai có tội thì về sám hối, ai bị oan thì về giải oan, buông bỏ chấp niệm. Xin xóa toàn bộ nợ tiền âm, nợ tiền trần, nợ tiền các vị cụ thể là: Các vị Chư Phật, Chư Bồ Tát, Chư Thánh, các Quan, các Thần, thập pháp giới chúng sinh, oan gia trái chủ, duyên âm, âm binh, gia tiên tiền tổ, các bạn Atula, Thần Atula, Chúa Atula, Vua Atula, các bạn Quỷ, Thần Quỷ, Chúa Quỷ, Vua Quỷ, từ nhiều đời nhiều kiếp đến nay cho tất cả vong linh đã được khai quang trên.';
+  const HOA_GIAI = 'phong ấn, Hóa giải tội, hóa giải oan, chữa bệnh cho: (Bà Cô Tổ, Ông Mãnh Tổ cũng như hội đồng gia tiên, tiền tổ nhiều đời nhiều kiếp, cô bé đỏ, cậu bé đỏ';
+  const HOA_GIAI_2 = '/các bạn Atula, Thần Atula, Chúa Atula, Vua Atula có tội, bị oan, bị bệnh/các bạn Quỷ, Thần Quỷ, Chúa Quỷ, Vua Quỷ, có tội, bị oan, bị bệnh/Hóa giải duyên âm/Hóa giải Kumanthong/Hóa giải Bùa chú';
+  const BAO_THAP = 'Đại Bảo Tháp Mandala Tây Thiên, xã Đại Đình, tỉnh Phú Thọ, nước Việt Nam';
+  const BAO_THAP_3 = 'Đại Bảo Tháp Mandala Tây Thiên (xã Đại Đình, tỉnh Phú Thọ, Việt Nam), Đại Bảo Tháp Boudhanath (Kathmandu, Nepal) – "Trái tim" của Phật giáo Tây Tạng, Chùa Vàng Shwedagon (Yangon, Myanmar) – Thánh địa Phật giáo Nam truyền';
+  const yn = (yNghia, doiTuong) => ({ k: 'box', groups: [{ title: '► Ý NGHĨA BÀI:', items: yNghia }].concat(doiTuong ? [{ title: '► ĐỐI TƯỢNG ỨNG DỤNG:', items: doiTuong }] : []) });
+  const tranTien = 'tờ tiền trần 10.000 đồng';
+
+  /* ---------- chuẩn hóa thông tin khách nhập ---------- */
+  // Quan hệ để trống → "Người thân"
+  function norm(input) {
+    const d = JSON.parse(JSON.stringify(input || {}));
+    d.name = String(d.name || '').trim();
+    d.birth = String(d.birth || '').trim();
+    d.year = String(d.year == null ? new Date().getFullYear() : d.year).trim();
+    d.yearAL = String(d.yearAL == null ? canChiNam(d.year) : d.yearAL).trim();
+    d.family = (d.family || []).map(m => ({
+      rel: String(m.rel || '').trim() || 'Người thân', name: String(m.name || '').trim(), birth: String(m.birth || '').trim(), dead: !!m.dead, kt: !!m.kt
+    })).filter(m => m.name || m.birth || m.rel !== 'Người thân');
+    d.lineages = (d.lineages || []).map(l => ({ ho: String(l.ho || '').trim(), rep: String(l.rep || '').trim(), role: String(l.role || '').trim(), cem: String(l.cem || '').trim() })).filter(l => l.ho || l.rep);
+    d.addresses = (d.addresses || []).map(a => String(a || '').trim()).filter(Boolean);
+    d.song = String(d.song || '').trim(); d.animals = String(d.animals || '').trim();
+    d.burner = d.burner || {}; d.burner.name = String(d.burner.name || '').trim(); d.burner.addr = String(d.burner.addr || '').trim();
+    d.duyenAm = (d.duyenAm || []).map(x => ({ who: x.who == null ? 'self' : x.who, title: String(x.title || '').trim() }));
+    d.doSinh = String(d.doSinh || '').split('\n').map(s => s.trim()).filter(Boolean);
+    d.thanLinh = String(d.thanLinh || '').trim();
+    return d;
+  }
+  // Tự gợi ý dòng họ: bản thân, mẹ đẻ, vợ/chồng, mẹ vợ/mẹ chồng (chưa có gia đình thì 2 họ bố – mẹ)
+  function autoLineages(input) {
+    const d = norm(Object.assign({}, input, { lineages: [] }));
+    const ho = n => (n || '').trim().split(/\s+/)[0] || '';
+    const out = [];
+    const push = (name, role) => { if (name) out.push({ ho: ho(name), rep: name, role, cem: '' }); };
+    push(d.name, '');
+    const find = r => d.family.find(m => m.rel.toLowerCase() === r);
+    const me = find('mẹ đẻ'); if (me) push(me.name, 'mẹ đẻ');
+    const sp = find('chồng') || find('vợ'); if (sp) push(sp.name, sp.rel.toLowerCase());
+    const ms = find('mẹ chồng') || find('mẹ vợ'); if (ms) push(ms.name, ms.rel.toLowerCase());
+    return out;
+  }
+
+  /* ---------- câu chữ có tên khách ---------- */
+  function ctx(d) {
+    const ten = d.name || DOTS;
+    const tenSinh = d.name ? ten + (d.birth ? ', sinh ' + d.birth : '') : DOTS + ', sinh ' + D + '/' + D + '/' + D;
+    const tenSinhNgay = d.name ? ten + (d.birth ? ', sinh ngày ' + d.birth : '') : DOTS + ', sinh ngày ' + D + '/' + D + '/' + D;
+    const person = m => '+ ' + m.rel + ': ' + (m.name || DOTS) + (m.birth ? ', sinh ' + m.birth : '') + (m.dead ? ' (đã mất)' : '');
+    const famLines = d.family.length ? d.family.map(person) : ['+ Bố đẻ: ' + DOTS, '+ Mẹ đẻ: ' + DOTS, '+ Vợ/Chồng: ' + DOTS, '+ Con: ' + DOTS];
+    const lin = d.lineages.length ? d.lineages : [{ ho: D, rep: DOTS, role: '' }, { ho: D, rep: DOTS, role: 'mẹ đẻ' }, { ho: D, rep: DOTS, role: 'vợ/chồng' }, { ho: D, rep: DOTS, role: 'mẹ vợ/chồng' }];
+    const linLines = lin.map(l => '+ Dòng họ ' + (l.ho || D) + ', ' + (l.rep || DOTS));
+    const linRole = l => l.role ? 'dòng họ (' + l.role + ' – dòng họ ' + (l.ho || D) + ', ' + (l.rep || DOTS) + ')' : 'dòng họ ' + (l.ho || D) + ', ' + (l.rep || DOTS);
+    const addrs = d.addresses.length ? d.addresses : [];
+    const addr0 = addrs[0] || DOTS;
+    const year = d.year || D, yearAL = d.yearAL || D;
+    const ngay = 'Hôm nay là ngày ' + D + ' tháng ' + D + ' năm ' + year + ' dương lịch, tức ngày ' + D + ' tháng ' + D + ' năm ' + yearAL + ' âm lịch';
+    const ngayNgan = 'Hôm nay là ngày ' + D + '/' + D + '/' + year + ' tức ngày ' + D + ' tháng ' + D + ' năm ' + yearAL + '.';
+    const kt = d.family.filter(m => m.kt);
+    const burner = d.burner.name ? 'Con xin nhờ ' + d.burner.name + (d.burner.addr ? ' ở địa chỉ ' + d.burner.addr : '') + ' đốt mã giúp con.' : '';
+    return { ten, tenSinh, tenSinhNgay, famLines, lin, linLines, linRole, addrs, addr0, year, yearAL, ngay, ngayNgan, kt, burner, N: lin.length };
+  }
+  const famBlocks = c => [{ k: 'li', i: true, text: c.famLines.join('\n') }];
+  const burnerBlocks = c => c.burner ? [{ k: 'p', text: c.burner }] : [{ k: 'note', text: '**Trường hợp nhờ người đốt giúp thì đọc câu:** Con xin nhờ ' + DOTS + ' ở địa chỉ ' + DOTS + ' đốt mã giúp con.' }];
+
+  /* ---------- lễ vật (dùng chung cho bài đọc và bảng kê biếu tiền) ---------- */
+  // Đơn vị: am = lễ tiền âm, tran = tờ tiền trần 10.000đ, vangla = tập vàng lá, do500 = tập 500.000 tiền âm màu đỏ, qtl = lễ tiền Quan Thần Linh,
+  // dodo = tập tiền đô màu đỏ (kẹp nhỏ), do = tập tiền đô, euro = tập tiền Euro, xu = tập tiền xu, vangthoi = vỉ vàng thỏi, bacthoi = vỉ bạc thỏi
+  const UNIT = { am: 'lễ tiền âm', tran: 'tờ tiền trần 10.000 đồng', vangla: 'tập vàng lá', do500: 'tập 500.000 tiền âm màu đỏ', qtl: 'lễ tiền Quan Thần Linh', dodo: 'tập tiền đô màu đỏ (kẹp nhỏ)', do: 'tập tiền đô', euro: 'tập tiền Euro', xu: 'tập tiền xu', vangthoi: 'vỉ vàng thỏi', bacthoi: 'vỉ bạc thỏi' };
+  const UNIT_ORDER = ['qtl', 'am', 'do500', 'vangla', 'dodo', 'do', 'euro', 'xu', 'vangthoi', 'bacthoi', 'tran'];
+  function traNoItems(N, self) {
+    const t = (label, q) => ({ label, q });
+    const items = [
+      t('oan gia trái chủ', { am: 10, tran: 1 }), t('thập pháp giới chúng sinh', { am: 10, tran: 1 }), t('âm binh', { am: 10, tran: 1 }),
+      t('cửa Phật', { vangla: 1, tran: 1 }), t('các bạn Atula', { am: 10, tran: 1 }), t('duyên âm', { am: 10, tran: 1 }), t('các bạn quỷ', { am: 10, tran: 1 }),
+      t('gia tiên ' + N + ' họ', { do500: N, am: 10 * N, tran: N }), t('tam giới', { am: 10, tran: 1 }), t('tam tứ phủ', { am: 10, tran: 1 })];
+    if (self) items.push(t('cửa Thoải phủ', { am: 10, tran: 1 }));
+    return items;
+  }
+  const BIEU_QTL = { qtl: 1, am: 10, tran: 1 }, BIEU_BCD = { am: 10, tran: 1 }, BIEU_BCT = { am: 10, vangla: 1, dodo: 2, tran: 1 }, BIEU_DA = { am: 10, do: 2, euro: 2, tran: 2, xu: 1, vangthoi: 1, bacthoi: 1 };
+  function qText(q) { return UNIT_ORDER.filter(k => q[k]).map(k => q[k] + ' ' + UNIT[k]).join(', '); }
+  function addQ(a, b, k) { k = k || 1; Object.keys(b).forEach(x => { a[x] = (a[x] || 0) + b[x] * k; }); return a; }
+
+  /* ================= PHẦN HƯỚNG DẪN ================= */
+  function huongDan(d, c, opt) {
+    const P1 = [['1', '**Sái tịnh tăng năng lượng cho đất**', 'Làm thanh sạch không gian, đất', ['👉 Đọc 3 ngày liên tục, mỗi ngày đọc 1 lần. Hết 3 ngày thì dừng, không cần đọc nữa. Ngồi đâu đọc cũng được.', '👉 3 tháng hoặc 6 tháng đọc lại 1 lần. Đọc từng phòng nếu người nhà ngủ hay bị mơ (đất dữ).']],
+      ['2', '**Sám hối**', 'Thành tâm sám hối, nhận ra và xin buông bỏ những lỗi lầm, nghiệp xấu đã tạo trong nhiều đời.', ['👉 Đọc 3 ngày liên tục, mỗi ngày đọc 1 lần. Ngồi đâu đọc cũng được, đọc lúc nào cũng được.', '👉 1 năm đọc 2 lần vào tháng 1 và tháng 6 âm lịch.']],
+      ['3', '**Xóa nợ cầu siêu**', '📌 Giải trừ nợ nần oan gia và nguyện cầu cho các vong linh được siêu thoát, an vui.', ['👉 Là bài quan trọng nhất, đọc vào buổi sáng từ 5h00 đến 7h00 là tốt nhất, ==cần phải đọc đủ 49 ngày liên tục==, mỗi ngày đọc từ 2 đến 3 lần. Sau 5 ngày đọc đủ 13 lần thì sang **phần 2**.']]];
+    const P2 = [['1', '**Khai quang, an vị**', 'Mở linh khí cho tượng, vật thờ và an vị đúng vị trí trang nghiêm.', 'Sau mỗi lần lau ban thờ hoặc 3 tháng đọc 1 lần'],
+      ['2', '**Trả nợ và biếu Quan Thần Linh đất mình trả nợ**', 'Hoàn trả những món nợ duyên nghiệp với oan gia để dứt ràng buộc, hết nợ, hết oán kết.', ['👉 Trả 1 lần/1 năm. Đọc 1 hoặc 2 lần trước khi trả.', '👉 Hằng năm kiểm tra lại vào tháng 7, còn nợ thì trả, hết nợ thì thôi.']],
+      ['3', '**Phóng sinh con vật**', 'Cứu và trả tự do cho con vật mình nợ, vun bồi phước lành.', ''],
+      ['4', '**Biếu Quan Thần Linh đất**', 'Hanh thông công việc và tiền, VD: Nhà ở, Công ty, Cửa hàng', 'Ngày mồng 1 hằng tháng'],
+      ['5', '**Biếu Quan ở nghĩa trang và Bà Cô Tổ**', 'Dâng lễ tạ ơn các vị Quan Thần Linh và Bà Cô Tổ trong 2 hoặc 4 dòng họ, cầu phù hộ độ trì.', ['👉 Tháng 7 và tháng 12 hằng năm', '👉 Quan Thần Linh nghĩa trang nơi gia tiên an nghỉ']],
+      ['6', '**Khai thị và biếu quà duyên âm**', 'Khai mở, giảng giải để soi sáng và hóa giải các mối duyên âm còn vương vấn, ràng buộc.', 'Biếu 1 lần và đọc bài mời tu 3 ngày hoặc 10 ngày tùy thuộc bạn kiểm tra qua Bộ Tú lơ khơ'],
+      ['7', '**Giải nghiệp dòng họ**', 'Hóa giải và chuyển hóa những nghiệp chướng đã gây tạo, giúp cuộc sống nhẹ nhàng, hanh thông.', 'Đọc 21 ngày. 6 tháng đọc 1 lần 21 ngày. Bài này đã bao gồm cả bài Xóa nợ cầu siêu, nên khi đọc bài này thì không cần đọc bài Xóa nợ cầu siêu.'],
+      ['8', '**Độ sinh Tạo Phước**', '**Tạo Phước lớn** (Cứu độ, dẫn dắt chúng sinh hướng về điều thiện, biết tu tập và làm lành).', '**Tùy khởi tâm 6 tháng, 1 năm, 3 năm**'],
+      ['9', '**Viết sổ Gieo Phước báu từ 1 đến 3 năm**', '**Tạo Phước lớn** (Ghi sổ phát nguyện làm việc thiện, gieo trồng phước báu đều đặn liên tục từ 1 đến 3 năm).', '**Viết liên tục từ 1 đến 3 năm**']];
+    const W4 = [760, 2400, 2900, 3578];
+    const out = [
+      { k: 'title', text: 'GIẢI PHÁP CÁC VẤN ĐỀ ÂM PHẦN' },
+      { k: 'sub', text: 'QUY TRÌNH TU TẬP TẠO PHƯỚC CHO THÀNH VIÊN TU MỚI' }];
+    if (opt && opt.who) out.push({ k: 'c', text: '**Người đọc bài: ' + c.tenSinh + '**' });
+    out.push(
+      { k: 'note', text: '👉 **Tất cả các bài đọc tu đi công tác trong nước hoặc nước ngoài đều đọc được, ngồi đâu đọc cũng được. Không cần thắp hương.**' },
+      { k: 'p', text: '📌 **Lưu ý:** Lúc nào anh/chị rảnh, anh/chị nghe phần ghi âm chia sẻ cách kiểm tra gia tiên và tu tập tạo phước tốt nhất cho bản thân và cho gia tiên.' },
+      { k: 'h', text: 'PHẦN 1: CÓ 3 BÀI ĐỌC TRONG 3 ĐẾN 5 NGÀY, ĐỌC CẢ 3 BÀI THEO HƯỚNG DẪN. Bài Xóa nợ cầu siêu cần đọc liên tục trong 49 ngày.' },
+      { k: 'table', head: ['STT', 'Bài đọc', 'Ý nghĩa', 'Thời gian đọc'], widths: W4, center: [true], rows: P1 },
+      { k: 'h', text: 'PHẦN 2: CÓ 8 BÀI ĐỌC + VIẾT SỔ GIEO PHƯỚC (Làm từng bài trong 49 ngày, không cần vội. Mỗi lần làm xong từng mục kiểm tra tốt rồi mới làm tiếp)' },
+      { k: 'table', head: ['STT', 'Bài đọc', 'Ý nghĩa', 'Thời gian đọc và ghi chú'], widths: W4, center: [true], rows: P2 });
+    return out;
+  }
+
+  /* ================= PHẦN 1 ================= */
+  function saiTinh(d, c) {
+    return [
+      { k: 'title', text: '1. SÁI TỊNH TĂNG NĂNG LƯỢNG CHO ĐẤT' },
+      { k: 'sub', text: '(Sái tịnh từng phòng: phòng khách, phòng thờ, phòng ngủ, bếp)' },
+      yn(['Thanh tịnh không gian: dùng nước pháp và thần chú làm sạch từng phòng (phòng khách, phòng thờ, phòng ngủ, bếp), xua tan tà khí, uế khí.',
+        'Tịnh thân – khẩu – ý: trì chú tịnh nghiệp để thân tâm trong sạch trước khi thỉnh Phật, Bồ Tát và Thổ Địa về gia hộ.',
+        'Cứu khổ – hồi hướng: tụng Cứu Khổ Chân Kinh, Thất Phật Diệt Tội để tiêu tai giải nạn, rồi hồi hướng phước lành cho muôn loài.'],
+        ['Nhà mới chuyển đến, mới xây sửa hoặc lâu ngày không ở; người mới bắt đầu tu nên đọc bài này đầu tiên.',
+          'Nhà có người hay mơ, ngủ không yên, không khí nặng nề, âm u (đất dữ) – sái tịnh từng phòng.',
+          'Đọc định kỳ 3 – 6 tháng/lần để giữ không gian thanh sạch; đi công tác, ngồi đâu đọc cũng được.']),
+      { k: 'c', text: 'Nam Mô A Di Đà Phật (3 lần)' },
+      { k: 'h', text: 'Tịnh khẩu nghiệp chân ngôn (Sạch nghiệp miệng)' },
+      { k: 'p', text: 'Tu rị tu rị, ma ha tu rị, tu tu rị, ta bà ha (3 lần)' },
+      { k: 'h', text: 'Tịnh thân nghiệp chân ngôn (Sạch nghiệp thân)' },
+      { k: 'p', text: 'Tu đa rị, tu đa rị, tu ma rị, ta bà ha (3 lần)' },
+      { k: 'h', text: 'Tam Tịnh Nghiệp Chân Ngôn' },
+      { k: 'p', text: 'Án sa phạ bà phạ, truật đà sa phạ, đạt mạ sa phạ, bà phạ truật độ hám (3 lần)' },
+      { k: 'c', text: 'Nguyện Chư Phật dĩ vãng thần thông lực\nDĩ thử pháp thủy biến thanh lương\nNhất sái thiên thiên thanh\nNhị sái địa địa linh\nTam sái nhân nhân trường sinh\nTứ sái quỷ quỷ tiêu hình\nNgũ sái tà tà tẩu tán\nLục sái đàn tràng nhi thanh tịnh' },
+      { k: 'h', text: 'Phổ an vị chân ngôn' },
+      { k: 'p', text: 'Án tát zô tát zô sa bà ha (3 lần)' },
+      { k: 'p', text: 'Giáo hữu sái tịnh chân ngôn cẩn đương trì tụng.' },
+      { k: 'h', text: 'Phật Mẫu Chuẩn Đề Thần Chú' },
+      { k: 'c', text: 'Khể thủ quy y Tô Tất Đế\nĐầu diện đỉnh lễ Thất Câu Chi\nNgã kim xưng tán Đại Chuẩn Đề\nDuy nguyện từ bi thùy gia hộ' },
+      { k: 'p', text: 'Nam mô tát đa nẫm tam miệu tam bồ đà câu chi nẫm đát điệt tha. Án chiết lệ chủ lệ chuẩn đề, sa bà ha. (3 - 7 lần)' },
+      { k: 'p', text: 'Tay a tha Om Cha lê Chu lê Chun đê So ha (3 - 7 lần)' },
+      { k: 'p', text: 'Phụng thỉnh Như Lai điểm khai tịnh nhãn, nhãn phóng hào quang.\nPhụng thỉnh Như Lai điểm khai tịnh nhĩ, nhĩ quán thế gian.\nPhụng thỉnh Như Lai điểm khai tịnh thiệt, thiệt vị cam thường.\nPhụng thỉnh Như Lai điểm khai tịnh tỵ, tỵ khiếu chân hương.' },
+      { k: 'h', text: 'AN THỔ ĐỊA CHÂN NGÔN' },
+      { k: 'p', text: 'Nam mô tam mãn đa, một đà nẫm, án độ rô độ rô, địa vĩ ta bà ha (3 lần)' },
+      { k: 'h', text: 'PHỔ CÚNG DƯỜNG CHÂN NGÔN' },
+      { k: 'p', text: 'Án nga nga nẵng tam bà phạ phiệt nhật ra hồng (3 lần)' },
+      { k: 'c', text: 'Phép Phật cao siêu rất nhiệm màu,\nNgàn muôn ức kiếp dễ hay đâu.\nCon nay nghe thấy xin vâng giữ,\nChân nghĩa Như Lai hiểu thật sâu.' },
+      { k: 'p', text: 'Kính lạy Đức Phật Thích Ca Mâu Ni là thầy dạy bảo chúng con.' },
+      { k: 'p', text: 'Phật nói Cứu Khổ Chân Kinh.' },
+      { k: 'p', text: 'Nam mô đại từ đại bi linh cảm cứu khổ cứu nạn Quan Thế Âm Bồ Tát.' },
+      { k: 'p', text: 'Thiên thiên vạn ức Phật, hằng hà sa số Phật, vô lượng công đức Phật. Phật cáo A Nan ngôn: Thử kinh đại thánh, năng cứu ngục tù, năng cứu trọng bệnh, năng cứu tam tai bách nạn khổ. Nhược hữu nhân tụng đắc nhất thiên biến, nhất thân ly khổ nạn; tụng đắc nhất vạn biến, hợp gia ly khổ nạn.' },
+      { k: 'p', text: 'Nam mô Phật lực uy, Nam mô Phật lực hộ, sử nhân vô ác tâm, linh nhân thân đắc độ.' },
+      { k: 'p', text: 'Hồi Quang Bồ Tát, Hồi Thiện Bồ Tát, A Nậu Đại Thiên Vương, Chánh Điện Bồ Tát, Ma Kheo Ma Kheo, Thanh Tịnh Tỳ Kheo, quan sự đắc tán, tụng sự đắc hưu, chư Đại Bồ Tát, Ngũ Bách A La Hán,' },
+      { k: 'p', text: 'cứu hộ đệ tử **' + c.ten + '** (con tên là **' + c.ten + '**, xin cho ' + (d.name ? c.ten + ' và người thân' : DOTS) + ' ở tại ' + c.addr0 + '), nhất thân ly khổ nạn. Tự nhiên Quan Thế Âm, anh lạc bất tu giải, cần độc thiên vạn biến, tai ương tự nhiên giải thoát.' },
+      { k: 'p', text: 'Phật thuyết chân ngôn viết:' },
+      { k: 'h', text: 'Thất Phật Diệt Tội Chân Ngôn (Thần chú hóa giải nghiệp)' },
+      { k: 'mantra', text: '(Ly bà ly bà đế, cầu ha cầu ha đế, đà ra ni đế, ni ha ra đế, tỳ lê nễ đế, ma ha già đế, chân lăng càn đế, ta bà ha): 3 lần' },
+      { k: 'mantra', text: 'Om Ben za Sát tô Hum: 3 lần' },
+      { k: 'c', text: 'Con xin đem phước duyên này,\nCầu cho hết thảy muôn loài chúng sinh,\nMai sau cùng được vãng sinh,\nCùng về nước Phật hiển vinh đời đời.' },
+      { k: 'c', text: 'Nam Mô A Di Đà Phật (3 lần)' },
+      { k: 'c', text: 'Om A Mi Đề Wa Si (3 lần)' }];
+  }
+
+  const HIEN_TONG = ['Phật Nhiên Đăng cổ Phật', 'Phật A Di Đà (Amitabha)', 'Phật Thích Ca Mâu Ni (Shakyamuni Buddha)', 'Phật Di Lặc (Maitreya Buddha)', 'Phật Dược Sư (Bhaisajyaguru)',
+    'Bồ Tát Quán Thế Âm (Avalokiteshvara)', 'Bồ Tát Đại Thế Chí (Mahasthamaprapta)', 'Bồ Tát Văn Thù Sư Lợi (Manjushri)', 'Bồ Tát Phổ Hiền (Samantabhadra)', 'Bồ Tát Địa Tạng Vương (Ksitigarbha)',
+    'Phật Tỳ Bà Thi (Vipasyin)', 'Phật Thi Khí (Sikhin)', 'Phật Tỳ Xá Phù (Visvabhu)', 'Phật Câu Lưu Tôn (Krakucchanda)', 'Phật Câu Na Hàm Mâu Ni (Kanakamuni)', 'Phật Ca Diếp (Kasyapa)'];
+  function samHoi(d, c) {
+    const li = (arr, lvl) => arr.map(t => ({ k: 'li', lvl: lvl || 1, text: '○ ' + t }));
+    return [
+      { k: 'title', text: '2. SÁM HỐI' },
+      { k: 'sub', text: '🙏 SÁM HỐI LỖI TRONG VÔ LƯỢNG KIẾP TẠO PHƯỚC' },
+      yn(['Khai thông căn quả tiền kiếp sâu dày của bản thân, người thân và các dòng họ nội – ngoại.',
+        'Thành tâm sám hối mọi lỗi vô minh, nhất là lỗi lãng quên phát nguyện cứu độ chúng sinh trong vô lượng kiếp.',
+        'Phát nguyện tinh tấn thiện hành mỗi ngày: nghĩ điều tốt, nói điều tốt, làm việc từ tâm – lợi mình, lợi người, lợi chúng sinh.'],
+        ['Thành viên mới bắt đầu tu, cần sám hối căn quả trước khi đọc bài Xóa nợ cầu siêu.',
+          'Người muốn sám hối cho bản thân và kêu thay cho người thân, các dòng họ nội – ngoại.',
+          'Đọc 3 ngày liên tục; sau đó mỗi năm đọc lại 2 lần vào tháng 1 và tháng 6 âm lịch.']),
+      { k: 'p', text: 'Hôm nay là ngày ' + D + ' tháng ' + D + ' năm ' + c.year + ', Con tên là **' + c.ten + '** con xin đọc bài sám hối căn quả của con và người thân trong vô lượng kiếp tạo phước báu.' }]
+      .concat(chu20(), [
+        { k: 'p', text: '**1. Con xin Khai Quang**, Khai phong ấn, khai trấn yểm, khai long mạch, khai khí mạch, khai huyết mạch, khai địa mạch, khai thủy mạch, khai Thần mạch, khai Thánh mạch, khai Quan mạch, Khai thông các Thánh, các Quan, các Thần, Khai mạch Thập pháp giới chúng sinh, khai thông Thập Pháp giới chúng sinh, khai toàn bộ căn quả tiền kiếp sâu dày, khai thông nhiều đời nhiều kiếp đến nay của:' },
+        { k: 'p', text: '**' + c.tenSinh + '** và người thân của con:' }], famBlocks(c), [
+        { k: 'p', text: 'Và con xin khai thông nhiều đời nhiều kiếp của Bà Cô Tổ, Ông Mãnh Tổ cũng như Hội Đồng Gia Tiên, Tiền Tổ nhiều đời nhiều kiếp của các dòng họ:' },
+        { k: 'li', i: true, text: c.linLines.join('\n') },
+        { k: 'p', text: 'Khai thông biên giới Việt Nam với biên giới toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**Khai thông toàn bộ căn quả gồm:**' },
+        { k: 'h', text: 'Hiển Tông (không cần đọc ở phần ngoặc đơn)' }], li(HIEN_TONG), [
+        { k: 'h', text: 'Mật Tông' },
+        { k: 'p', text: '**Ngũ Trí Như Lai (Ngũ Phương Phật):**' }],
+        li(['Đại Nhật Như Lai (Vairochana / Tỳ Lô Giá Na)', 'A Súc Bệ Như Lai (Akshobhya)', 'Bảo Sanh Như Lai (Ratnasambhava)', 'A Di Đà Như Lai (Amitabha)', 'Bất Không Thành Tựu Như Lai (Amoghasiddhi)', 'Kim Cương Trì (Vajradhara)']), [
+        { k: 'p', text: '**Bồ Tát (Hóa thân và Bổn tôn):**' }],
+        li(['Kim Cương Tát Đỏa (Vajrasattva)', 'Tara (Độ Mẫu/Phật Mẫu):']), li(['Tara Xanh (Green Tara)', 'Tara Trắng (White Tara)', 'Phật Mẫu Chuẩn Đề (Cundi)'], 2),
+        li(['Đức Liên Hoa Sanh (Padmasambhava/Guru Rinpoche)', 'Kim Cương Thủ (Vajrapani)']), [
+        { k: 'p', text: '**Các Vị Hộ Pháp và Minh Vương:**' }],
+        li(['Mahakala (Đại Hắc Thiên)', 'Yamantaka (Hàng Phục Dạ Ma)', 'Hayagriva (Mã Đầu Minh Vương)', 'Jambhala (Tài Bảo Thiên Vương/Kubera)', 'Vajrayogini (Kim Cương Du Già Nữ)']), [
+        { k: 'h', text: 'Thánh Mẫu, Thần Linh tiêu biểu' },
+        { k: 'p', text: '**I. Tam Tòa Thánh Mẫu và Tứ Phủ Thánh Mẫu:**' }],
+        li(['Mẫu Đệ Nhất Thượng Thiên (Thiên Phủ, Mẫu Cửu Trùng)', 'Mẫu Đệ Nhị Thượng Ngàn (Nhạc Phủ, Mẫu Thượng Ngàn, La Bình Công Chúa)', 'Mẫu Đệ Tam Thoải Phủ (Thoải Phủ, Mẫu Thoải, Thủy Cung Thánh Mẫu)', 'Mẫu Địa Tiên - Liễu Hạnh Công Chúa (Địa Phủ, Mẫu Đệ Nhị Địa Tiên)']), [
+        { k: 'p', text: '**II. Tứ Phủ Công Đồng (Hội đồng thần linh Tứ Phủ) – Ngũ Vị Tôn Quan:**' }],
+        li(['Quan Lớn Đệ Nhất Thượng Thiên (Đức Thánh Cả)', 'Quan Lớn Đệ Nhị Thượng Ngàn (Quan Giám Sát)', 'Quan Lớn Đệ Tam Thoải Phủ', 'Quan Lớn Đệ Tứ Khâm Sai', 'Quan Lớn Tuần Tranh (Quan Lớn Đệ Ngũ Tuần Tranh)', 'Quan Lớn Đệ Lục', 'Quan Điều Thất', 'Quan Lớn Đệ Bát Đồng Bằng Sông Diêm', 'Quan Hoàng Triệu Tường (Quan Hoàng Triệu)']),
+        li(['Bà Chúa Liễu Hạnh: Mẫu Đệ Nhất Thiên Tiên (hoặc Mẫu Địa Tiên), Cửu Trùng Thanh Vân Công Chúa.', 'Thiên Thanh Công Chúa: Mẫu Đệ Nhất Thượng Thiên, Bán Thiên Công Chúa', 'Thủy Cung Thánh Mẫu: Mẫu Đệ Tam Thoải Cung, Xích Lân Công Chúa, Động Đình Công Chúa.', 'Bà Chúa Ngọc: Thiên Y A Na Thánh Mẫu (Po Nagar). Nữ thần chính của người Chăm']), [
+        { k: 'p', text: '**Hàng Chúa Bà/Chúa Mường (Các vị thần quyền cai quản vùng miền):**' }],
+        li(['Tứ Phủ Chầu Bà (Đứng đầu hàng Chầu): Chúa Bà Lục Cung – danh hiệu khác của Chầu Lục Cung Nương.', 'Tam Vị Chúa Mường (Tín ngưỡng Mường/Sơn Trang): Chúa Đệ Nhất Tây Thiên (thường đồng nhất với Quốc Mẫu Tây Thiên); Chúa Đệ Nhị Nguyệt Hồ (Chúa Bói Nguyệt Hồ); Chúa Đệ Tam Lâm Thao (Chúa Ót).',
+          'Các vị Chúa Bà nổi tiếng khác: Chúa Thác Bờ (Chúa Thác Bờ Hòa Bình) – Nữ thần cai quản vùng sông Đà; Chúa Bà Ngũ Phương (Vũ Quận Bạch Hoa Công Chúa) – Cai quản năm phương; Bà Chúa Kho (Bà Chúa Kho ở Bắc Ninh) – Thần tài lộc, giữ kho lương.']), [
+        { k: 'p', text: '**Hàng thần nữ địa phương (Bà Chúa ở miền Nam và các vị Cô):**' }],
+        li(['Bà Chúa Xứ (Bà Chúa Xứ Núi Sam, An Giang) – Nữ thần cai quản vùng đất, rất nổi tiếng ở miền Nam.', 'Bà Đen (Linh Sơn Thánh Mẫu, Bà Đen Núi Bà) – Thần bảo hộ ở Tây Ninh.', 'Bà Rá (Bà Rá, Bình Phước) – Thần núi.', 'Bà Thiên Hậu (Thiên Hậu Thánh Mẫu) – Nữ thần biển, được người Hoa và người Việt thờ phụng.', 'Chúa Ba Nàng (Chúa Bà ở Tả Phủ).',
+          'Chầu Bà: Chầu Đệ Nhất Thượng Thiên; Chầu Đệ Nhị Thượng Ngàn (Chầu Bà Mỏ Mẻ, Chầu Lục Cung Nương); Chầu Đệ Tam Thoải Phủ; Chầu Đệ Tứ Khâm Sai (Chầu Bát); Chầu Lục Cung Nương; Chầu Bé Bắc Lệ.',
+          'Ông Hoàng: Ông Hoàng Bơ Thoải; Ông Hoàng Bảy Bảo Hà; Ông Hoàng Mười Nghệ An.']), [
+        { k: 'p', text: '**Tứ Phủ Thánh Cô (Thường có 12 vị):** Cô Đệ Nhất Thượng Thiên; Cô Đôi Thượng Ngàn (Cô Đôi Bồng Lai); Cô Bơ Thoải Phủ (Cô Bơ Bông, Cô Ba Thủy Cung); Cô Tư Địa Phủ (Cô Tư Tây Hồ, Cô Tư Ỷ Lan); Cô Năm Suối Lân; Cô Sáu Lục Cung (Cô Sáu Sơn Trang); Cô Bảy Kim Giao (Cô Bảy Mỏ Bạch, Cô Bảy Tân La); Cô Tám Đồi Chè; Cô Chín Sòng Sơn (Cô Chín Giếng); Cô Mười Đồng Mỏ; Cô Mười Một Đồng Nhân; Cô Mười Hai Mỏ Than.' },
+        { k: 'p', text: 'Các Thánh Cô là các vị nữ thiếu niên, thường được gọi theo ngôi thứ hoặc tên nơi ngự chính: Cô Bé Đông Cuông; Cô Bé Suối Ngang; Cô Bé Cây Xanh (Bắc Giang); Cô Bé Thác Bờ; Cô Bé Cửa Suốt (Hầu cận Đức Thánh Trần).' },
+        { k: 'p', text: '**Tứ Phủ Thánh Cậu (Thường có 12 vị):** Cậu Hoàng Cả; Cậu Hoàng Đôi; Cậu Hoàng Bơ; Cậu Hoàng Tư; Cậu Bé Đồi Ngang; Cậu Bé Bảo Hà; Cậu Bé Suối Lân; Cậu Bé Sòng Sơn; Cậu Bé Kim Giao; Cậu Bé Lệch; Cậu Bé Cửa Đông; Cậu Bé Đồng Đình.' },
+        { k: 'p', text: '**Các vị thần linh khác:**' }],
+        li(['Ngọc Hoàng Thượng Đế, Nam Tào, Bắc Đẩu', 'Thập Điện Diêm Vương', 'Hội đồng Trần Triều (Đức Thánh Trần Hưng Đạo Đại Vương, Vương Mẫu, Vương Cô, Vương Tử...)']),
+        li(['Đức Thánh Trần (Thần Chủ): Nhân Vũ Hưng Đạo Đại Vương Trần Quốc Tuấn (Đức Ông Trần Triều) – Thần chủ tối cao của Trần Triều, được tôn sùng là vị thánh trừ tà, chữa bệnh, ban lộc.',
+          'Vương Phụ: Khải Thánh An Sinh Vương Trần Liễu (cha ruột của Đức Thánh Trần). Vương Mẫu: An Sinh Phu Nhân (Thụy hiệu Thiện Đạo Quốc Mẫu).',
+          'Vương Phi (Phu nhân Đức Thánh Trần): Thiên Thành Công Chúa (Nguyên Từ Quốc Mẫu).',
+          'Tứ Vị Vương Tử: Đức Thánh Cả – Hưng Vũ Vương Trần Quốc Nghiễn; Đức Thánh Phó – Hưng Hiến Vương Trần Quốc Uất; Đức Thánh Tam (Đức Ông) – Hưng Nhượng Vương Trần Quốc Tảng (thường được thờ chính tại Đền Cửa Ông); Đức Thánh Tứ – Hưng Trí Vương Trần Quốc Hiện.',
+          'Nhị Vị Vương Cô: Vương Cô Đệ Nhất – Công chúa Quyên Thanh (Bảo Thánh Hoàng Thái Hậu); Vương Cô Đệ Nhị – Công chúa Đại Hoàng (Anh Nguyên Quận Chúa).'], 2), [
+        { k: 'p', text: '**Lục Bộ Trần Triều (Sáu vị tướng cận thần):** Phạm Tướng Quân – Điện Tiền Phò Mã Phạm Ngũ Lão; Tả Yết Kiêu Tướng Quân – Yết Kiêu (tên thật Phạm Hữu Thế); Hữu Dã Tượng Tướng Quân – Dã Tượng; Nghĩa Xuyên Tướng Quân – Nguyễn Chế Nghĩa; Hùng Thắng Tướng Quân – Vi Hùng Thắng (Quận Công); Huyền Quang Tướng Quân.' },
+        { k: 'p', text: '**Hàng Hầu Cận (Thánh Cô, Thánh Cậu Trần Triều):** Cô Bé Cửa Suốt – Tịnh Huệ Công Chúa; Cậu Bé Cửa Đông – vị Vương Tôn, hầu cận Đức Thánh; các Cậu Bé và Cô Bé khác (Thánh Cô, Thánh Cậu Bản Đền/Bản Cảnh).' },
+        { k: 'p', text: 'Các căn quả tiền kiếp sâu dày. Khai thông biên giới Việt Nam với biên giới toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**2. Con tên là: ' + c.tenSinh + '** và người thân của con:' }], famBlocks(c), [
+        { k: 'p', text: 'Con xin sám hối lỗi vô minh lãng quên việc đã phát nguyện giúp cứu độ chúng sinh trong vô lượng kiếp trong quá khứ, cũng như tất cả các lỗi vô minh trong kiếp này và vô lượng kiếp trong quá khứ của con và người thân bên trên.' },
+        { k: 'p', text: 'Ngay từ giây phút này trở đi, con xin tinh tấn tu thiện hành mỗi ngày (Nghĩ điều tốt, nói điều tốt, làm việc từ tâm với tôn chỉ lợi cho mình, lợi cho mọi người và lợi cho chúng sinh).' }],
+        thatPhat(), taOn(3));
+  }
+
+  function xoaNo(d, c) {
+    const addr = c.addrs.length ? c.addrs.map((a, i) => (i + 1) + '. ' + a) : ['1. ' + DOTS, '2. ' + DOTS];
+    return [
+      { k: 'title', text: '3. XÓA NỢ CẦU SIÊU' },
+      { k: 'sub', text: '(Bài đọc hàng ngày liên tục, có thể sau 9 hoặc 21 ngày chuyển sang đọc bài Giải nghiệp dòng họ, giải oan, duyên âm, cầu siêu)' },
+      yn(['Khai quang cho bản thân, người thân, các dòng họ và vong linh tại các địa chỉ đất.', 'Xin xóa nợ tiền âm, tiền trần; hóa giải tội, oan, bệnh cho gia tiên và các cõi pháp giới chúng sinh.', 'Cầu siêu, mời vong linh về Đại Bảo Tháp tu tập; cầu hanh thông công việc, khai thông trí tuệ.'],
+        ['Người làm ăn bế tắc, sức khỏe, gia đạo bất an; gia tiên, vong linh chưa siêu thoát, còn nợ âm, oan gia.', 'Người mới tu: đây là bài quan trọng nhất, đọc liên tục 49 ngày, mỗi ngày 2 – 3 lần (sáng 5h – 7h là tốt nhất).', 'Có thể khai quang, kêu thay tấu đỡ cho người thân, các dòng họ và các địa chỉ đất của mình.']),
+      { k: 'p', text: 'Hôm nay là ngày ' + D + ' tháng ' + D + ' năm ' + c.year + ', Con tên là **' + c.ten + '** con xin đọc bài hóa giải, xóa nợ, cầu siêu Tạo Phước.' }]
+      .concat(chu20(), [
+        { k: 'p', text: '**1. Con xin Khai Quang,** ' + KHAI_DAI.replace(/^k/, 'K') + ' ở trên người của con **' + c.tenSinh + '** và người thân của con:' }], famBlocks(c), [
+        { k: 'p', text: '**Và** Bà Cô Tổ, Ông Mãnh Tổ cũng như Hội Đồng Gia Tiên, Tiền Tổ nhiều đời nhiều kiếp của' },
+        { k: 'li', i: true, text: c.lin.map(l => 'Dòng họ ' + (l.ho || D) + ', ' + (l.rep || DOTS)).join('\n') },
+        { k: 'p', text: 'tất cả người và vong linh khai quang bên trên và các địa chỉ:' },
+        { k: 'li', i: true, text: addr.join('\n') }], tamChu(), [
+        { k: 'p', text: '**2. Con tên là ' + c.ten + '. ' + KEU_THAY }], thatPhat(), [
+        { k: 'p', text: '**3. Xin được hóa giải** ' + HOA_GIAI + ' ' + DOTS + ' (các vấn đề âm cần lưu ý)' + HOA_GIAI_2 + ' nếu có...)' }], thatPhat(), [
+        { k: 'p', text: '**4. Con kính xin chư Phật**, Chư Bồ Tát, Chư Thiên, Chư Thánh, Chư Thần, các Quan, kính xin Quan Thần Linh, Quan Thổ Công, Quan Thổ Địa, Ông Tiền Chủ, Bà Tiền Chủ ở tại ' + BAO_THAP + ' mở cửa cho phép tất cả các vong linh đã được khai quang bên trên, được vào trong ' + BAO_THAP + ' tinh tấn tu tập cầu được siêu thoát cũng như hiệp lực vì hòa bình toàn cầu. Những vong linh khai quang bên trên, ai ở nước ngoài thì về thăm gia tiên, quê hương đất nước mình. Những ai muốn quay trở về ' + BAO_THAP + ' để tinh tấn tu tập cầu siêu thoát, cũng như hiệp lực vì hòa bình toàn cầu, thì sau 21 ngày hãy lên và xin được vào ' + BAO_THAP + ' tinh tấn tu tập cầu được siêu thoát, cũng như hiệp lực vì hòa bình toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**5. Con Xin được tiếp linh** Xin được tiếp linh và hợp nhất với long mạch, khí mạch, huyết mạch, địa mạch, thủy mạch, Thánh mạch, Quan mạch, Thần mạch, mạch thập pháp giới chúng sinh, các luân xa trái đất, các cõi pháp giới chúng sinh với các địa chỉ đất đã đọc bên trên. **Kính xin Chư Phật**, Chư Bồ Tát, Chư Thiên, Chư Thánh, Chư Thần, Các Quan, Quan Thần Linh, Bà Chúa Đất, Bà Cô Tổ, Ông Mãnh Tổ, Hội Đồng Gia Tiên Tiền Tổ của các dòng họ hiện đang hiển Phật, hiển Thánh, hiển Thần ở Việt Nam và trên thế giới giúp cho mọi người được hanh thông công việc và tiền trần gian để có tài bảo độ sinh và con xin được khai thông trí tuệ, học đâu hiểu đó, để con có thể đóng góp cho gia đình và xã hội.' }],
+        tamChu(), [{ k: 'mantra', text: '• Om Ta rê Tut ta rê Tu rê So ha (3 lần)' }, { k: 'mantra', text: '• Om Jăm ba la Ja len đây a So ha (3 lần)' }],
+        taOn(6));
+  }
+
+  /* ================= PHẦN 2 ================= */
+  function khaiQuang(d, c) {
+    const out = [
+      { k: 'title', text: 'PHẦN 2 – BÀI 1. KHAI QUANG VÀ AN VỊ QUAN THẦN LINH (PHẬT, THÁNH)' },
+      { k: 'sub', text: '(Mỗi tháng đọc 1 lần để nơi thờ luôn có năng lượng tốt)' },
+      { k: 'box', groups: [{ title: '► Ý NGHĨA BÀI:', items: ['Thanh tịnh – khai quang nơi thờ: Sái tịnh, khai mở phong ấn, trấn yểm tại ban thờ và đất ở, đồng thời giải oan, độ sinh cho các vong linh, giúp không gian thờ tự trong sạch.', 'An vị chư vị: Khai quang, an vị Phật A Di Đà, Quan Thần Linh, Quan Thần Tài và bát hương để các Ngài ngự đúng chỗ, gia hộ cho gia chủ.', 'Giữ năng lượng tốt – hanh thông: Đọc đều đặn mỗi tháng giúp nhà cửa luôn vượng khí, bình an, công việc và tiền tài hanh thông.'] }] },
+      { k: 'h', text: 'LỜI KHẤN' },
+      { k: 'p', text: '**1.** ' + c.ngay + '. Con tên là **' + c.ten + '**, con xin được sái tịnh, an vị, khai quang Quan Thần Linh ' + (d.thanLinh || 'tại địa chỉ đất ' + c.addr0) + '.' }]
+      .concat(chu20(), [
+        { k: 'p', text: '**2. Con xin Khai Quang:** khai phong ấn, khai trấn yểm, khai long mạch, khai khí mạch, khai huyết mạch, khai địa mạch, khai thủy mạch, khai Thần mạch; khai các Thần, các Thánh, các Quan; khai mạch và khai thông Thập pháp giới chúng sinh; khai toàn bộ vong linh các anh hùng liệt sĩ, các anh chị thanh niên xung phong; khai các vong linh oán khí nặng; khai toàn bộ vong linh binh lính, dân thường già trẻ trai gái phản quốc; khai toàn bộ vong linh binh lính, tướng sĩ Tàu, vong linh binh lính, tướng sĩ nước ngoài tử trận tại Việt Nam; khai toàn bộ bùa chú, khai toàn bộ quỷ nếu có ở tại **ban thờ** và xung quanh đất này. Khai quang Bà Cô Tổ, Ông Mãnh Tổ cũng như hội đồng gia tiên tiền tổ nhiều đời nhiều kiếp của tất cả các vong linh vừa được khai; khai thông biên giới Việt Nam với biên giới toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**3. Con tên là ' + c.ten + '** xin kêu thay tấu đỡ cho những vong linh không tự đọc khấn được, cũng như kính mời các vong linh đã được khai quang bên trên từ nhiều đời nhiều kiếp: ai có tội thì về sám hối, ai bị oan thì về giải oan, buông bỏ chấp niệm. Xin xóa toàn bộ nợ tiền âm, nợ tiền trần, nợ tiền các Thánh, các Quan, các Thần và Thập pháp giới chúng sinh từ nhiều đời nhiều kiếp cho tất cả vong linh đã được khai quang bên trên.' }], thatPhat(), [
+        { k: 'p', text: '**4. Kính xin** chư Phật, chư Bồ Tát, chư Thiên, chư Thánh, chư Thần, các Quan; kính xin Quan Thần Linh, Quan Thổ Công, Quan Thổ Địa, Ông Tiền Chủ, Bà Tiền Chủ ở tại Đại Bảo Tháp Mandala Tây Thiên (xã Đại Đình, tỉnh Phú Thọ, Việt Nam) mở cửa cho phép tất cả vong linh đã được khai quang được vào Đại Bảo Tháp để tinh tấn tu tập, cầu siêu thoát và hiệp lực vì hòa bình toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**5. Xin kính mời** tất cả vong linh đã được khai quang bên trên: ai ở nước ngoài thì về thăm gia tiên, quê hương đất nước mình. Những ai muốn quay trở về Đại Bảo Tháp Mandala Tây Thiên (xã Đại Đình, tỉnh Phú Thọ, Việt Nam) để tinh tấn tu tập cầu siêu thoát, cũng như hiệp lực vì hòa bình toàn cầu, thì sau 21 ngày hãy lên và xin được vào Đại Bảo Tháp tinh tấn tu tập, cầu được siêu thoát.' }], tamChu(), [
+        { k: 'p', text: '**6. Xin được tiếp linh** và hợp nhất với long mạch, khí mạch, huyết mạch, địa mạch, thủy mạch, Thánh mạch, Quan mạch, Thần mạch, mạch Thập pháp giới chúng sinh với địa chỉ đất này và xung quanh.' }], tamChu(), [
+        { k: 'p', text: '**7. Con xin khai quang,** khai ánh sáng hào quang của Đức Phật A Di Đà tại địa chỉ đất ' + c.addr0 + '.' }], tamChu(), [
+        { k: 'p', text: '**8. Con xin khai quang,** khai ánh sáng hào quang của Quan Thần Linh, Quan Thần Tài tại địa chỉ đất ' + c.addr0 + '.' }], tamChu(), [
+        { k: 'p', text: '**9. Xin được an vị** Đức Phật A Di Đà, Quan Thần Linh, Quan Thần Tài tại địa chỉ đất ' + c.addr0 + '.' }], tamChu(), [
+        { k: 'p', text: '**10. Xin được an vị bát hương** thờ Đức Phật A Di Đà, Quan Thần Linh, Quan Thần Tài tại địa chỉ đất ' + c.addr0 + '.' }], tamChu(), [
+        { k: 'p', text: '**11. Con xin** cho con có nhân duyên với ' + DOTS + ' tại địa chỉ đất ' + c.addr0 + '.' },
+        { k: 'p', text: 'Kính xin Quan Thần Linh và Bà Chúa Đất tại đất này cho con và nhân sự, cộng tác của con được ' + DOTS + ' *(bạn cần xin gì thì tự xin)*, được hanh thông công việc và tiền trần gian.' },
+        { k: 'p', text: '**12. Con xin tạ ơn** công đức vô lượng của các Ngài.' },
+        { k: 'p', text: 'Xin cho Thập pháp giới chúng sinh Hòa bình, An lạc, Hoan hỷ và Hạnh phúc.' }], tamChu(), [
+        { k: 'note', text: '==Lưu ý:== Nhà mình có Phật, Thánh... thì khai quang và an vị.' }]);
+    return out;
+  }
+
+  function traNoLines(items) {
+    return items.map(it => {
+      if (/^gia tiên/.test(it.label)) return null;
+      const verb = it.label === 'duyên âm' ? 'Xin trả nợ cho ' : it.label === 'âm binh' ? 'Xin được trả nợ cho ' : it.label === 'các bạn quỷ' ? 'Xin được trả nợ cho ' : /^cửa/.test(it.label) ? 'Xin được trả nợ về ' : 'Xin được trả nợ ';
+      return { k: 'li', text: verb + it.label + ' ' + qText(it.q) };
+    });
+  }
+  function traNo(d, c) {
+    const N = c.N;
+    const giaTien = (withLin) => [{ k: 'li', text: 'Xin được trả nợ gia tiên ' + N + ' họ:' }].concat(withLin ? [{ k: 'li', lvl: 2, i: true, text: c.lin.map(l => 'Dòng họ ' + (l.ho || D) + ' – ' + (l.rep || DOTS)).join('; ') }] : [],
+      [{ k: 'li', lvl: 2, text: soChu(N) + ' tập 500.000 tiền âm màu đỏ' }, { k: 'li', lvl: 2, text: (10 * N) + ' lễ tiền âm, ' + N + ' tờ tiền trần mỗi tờ 10.000 đồng.' }]);
+    const listFor = (self) => {
+      const items = traNoItems(N, self), lines = traNoLines(items), gi = items.findIndex(x => /^gia tiên/.test(x.label));
+      return lines.slice(0, gi).concat(giaTien(self), lines.slice(gi + 1)).filter(Boolean);
+    };
+    let out = [
+      { k: 'title', text: 'PHẦN 2 – BÀI 2. TRẢ NỢ VÀ BIẾU QUAN THẦN LINH' },
+      { k: 'sub', text: 'Trả nợ cho bản thân, người thân và biếu Quan Thần Linh' },
+      yn(['Bài lễ để tự mình sám hối, xin xóa các khoản nợ tiền âm, nợ tiền trần tích tụ từ nhiều đời nhiều kiếp.', 'Việc trả nợ và dâng biếu tượng trưng cho lòng thành, giúp thân tâm nhẹ nhàng, hóa giải vướng mắc với oan gia trái chủ, gia tiên và các cõi chúng sinh.', 'Đồng thời tỏ lòng tri ân, biếu tiền Quan Thần Linh và Bà Chúa Đất đang cai quản nơi mình ở và làm lễ.'],
+        ['Dùng cho cá nhân muốn tự trả nợ nghiệp, xóa nợ tiền âm - tiền trần cho chính mình.', 'Có thể kêu thay tấu đỡ để trả nợ giúp cho người thân (cha mẹ, người trong gia đình).', 'Phù hợp khi làm lễ tại nhà hoặc tại nơi đất mình đang sinh sống, canh tác. Hoặc nhờ người hóa giải giúp.']),
+      { k: 'p', text: '*' + c.ngayNgan + '*' },
+      { k: 'p', text: 'Con tên là: **' + c.tenSinhNgay + '**, xin sám hối xóa tội, giải oan, buông bỏ chấp niệm, xin xóa toàn bộ nợ tiền âm, nợ tiền trần trong tiền kiếp đến nay và xin được trả nợ, biếu tiền cho bản thân con như sau:' }]
+      .concat(chu20(), [
+        { k: 'p', text: '**1. Xin Khai Quang**, Khai phong ấn, khai trấn yểm, khai long mạch, khai khí mạch, khai huyết mạch, khai địa mạch, khai thủy mạch, khai thần mạch, Khai thông các Thánh, các Quan, các Thần, Khai mạch thập pháp giới chúng sinh, khai thông thập pháp giới chúng sinh, khai thông nhiều đời nhiều kiếp đến nay của con là ' + c.tenSinhNgay + '.' },
+        { k: 'p', text: 'Khai thông biên giới Việt Nam với biên giới toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**2. Con tên là: ' + c.ten + '** xin sám hối xóa tội, giải oan, buông bỏ chấp niệm, xin xóa toàn bộ nợ tiền âm, nợ tiền trần trong tiền kiếp đến nay và xin được trả nợ cho bản thân con như sau:' },
+        { k: 'p', text: '**' + c.tenSinhNgay + '**, xin được trả nợ tiền âm như sau:' }], listFor(true));
+    const kt = c.kt.length ? c.kt : null;
+    if (kt) kt.forEach(m => {
+      out = out.concat([{ k: 'p', text: '**' + c.ten + ' xin kêu thay tấu đỡ cho ' + lower1(m.rel) + ' là ' + (m.name || DOTS) + '**' + (m.birth ? ', sinh ' + m.birth : '') + ' sám hối xóa tội, giải oan, buông bỏ chấp niệm, xin xóa toàn bộ nợ tiền âm, nợ tiền trần trong tiền kiếp đến nay và xin được trả nợ thay cho ' + lower1(m.rel) + ' ' + (m.name || DOTS) + ' như sau:' }], listFor(false));
+    });
+    else out.push({ k: 'note', text: '**Trường hợp trả nợ cho người thân thì đọc:** ' + c.ten + ' xin kêu thay tấu đỡ cho (quan hệ) là (họ tên) sám hối xóa tội, giải oan, buông bỏ chấp niệm, xin xóa toàn bộ nợ tiền âm, nợ tiền trần trong tiền kiếp đến nay và xin được trả nợ thay như sau: (đọc lại danh sách lễ như trên). Những người khác tương tự.' });
+    out = out.concat([
+      { k: 'p', text: 'Con xin biếu Quan Thần Linh, Bà Chúa Đất tại nơi đất con làm lễ, tại địa chỉ đất như sau:' },
+      { k: 'p', text: '**Tại địa chỉ: ' + c.addr0 + '**' },
+      { k: 'li', text: '**Biếu Quan Thần Linh:** ' + qText(BIEU_QTL) + '.' },
+      { k: 'li', text: '**Biếu Bà Chúa Đất:** ' + qText(BIEU_BCD) + '.' }], tamChu(), taOn(3), [{ k: 'p', text: '**Con xin cảm ơn các Ngài!**' }], burnerBlocks(c));
+    return out;
+  }
+
+  function phongSinh(d, c) {
+    const song = d.song || ('sông (hồ, suối, ao ' + DOTS + ')');
+    const animals = d.animals ? d.animals.split(/\n|;/).map(s => s.trim()).filter(Boolean) : [DOTS, DOTS];
+    let out = [
+      { k: 'title', text: 'PHẦN 2 – BÀI 3. PHÓNG SINH' },
+      { k: 'sub', text: 'HÓA GIẢI CHO ĐẤT, SÔNG, HỒ... & PHÓNG SINH CON VẬT OAN GIA' },
+      yn(['Bài lễ khai quang, hóa giải phong ấn, trấn yểm và các oán khí tại đất, sông, hồ nơi mình thả phóng sinh.', 'Cầu siêu và hóa giải cho vong linh, các cõi chúng sinh, giúp họ được siêu thoát và về nơi tu tập.', 'Kết hợp phóng sinh con vật để trả nợ con vật oan gia trái chủ, tích phước và chuộc lại nghiệp sát sinh.'],
+        ['Dùng khi phóng sinh (thả cá, con vật....) tại sông, hồ, ao, suối.', 'Áp dụng để hóa giải nghiệp về sức khỏe do nợ con vật oan gia gây ra.', 'Có thể kêu thay tấu đỡ, phóng sinh giúp cho người thân trong gia đình.']),
+      { k: 'p', text: '**1.** ' + c.ngay + ', con tên là **' + c.ten.toUpperCase() + '** xin được trả nợ con vật oan gia.' }]
+      .concat(chu20(), [
+        { k: 'p', text: '**2. Con xin Khai Quang**, ' + KHAI_DAI.replace(/^k/, 'K') + ' nếu có ở ' + song + ' và xung quanh các đất này, khai thông biên giới Việt Nam với biên giới toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**3. Con tên là ' + c.ten.toUpperCase() + '. ' + KEU_THAY }], thatPhat(), [
+        { k: 'p', text: '**4. Xin được hóa giải** ' + HOA_GIAI + HOA_GIAI_2 + '...)' }], thatPhat(), [
+        { k: 'p', text: '**5. Kính xin** chư Phật, chư Bồ Tát, chư Thiên, chư Thánh, chư Thần, các Quan, kính xin Quan Thần Linh, Quan Thổ Công, Quan Thổ Địa, Ông Tiền Chủ, Bà Tiền Chủ ở tại ' + BAO_THAP_3 + ', mở cửa cho phép tất cả vong đã được khai quang được vào Đại Bảo Tháp để tinh tấn tu tập cầu siêu thoát cũng như hiệp lực vì hòa bình toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**6. Xin kính mời** tất cả vong linh khai quang bên trên, ai ở nước ngoài thì về thăm gia tiên, quê hương đất nước mình. Những ai muốn quay trở về ' + BAO_THAP + ' để tinh tấn tu tập cầu siêu thoát, cũng như hiệp lực vì hòa bình toàn cầu, thì sau 21 ngày hãy lên và xin được vào Đại Bảo Tháp tinh tấn tu tập cầu được siêu thoát, cũng như hiệp lực vì hòa bình toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**7. Xin được tiếp linh, điền hàn** và hợp nhất với long mạch, khí mạch, huyết mạch, địa mạch, thủy mạch, Thánh mạch, Quan mạch, Thần mạch, mạch thập pháp giới chúng sinh, các luân xa trái đất, các cõi pháp giới chúng sinh với các địa chỉ đất đã đọc bên trên.' }], tamChu(), taOn(8), [
+        { k: 'part', text: 'PHÓNG SINH' },
+        { k: 'p', text: '*' + c.ngayNgan + '*' },
+        { k: 'p', text: 'Con tên là **' + c.ten.toUpperCase() + '** con xin hóa giải con vật oan gia trái chủ về sức khỏe qua các con vật sau:' },
+        { k: 'li', text: animals.join('\n') }]);
+    const yob = m => (m.birth.match(/(\d{4})\s*$/) || [])[1] || DOTS;
+    if (c.kt.length) c.kt.forEach(m => out.push({ k: 'p', text: '**' + c.ten.toUpperCase() + '** con xin kêu thay tấu đỡ trả nợ con vật oan gia trái chủ cho ' + m.rel + ': ' + (m.name || DOTS) + ' sinh năm ' + yob(m) + ' là: ' + DOTS }));
+    else out.push({ k: 'p', text: '**' + c.ten.toUpperCase() + '** con xin kêu thay tấu đỡ trả nợ con vật oan gia trái chủ cho (quan hệ): ' + DOTS + ' sinh năm ' + DOTS + ' là: ' + DOTS });
+    return out.concat([
+      { k: 'p', text: 'Xin cho các bạn khi mất đi được siêu thoát.' },
+      { k: 'c', text: 'Om A Mi Đề Wa Si (21 lần)' },
+      { k: 'note', text: '==Trường hợp phóng sinh con ba ba bé thì đọc:== Điềm lành mang đến, điềm gở trở đi (9 lần)' },
+      { k: 'p', text: '**Con xin cảm ơn các Ngài!**' }]);
+  }
+
+  function bieuQTL(d, c) {
+    const others = c.addrs.slice(1);
+    let out = [
+      { k: 'title', text: 'PHẦN 2 – BÀI 4. BIẾU QUAN THẦN LINH VÀ BÀ CHÚA ĐẤT' },
+      yn(['Tri ân Quan Thần Linh, Bà Chúa Đất đang cai quản nơi mình ở, nơi làm việc.', 'Xin phép Thần Linh tại chỗ để biếu đúng phép đến các địa chỉ đất khác.', 'Được các Ngài hoan hỷ gia hộ, công việc và tiền tài hanh thông; tiền trần giữ lại để làm việc tạo phước.']),
+      { k: 'note', text: '**Lưu ý: Biếu ngày mồng 1 âm lịch hằng tháng, biếu xong thì đốt tiền âm luôn, tiền trần cất để dành trong 3 năm sau đó tùy duyên làm việc Tạo Phước. (Không cần thắp hương hoặc thắp hương tùy gia chủ) Có thể biếu nhiều hơn tùy gia chủ.**' },
+      { k: 'p', text: 'Hôm nay là ngày ' + D + '/' + D + '/' + c.year + ', tức ngày ' + D + ' tháng ' + D + ' năm ' + c.yearAL + ', Con tên là **' + c.ten + '**, con xin biếu tiền Quan Thần Linh, Bà Chúa Đất.' }]
+      .concat(chu20(), [
+        { k: 'p', text: 'Con tên là: **' + c.ten + '**, con xin biếu tiền như sau:' },
+        { k: 'p', text: 'Tại địa chỉ đang lễ: **' + c.addr0 + '**' },
+        { k: 'li', text: '+ Biếu Quan Thần Linh ' + qText(BIEU_QTL) + '.' },
+        { k: 'li', text: '+ Biếu Bà Chúa Đất ' + qText(BIEU_BCD) + '.' }]);
+    const list = others.length ? others : [DOTS, DOTS];
+    out.push({ k: 'p', text: 'Con xin phép Quan Thần Linh tại đất: ' + c.addr0 + ' cho con ở tại đất này biếu tiền Quan Thần Linh, Bà Chúa Đất ở tại các địa chỉ đất sau:' });
+    list.forEach(a => { out = out.concat([{ k: 'p', text: '*Tại địa chỉ: ' + a + '*' }, { k: 'li', text: '+ Biếu Quan Thần Linh ' + qText(BIEU_QTL) + '.' }, { k: 'li', text: '+ Biếu Bà Chúa Đất ' + qText(BIEU_BCD) + '.' }]); });
+    return out.concat(tamChu(), [{ k: 'p', text: '**Con xin cảm ơn Quan Thần Linh và Bà Chúa Đất**' }]);
+  }
+
+  function bieuNghiaTrang(d, c) {
+    const N = c.N;
+    let out = [
+      { k: 'title', text: 'PHẦN 2 – BÀI 5. BIẾU QUAN Ở NGHĨA TRANG VÀ BÀ CÔ TỔ' },
+      { k: 'sub', text: 'BIẾU QUAN THẦN LINH NGHĨA TRANG NƠI AN NGHỈ GIA TIÊN 2 BÊN 4 HỌ VÀ BÀ CÔ TỔ 4 HỌ (Nếu chưa có gia đình thì biếu 2 bên Bố Mẹ)' },
+      yn(['Tri ân Quan Thần Linh cai quản nghĩa trang – nơi an nghỉ của gia tiên 2 bên 4 họ.', 'Biếu Bà Cô Tổ 4 họ để tỏ lòng hiếu kính, cầu các Ngài phù hộ độ trì.', 'Giúp mồ mả gia tiên yên ổn, con cháu bình an, gia đạo hòa thuận.']),
+      { k: 'p', text: '*' + c.ngayNgan + '*' },
+      { k: 'p', text: 'Con tên là **' + c.tenSinhNgay + '**, con xin biếu tiền Quan Thần Linh, và Bà Cô Tổ của ' + c.linRole(c.lin[0]) + '.' }]
+      .concat(chu20(), [{ k: 'p', text: '**Con tên là: ' + c.tenSinhNgay + '**, con xin biếu tiền như sau:' }]);
+    c.lin.forEach((l, i) => {
+      out.push({ k: 'p', text: '**' + (i + 1) + '. Tại nghĩa trang ' + (l.cem || DOTS) + ' nơi an nghỉ gia tiên nội ngoại ' + c.linRole(l) + '**' });
+      out.push({ k: 'li', text: 'Biếu Quan Thần Linh: ' + qText(BIEU_QTL) });
+    });
+    out = out.concat([
+      { k: 'p', text: '**Tại địa chỉ (mình biếu): ' + c.addr0 + '**' },
+      { k: 'li', text: '**Biếu Quan Thần Linh:** 10 lễ tiền âm, 1 ' + tranTien + '.' }], tamChu(), [
+      { k: 'p', text: '**' + c.tenSinhNgay + '** xin biếu ' + N + ' Bà Cô Tổ dòng họ là:' },
+      { k: 'li', text: c.lin.map(l => l.role ? 'Dòng họ (' + l.role + ' – dòng họ ' + (l.ho || D) + ', ' + (l.rep || DOTS) + ')' : 'Dòng họ ' + (l.ho || D) + ', ' + (l.rep || DOTS)).join('\n') },
+      { k: 'p', text: '• **TRI ÂN (BIẾU ' + N + ' BÀ CÔ TỔ):** Lễ biếu mỗi Bà Cô Tổ gồm 10 lễ tiền âm, 1 tập vàng lá, 2 tập tiền đô màu đỏ (kẹp nhỏ), 1 ' + tranTien + '.' },
+      { k: 'p', text: '**TỔNG ' + N + ' BÀ CÔ TỔ:** ' + (10 * N) + ' lễ tiền âm, ' + N + ' tập vàng lá, ' + (2 * N) + ' tập tiền đô màu đỏ, ' + N + ' tờ tiền trần mệnh giá 10.000 đồng.' }], tamChu(), taOn(4), [
+      { k: 'p', text: '**Con xin cảm ơn các Ngài**' }], burnerBlocks(c));
+    return out;
+  }
+
+  function duyenAmTargets(d) {
+    const list = d.duyenAm.length ? d.duyenAm : [{ who: 'self', title: '' }];
+    return list.map(x => {
+      const m = x.who === 'self' ? null : d.family[+x.who];
+      return { m, title: x.title || DOTS };
+    });
+  }
+  function duyenAm(d, c) {
+    const yN = yn(['Khai quang, hóa giải tội, oan, bệnh cho duyên âm tiền kiếp đang theo người thân.', 'Biếu tiền để trả nợ duyên, giúp đôi bên buông bỏ ràng buộc, chấp niệm.', 'Mời duyên âm cùng người thân về Đại Bảo Tháp tu tập; người còn sống nhẹ nhàng, tình duyên hanh thông.']);
+    let out = [];
+    duyenAmTargets(d).forEach((t, idx) => {
+      const ai = t.m ? lower1(t.m.rel) + ' là ' + (t.m.name || DOTS) + (t.m.birth ? ', sinh ngày ' + t.m.birth : '') : '';
+      const cua = t.m ? 'của ' + lower1(t.m.rel) + ' là ' + (t.m.name || DOTS) + (t.m.birth ? ', sinh ngày ' + t.m.birth : '') : 'của con là ' + c.tenSinhNgay;
+      out = out.concat([
+        { k: 'title', text: 'PHẦN 2 – BÀI 6. KHAI THỊ DUYÊN ÂM', pb: idx > 0 },
+        { k: 'sub', text: 'BIẾU TIỀN DUYÊN ÂM ' + t.title.toUpperCase() },
+        yN,
+        { k: 'p', text: '*' + c.ngayNgan + '*' },
+        { k: 'p', text: 'Con tên là **' + c.tenSinhNgay + '**, ' + (t.m ? 'xin kêu thay tấu đỡ cho ' + ai + ', ' : '') + 'con xin được biếu tiền duyên âm là ' + t.title + ' như sau:' }],
+        chu20(), [
+        { k: 'p', text: '**1. Xin Khai Quang**, Khai phong ấn, khai trấn yểm, khai long mạch, khai khí mạch, khai huyết mạch, khai địa mạch, khai thủy mạch, khai thần mạch, Khai thông các Thánh, các Quan, các Thần, Khai mạch thập pháp giới chúng sinh, khai thông thập pháp giới chúng sinh, khai thông nhiều đời nhiều kiếp đến nay của duyên âm là ' + t.title + ' ' + cua + ' (ai có tội thì về sám hối, ai bị oan thì về giải oan, buông bỏ chấp niệm, ai có bệnh thì về chữa bệnh).' }],
+        thatPhat(), [{ k: 'p', text: 'Khai thông biên giới Việt Nam với biên giới toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**2. Con tên là: ' + c.ten + '** ' + (t.m ? 'xin kêu thay tấu đỡ cho ' + ai + ', xin sám hối xóa tội, giải oan, buông bỏ chấp niệm, xin xóa toàn bộ nợ tiền âm, nợ tiền trần trong tiền kiếp đến nay cho ' + (t.m.name || DOTS) + '.' : 'xin sám hối xóa tội, giải oan, buông bỏ chấp niệm, xin xóa toàn bộ nợ tiền âm, nợ tiền trần trong tiền kiếp đến nay.') + ' Con xin biếu tiền duyên âm là ' + t.title + ' như sau:' },
+        { k: 'p', text: '**' + c.ten + (t.m ? ' xin kêu thay tấu đỡ biếu tiền duyên âm của ' + ai : ' xin biếu tiền duyên âm của con') + ', là ' + t.title + ' như sau:**' },
+        { k: 'li', text: '- 10 lễ tiền âm\n- 2 tập tiền đô\n- 2 tập tiền Euro\n- 2 tờ tiền trần 10.000 đồng\n- 1 tập tiền xu\n- 1 vỉ vàng thỏi\n- 1 vỉ bạc thỏi' },
+        { k: 'p', text: 'Xin mời Duyên âm là ' + t.title + ' cùng với người thân, người hầu hạ, hầu gái ở Việt Nam và trên thế giới về:' },
+        { k: 'li', text: '- Đại Bảo Tháp Mandala Tây Thiên, xã Đại Đình, tỉnh Phú Thọ, Việt Nam.\n- Đại Bảo Tháp Boudhanath (Kathmandu, Nepal) – "Trái tim" của Phật giáo Tây Tạng.\n- Chùa Vàng Shwedagon (Yangon, Myanmar) – Thánh địa Phật giáo Nam Truyền.' }],
+        tamChu(), taOn(3), c.burner ? [{ k: 'p', text: c.burner }] : [{ k: 'p', text: 'Con xin nhờ ' + DOTS + ' ở địa chỉ ' + DOTS + ' đốt mã giúp con.' }], [{ k: 'p', text: '**Con xin cảm ơn các Ngài!**' }]);
+    });
+    return out;
+  }
+
+  function giaiNghiep(d, c) {
+    return [
+      { k: 'title', text: 'PHẦN 2 – BÀI 7. GIẢI NGHIỆP' },
+      { k: 'sub', text: 'GIẢI NGHIỆP DÒNG HỌ (nhờ nhóm trưởng giúp)' },
+      yn(['Bài lễ sám hối và hóa giải nghiệp sâu dày của bản thân và cả dòng họ tích tụ từ nhiều đời nhiều kiếp.', 'Khai thông và hóa giải cho Bà Cô Tổ, Ông Mãnh Tổ, Hội Đồng Gia Tiên nhiều đời của các dòng họ.', 'Tạo phước báu cho bản thân, gia tiên và con cháu; cầu khai thông trí tuệ, hanh thông công việc.'],
+        ['Dùng cho người muốn hóa giải nghiệp chung của cả dòng họ nội - ngoại.', 'Áp dụng khi làm lễ cầu cho nhiều thành viên gia đình (còn sống và đã mất) cùng lúc.', 'Phù hợp khi muốn chuyển hóa các nghiệp cụ thể (ngạo mạn, khẩu nghiệp, nợ duyên âm, nợ tào quan...) đã được luận giải.']),
+      { k: 'note', text: '==LƯU Ý: CẦN NHỜ NHÓM TRƯỞNG GIÚP.== Đọc 21 ngày, 6 tháng đọc lại 1 lần 21 ngày. Bài này đã bao gồm cả bài Xóa nợ cầu siêu, nên khi đọc bài này thì không cần đọc bài Xóa nợ cầu siêu.' },
+      { k: 'p', text: 'Thông tin chuẩn bị gửi nhóm trưởng:' },
+      { k: 'li', i: true, text: ['Người đọc: ' + c.tenSinh].concat(c.famLines, c.linLines).join('\n') }];
+  }
+
+  function doSinh(d, c) {
+    const addrs = d.doSinh.length ? d.doSinh.map((a, i) => '**' + (i + 1) + '. ' + a + '**') : ['**1. ' + DOTS + DOTS + '**', '**2. ' + DOTS + DOTS + '**', '**3. ' + DOTS + DOTS + '**'];
+    return [
+      { k: 'title', text: 'PHẦN 2 – BÀI 8. ĐỘ SINH TẠO PHƯỚC LỚN' },
+      { k: 'sub', text: '(Hóa giải và điền hàn long mạch nhà và đất)' },
+      yn(['Tạo phước lớn: cứu độ, dẫn dắt chúng sinh hướng về điều thiện, biết tu tập và làm lành.', 'Giải oan, xóa nợ, mời các vong linh, quỷ, Atula về nơi tu tập để được siêu thoát.', 'Phước độ sinh hồi hướng cho bản thân, gia tiên và con cháu được bình an, hanh thông.']),
+      { k: 'p', text: '**1. Khấn nguyện:** ' + c.ngay + '. Con tên là **' + c.tenSinhNgay + '**, con xin được độ sinh tạo phước.' }]
+      .concat(chu20(), [
+        { k: 'p', text: '**2. Con xin Khai Quang:** khai phong ấn, khai trấn yểm, khai long mạch, khai khí mạch, khai huyết mạch, khai địa mạch, khai thủy mạch, khai Thần mạch, khai Thánh mạch, khai Quan mạch; khai thông các Thánh, các Quan, các Thần; khai mạch và khai thông Thập pháp giới chúng sinh; khai toàn bộ các luân xa của trái đất; khai thông các cõi pháp giới chúng sinh; khai Tam giới; khai toàn bộ vong linh các anh hùng liệt sĩ, các anh chị thanh niên xung phong; khai các vong linh oán khí nặng; khai toàn bộ vong linh binh lính, dân thường già trẻ trai gái phản quốc; khai toàn bộ vong linh binh lính, tướng sĩ Tàu, vong linh binh lính, tướng sĩ nước ngoài tử trận tại Việt Nam; khai toàn bộ bùa chú; khai toàn bộ các bạn Quỷ, Thần Quỷ, Chúa Quỷ, Vua Quỷ, tất cả các bạn Atula, Thần Atula, Chúa Atula, Vua Atula nhiều đời nhiều kiếp đến nay, nếu có ở tại đất và **ban thờ** tại các địa chỉ sau (nhóm 50 địa chỉ trên nhóm HGTL):' },
+        { k: 'li', text: addrs.join('\n') },
+        { k: 'p', text: 'và xung quanh các đất này; khai thông biên giới Việt Nam với biên giới toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**3. Con tên là ' + c.ten + '. Con xin kêu cho bản thân, kêu thay tấu đỡ** cho những vong linh và tất cả các cõi pháp giới chúng sinh đã được khai quang bên trên mà không tự đọc khấn được; đồng thời kính mời các vong linh và tất cả các cõi pháp giới chúng sinh đã được khai quang bên trên từ nhiều đời nhiều kiếp: ai có tội thì về sám hối, ai bị oan thì về giải oan, buông bỏ chấp niệm. Xin xóa toàn bộ nợ tiền âm, nợ tiền trần, nợ tiền các vị, cụ thể là: chư Phật, chư Bồ Tát, chư Thánh, các Quan, các Thần, Thập pháp giới chúng sinh, oan gia trái chủ, duyên âm, âm binh, gia tiên tiền tổ, các bạn Atula, Thần Atula, Chúa Atula, Vua Atula, các bạn Quỷ, Thần Quỷ, Chúa Quỷ, Vua Quỷ từ nhiều đời nhiều kiếp đến nay, cho tất cả vong linh đã được khai quang bên trên. **Số lượng: ' + D + ' bạn Atula, ' + D + ' bạn Quỷ.**' }], thatPhat(), [
+        { k: 'p', text: '**4. Xin được hóa giải** phong ấn, hóa giải tội, hóa giải oan, chữa bệnh cho: Bà Cô Tổ, Ông mãnh tổ cũng như hội đồng gia tiên tiền tổ nhiều đời nhiều kiếp; cô bé đỏ, cậu bé đỏ / các bạn Atula, Thần Atula, Chúa Atula, Vua Atula có tội, bị oan, bị bệnh / các bạn Quỷ, Thần Quỷ, Chúa Quỷ, Vua Quỷ có tội, bị oan, bị bệnh / Hóa giải duyên âm / Hóa giải Kumanthong / Hóa giải bùa chú...' }], thatPhat(), [
+        { k: 'p', text: '**5. Kính xin** chư Phật, chư Bồ Tát, chư Thiên, chư Thánh, chư Thần, các Quan; kính xin Quan Thần Linh, Quan Thổ Công, Quan Thổ Địa, Ông Tiền chủ, Bà Tiền chủ ở tại ' + BAO_THAP_3 + ' mở cửa cho phép tất cả vong linh đã được khai quang được vào Đại Bảo Tháp để tinh tấn tu tập, cầu siêu thoát, cũng như hiệp lực vì hòa bình toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**6. Xin kính mời** tất cả vong linh đã được khai quang bên trên: ai ở nước ngoài thì về thăm gia tiên, quê hương đất nước mình. Những ai muốn quay trở về ' + BAO_THAP_3 + ' để tinh tấn tu tập cầu siêu thoát, cũng như hiệp lực vì hòa bình toàn cầu, thì sau 21 ngày hãy lên và xin được vào Đại Bảo Tháp tinh tấn tu tập, cầu được siêu thoát, cũng như hiệp lực vì hòa bình toàn cầu.' }], tamChu(), [
+        { k: 'p', text: '**7. Xin được tiếp linh, điền hàn** và hợp nhất với long mạch, khí mạch, huyết mạch, địa mạch, thủy mạch, Thánh mạch, Quan mạch, Thần mạch, mạch Thập pháp giới chúng sinh, các luân xa trái đất, các cõi pháp giới chúng sinh với các địa chỉ đất đã đọc bên trên.' }], tamChu(), taOn(8));
+  }
+
+  /* ================= BẢNG KÊ BIẾU TIỀN – LỄ VẬT ================= */
+  function bangKe(d, c) {
+    const N = c.N;
+    const tot = q => UNIT_ORDER.filter(k => q[k]).map(k => q[k] + ' ' + UNIT[k] + (k === 'tran' ? ' (= ' + fmtN(q[k] * 10000) + ' đồng)' : '')).join('; ');
+    const W3 = [3600, 6038];
+    let out = [
+      { k: 'title', text: 'BẢNG KÊ LỄ VẬT – BIẾU TIỀN' },
+      { k: 'sub', text: 'Người làm lễ: ' + c.tenSinh },
+      { k: 'p', text: 'Bảng kê tự tính theo thông tin đã nhập: ' + N + ' dòng họ, ' + (c.addrs.length || 1) + ' địa chỉ đất, ' + c.kt.length + ' người thân được kêu thay trả nợ. Tiền âm đốt sau khi đọc xong; tiền trần cất để dành làm việc Tạo Phước.' }];
+    // 1. Trả nợ & biếu QTL — mỗi khoản × số người
+    const S1 = {}; const nguoi = ['Bản thân: ' + c.ten].concat(c.kt.map(m => m.rel + ': ' + (m.name || DOTS)));
+    const selfItems = traNoItems(N, true), np = nguoi.length;
+    const rows1 = selfItems.map(it => {
+      const k = it.label === 'cửa Thoải phủ' ? 1 : np, q = addQ({}, it.q, k); addQ(S1, q);
+      return ['Trả nợ ' + it.label, qText(it.q), k === np && np > 1 ? String(k) : (k === 1 && np > 1 ? '1 (bản thân)' : '1'), '**' + qText(q) + '**'];
+    });
+    rows1.push(['Biếu Quan Thần Linh tại ' + c.addr0, qText(BIEU_QTL), '1', '**' + qText(BIEU_QTL) + '**']);
+    rows1.push(['Biếu Bà Chúa Đất tại ' + c.addr0, qText(BIEU_BCD), '1', '**' + qText(BIEU_BCD) + '**']);
+    addQ(S1, BIEU_QTL); addQ(S1, BIEU_BCD);
+    out = out.concat([
+      { k: 'h', text: '1. TRẢ NỢ VÀ BIẾU QUAN THẦN LINH (Phần 2 – Bài 2 · trả 1 lần/năm, kiểm tra lại vào tháng 7)' },
+      { k: 'p', text: '**Người được trả nợ (' + np + '):** ' + nguoi.join('; ') + '.' },
+      { k: 'table', head: ['Khoản', 'Lễ mỗi người', 'Số người', 'Cộng'], widths: [2500, 2900, 1100, 3138], center: [false, false, true], rows: rows1 },
+      { k: 'note', text: '**Tổng lễ bài 2:** ' + tot(S1) }]);
+    // 2. Biếu mồng 1
+    const S2 = {}; const addrs = c.addrs.length ? c.addrs : [DOTS];
+    const rows2 = addrs.map((a, i) => { addQ(S2, BIEU_QTL); addQ(S2, BIEU_BCD); return [(i === 0 ? '**Nơi đang lễ:** ' : '') + a, ['• Quan Thần Linh: ' + qText(BIEU_QTL), '• Bà Chúa Đất: ' + qText(BIEU_BCD)]]; });
+    out = out.concat([
+      { k: 'h', text: '2. BIẾU QUAN THẦN LINH VÀ BÀ CHÚA ĐẤT (Phần 2 – Bài 4 · mồng 1 âm lịch hằng tháng)' },
+      { k: 'table', head: ['Địa chỉ đất', 'Lễ vật mỗi tháng'], widths: W3, rows: rows2 },
+      { k: 'note', text: '**Tổng lễ mỗi tháng:** ' + tot(S2) }]);
+    // 3. Nghĩa trang & Bà Cô Tổ
+    const S3 = {}; const rows3 = [];
+    c.lin.forEach(l => { addQ(S3, BIEU_QTL); rows3.push(['Nghĩa trang ' + (l.cem || DOTS) + ' – ' + c.linRole(l), '• Quan Thần Linh: ' + qText(BIEU_QTL)]); });
+    rows3.push(['Tại địa chỉ (mình biếu): ' + c.addr0, '• Quan Thần Linh: 10 lễ tiền âm, 1 ' + tranTien]); addQ(S3, { am: 10, tran: 1 });
+    c.lin.forEach(l => { addQ(S3, BIEU_BCT); rows3.push(['Bà Cô Tổ – ' + c.linRole(l), '• ' + qText(BIEU_BCT)]); });
+    out = out.concat([
+      { k: 'h', text: '3. BIẾU QUAN Ở NGHĨA TRANG VÀ BÀ CÔ TỔ (Phần 2 – Bài 5 · tháng 7 và tháng 12 hằng năm)' },
+      { k: 'table', head: ['Nơi / vị', 'Lễ vật'], widths: W3, rows: rows3 },
+      { k: 'note', text: '**Tổng lễ mỗi lần:** ' + tot(S3) }]);
+    // 4. Duyên âm
+    const S4 = {}; const rows4 = duyenAmTargets(d).map(t => { addQ(S4, BIEU_DA); return ['Duyên âm ' + t.title + (t.m ? ' của ' + lower1(t.m.rel) + ' ' + (t.m.name || DOTS) : ' của ' + c.ten), '• ' + qText(BIEU_DA)]; });
+    out = out.concat([
+      { k: 'h', text: '4. KHAI THỊ VÀ BIẾU QUÀ DUYÊN ÂM (Phần 2 – Bài 6 · biếu 1 lần)' },
+      { k: 'table', head: ['Duyên âm', 'Lễ vật'], widths: W3, rows: rows4 },
+      { k: 'note', text: '**Tổng lễ:** ' + tot(S4) }]);
+    return out;
+  }
+
+  /* ---------- danh mục bài ---------- */
+  const LIST = [
+    { id: 'p1-1', file: '01_Sai_tinh_tang_nang_luong_dat', ten: 'Sái tịnh tăng năng lượng cho đất', phan: 1, fn: saiTinh },
+    { id: 'p1-2', file: '02_Sam_hoi', ten: 'Sám hối', phan: 1, fn: samHoi },
+    { id: 'p1-3', file: '03_Xoa_no_cau_sieu', ten: 'Xóa nợ cầu siêu (49 ngày)', phan: 1, fn: xoaNo },
+    { id: 'p2-1', file: '04_P2_Khai_quang_an_vi', ten: 'Khai quang và an vị Quan Thần Linh', phan: 2, fn: khaiQuang },
+    { id: 'p2-2', file: '05_P2_Tra_no_va_bieu_Quan_Than_Linh', ten: 'Trả nợ và biếu Quan Thần Linh', phan: 2, fn: traNo },
+    { id: 'p2-3', file: '06_P2_Phong_sinh', ten: 'Phóng sinh – hóa giải đất, sông, hồ', phan: 2, fn: phongSinh },
+    { id: 'p2-4', file: '07_P2_Bieu_Quan_Than_Linh_mong_1', ten: 'Biếu Quan Thần Linh và Bà Chúa Đất (mồng 1)', phan: 2, fn: bieuQTL },
+    { id: 'p2-5', file: '08_P2_Bieu_nghia_trang_Ba_Co_To', ten: 'Biếu Quan ở nghĩa trang và Bà Cô Tổ', phan: 2, fn: bieuNghiaTrang },
+    { id: 'p2-6', file: '09_P2_Khai_thi_duyen_am', ten: 'Khai thị và biếu quà duyên âm', phan: 2, fn: duyenAm },
+    { id: 'p2-7', file: '10_P2_Giai_nghiep_dong_ho', ten: 'Giải nghiệp dòng họ (nhờ nhóm trưởng)', phan: 2, fn: giaiNghiep },
+    { id: 'p2-8', file: '11_P2_Do_sinh_tao_phuoc', ten: 'Độ sinh Tạo Phước lớn', phan: 2, fn: doSinh }];
+
+  function one(id, input) { const d = norm(input), c = ctx(d); const b = LIST.find(x => x.id === id); return b.fn(d, c); }
+  function tongHop(input) {
+    const d = norm(input), c = ctx(d);
+    let out = huongDan(d, c, { who: !!d.name });
+    out.push({ k: 'h', text: 'MỤC LỤC' });
+    out.push({ k: 'li', text: LIST.map(b => (b.phan === 1 ? 'Phần 1 – ' : 'Phần 2 – ') + b.ten).join('\n') });
+    out.push({ k: 'li', text: 'Bảng kê lễ vật – biếu tiền' });
+    out.push({ k: 'part', text: 'PHẦN 1: 3 BÀI ĐỌC TRONG 3 ĐẾN 5 NGÀY', pb: true });
+    LIST.forEach((b, i) => {
+      const bl = b.fn(d, c);
+      if (b.id === 'p2-1') out.push({ k: 'part', text: 'PHẦN 2: 8 BÀI CẦN HÀNH ĐỘNG CỤ THỂ', pb: true });
+      else if (i > 0) bl[0] = Object.assign({}, bl[0], { pb: true });
+      out = out.concat(bl);
+    });
+    const bk = bangKe(d, c); bk[0] = Object.assign({}, bk[0], { pb: true });
+    return out.concat(bk);
+  }
+  function guide(input) { const d = norm(input), c = ctx(d); return huongDan(d, c, { who: !!d.name }); }
+  function ke(input) { const d = norm(input), c = ctx(d); return bangKe(d, c); }
+  return { LIST, norm, autoLineages, canChiNam, one, tongHop, guide, ke };
+})();
+
+</script>
+<script>
+(function () {
+  'use strict';
+  const API = String(window.PL_API || '').replace(/\/+$/, '');
+  const CONTACT = String(window.PL_CONTACT || '').trim();
+  const TK = 'phuocloc.token.v1', LAST = 'phuocloc.tp.lastInput';
+  const $ = id => document.getElementById(id);
+  const S = { token: null, user: null, hist: [], fam: [], lin: [], linTouched: false, addr: [''], da: [], cur: null };
+  const RELS = ['Bố đẻ', 'Mẹ đẻ', 'Vợ', 'Chồng', 'Bố vợ', 'Mẹ vợ', 'Bố chồng', 'Mẹ chồng', 'Con trai', 'Con gái', 'Con dâu', 'Con rể', 'Anh trai', 'Chị gái', 'Em trai', 'Em gái', 'Ông nội', 'Bà nội', 'Ông ngoại', 'Bà ngoại', 'Cháu nội', 'Cháu ngoại'];
+  try { S.token = localStorage.getItem(TK); } catch (e) { }
+
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const pad = n => (n < 10 ? '0' : '') + n;
+  const fd = (iso, t) => { if (!iso) return ''; const d = new Date(iso); if (isNaN(d)) return ''; return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() + (t ? ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) : ''); };
+  const fold = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().trim();
+  const slug = s => fold(s).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').toUpperCase() || 'BAI_TU';
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  function toast(m) { const t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 3200); }
+
+  /* ---------- máy chủ ---------- */
+  function api(method, path, body) {
+    if (!API) { const e = new Error('Trang chưa được nối với máy chủ tài khoản.'); e.code = 'no_api'; return Promise.reject(e); }
+    const h = { 'Content-Type': 'application/json' }; if (S.token) h.Authorization = 'Bearer ' + S.token;
+    return fetch(API + '/api' + path, { method, headers: h, body: body ? JSON.stringify(body) : undefined })
+      .catch(() => { const e = new Error('Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'); e.code = 'network'; throw e; })
+      .then(r => r.json().catch(() => ({})).then(j => {
+        if (!r.ok || j.ok === false) { const e = new Error(j.message || ('Lỗi máy chủ (' + r.status + ').')); e.code = j.error || ('http_' + r.status); e.status = r.status; throw e; }
+        return j;
+      }));
+  }
+  function setToken(t) { S.token = t; try { t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch (e) { } }
+  const canUse = u => !!u && (u.role === 'admin' || (u.apps || []).indexOf('taophuoc') >= 0);
+  const contact = () => CONTACT ? ' Liên hệ: ' + esc(CONTACT) + '.' : '';
+
+  /* ---------- đăng nhập ---------- */
+  function whoBar() {
+    const u = S.user;
+    if (!u) { $('who').innerHTML = ''; return; }
+    $('who').innerHTML = '<span><b>' + esc(u.fullName || u.username) + '</b></span>' +
+      (u.role !== 'member' ? '<a class="btn ghost small" href="admin.html">Quản trị</a>' : '') +
+      '<button class="btn ghost small" type="button" id="btnOut">Đăng xuất</button>';
+    $('btnOut').onclick = () => { api('POST', '/logout').catch(() => { }); setToken(null); S.user = null; showGate(); };
+  }
+  function showGate(msg) {
+    $('app').hidden = true; const g = $('gate'); g.hidden = false;
+    const u = S.user;
+    if (u && !canUse(u)) {
+      g.innerHTML = '<h2>Chưa được cấp quyền Tạo Phước</h2><p class="hint">Tài khoản <b>' + esc(u.username) + '</b> chưa được cấp quyền dùng trang Tạo Phước (bài tu, bài đọc).' + contact() + '</p>' +
+        '<button class="btn ghost" type="button" id="swap">Đăng nhập tài khoản khác</button>';
+      $('swap').onclick = () => { api('POST', '/logout').catch(() => { }); setToken(null); S.user = null; showGate(); };
+      whoBar(); return;
+    }
+    g.innerHTML = '<h2>Đăng nhập Tạo Phước</h2><p class="hint">Dành cho thành viên được cấp quyền tạo bài tu, bài đọc.' + contact() + '</p>' +
+      '<form id="lf" novalidate><label class="f">Tên đăng nhập<input name="u" autocomplete="username" autocapitalize="none" spellcheck="false"></label>' +
+      '<label class="f">Mật khẩu<input name="p" type="password" autocomplete="current-password"></label><p class="err" id="lerr" role="alert">' + esc(msg || '') + '</p>' +
+      '<button class="btn primary" type="submit">Đăng nhập</button></form>';
+    whoBar();
+    $('lf').addEventListener('submit', ev => {
+      ev.preventDefault(); const f = ev.target, b = f.querySelector('button'); b.disabled = true; $('lerr').textContent = '';
+      api('POST', '/login', { username: f.u.value.trim(), password: f.p.value }).then(j => { setToken(j.token); S.user = j.user; enter(); })
+        .catch(e => { $('lerr').textContent = e.message; }).then(() => { b.disabled = false; });
+    });
+  }
+  function enter() {
+    if (!canUse(S.user)) { showGate(); return; }
+    $('gate').hidden = true; $('app').hidden = false; whoBar(); renderQuota(); loadHist();
+  }
+  function renderQuota() {
+    const u = S.user, q = u.tp || { used: 0, limit: null };
+    const left = q.limit == null ? 'không giới hạn' : Math.max(0, q.limit - q.used) + ' / ' + q.limit;
+    let html = '<span>Bộ bài còn lại: <b>' + left + '</b></span><span>·</span><span>Hạn sử dụng: <b>' + (u.expiresAt ? fd(u.expiresAt) : 'không giới hạn') + '</b></span>';
+    if (u.expired) html = '<span><b>Tài khoản đã hết hạn sử dụng.</b> Vui lòng gia hạn để tạo bộ bài mới.' + contact() + '</span>';
+    $('quota').innerHTML = html;
+  }
+  function boot() {
+    if (!S.token) { showGate(); return; }
+    api('GET', '/me').then(j => { S.user = j.user; enter(); }, e => {
+      if (e.status === 401 || e.status === 403) { setToken(null); S.user = null; showGate(e.status === 403 ? e.message : ''); }
+      else showGate(e.message);
+    });
+  }
+
+  /* ---------- tab ---------- */
+  document.querySelector('.tabs').addEventListener('click', ev => {
+    const b = ev.target.closest('button[data-tab]'); if (!b) return;
+    document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x === b));
+    ['tao', 'mau', 'ls'].forEach(t => { $('tab-' + t).hidden = b.dataset.tab !== t; });
+    if (b.dataset.tab === 'ls') loadHist();
+  });
+
+  /* ---------- biểu mẫu ---------- */
+  const F = $('f');
+  const gender = () => (F.querySelector('input[name=gender]:checked') || {}).value || 'nam';
+  function relSelect(v) {
+    const known = !v || RELS.indexOf(v) >= 0;
+    return '<select data-f="relSel" aria-label="Mối quan hệ"><option value="">Người thân (mặc định)</option>' +
+      RELS.map(r => '<option' + (r === v ? ' selected' : '') + '>' + r + '</option>').join('') +
+      '<option value="__khac"' + (!known ? ' selected' : '') + '>Khác (tự ghi)…</option></select>' +
+      '<input data-f="relTxt" placeholder="Ghi mối quan hệ" value="' + (known ? '' : esc(v)) + '"' + (known ? ' hidden' : '') + '>';
+  }
+  function renderQuick() {
+    const sp = gender() === 'nu' ? ['Chồng', 'Bố chồng', 'Mẹ chồng'] : ['Vợ', 'Bố vợ', 'Mẹ vợ'];
+    $('quick').innerHTML = ['Bố đẻ', 'Mẹ đẻ'].concat(sp, ['Con trai', 'Con gái']).map(r => '<button type="button" data-rel="' + r + '">+ ' + r + '</button>').join('');
+  }
+  function renderFam() {
+    $('famRows').innerHTML = S.fam.length ? S.fam.map((m, i) => '<div class="row" data-i="' + i + '"><div class="row-top"><b>NGƯỜI THỨ ' + (i + 1) + '</b><button type="button" class="x" data-del="fam" aria-label="Xóa người này">×</button></div>' +
+      '<div class="fam"><label class="f">Mối quan hệ' + relSelect(m.rel) + '</label>' +
+      '<label class="f nm">Họ và tên<input data-f="name" autocapitalize="words" value="' + esc(m.name) + '"></label>' +
+      '<label class="f">Ngày sinh<input data-f="birth" inputmode="numeric" placeholder="dd/mm/yyyy" value="' + esc(m.birth) + '"></label></div>' +
+      '<div class="checks"><label><input type="checkbox" data-f="dead"' + (m.dead ? ' checked' : '') + '>Đã mất</label><label><input type="checkbox" data-f="kt"' + (m.kt ? ' checked' : '') + '>Kêu thay trả nợ, phóng sinh</label></div></div>').join('')
+      : '<p class="hint">Chưa có người nào. Bấm các nút gợi ý bên trên hoặc “+ Thêm người”.</p>';
+  }
+  function renderLin() {
+    $('linRows').innerHTML = S.lin.map((l, i) => '<div class="row" data-i="' + i + '"><div class="row-top"><b>DÒNG HỌ ' + (i + 1) + '</b><button type="button" class="x" data-del="lin" aria-label="Xóa dòng họ">×</button></div>' +
+      '<div class="lin"><label class="f">Họ<input data-f="ho" value="' + esc(l.ho) + '"></label><label class="f">Đại diện<input data-f="rep" value="' + esc(l.rep) + '"></label>' +
+      '<label class="f wide">Vai <small>(VD: mẹ đẻ, chồng)</small><input data-f="role" value="' + esc(l.role) + '"></label>' +
+      '<label class="f wide">Nghĩa trang nơi an nghỉ gia tiên<input data-f="cem" value="' + esc(l.cem) + '" placeholder="Không bắt buộc"></label></div></div>').join('') ||
+      '<p class="hint">Nhập họ tên người đọc để tự điền dòng họ.</p>';
+  }
+  function renderAddr() {
+    if (!S.addr.length) S.addr = [''];
+    $('addrRows').innerHTML = S.addr.map((a, i) => '<div class="row-top" data-i="' + i + '"><label class="f" style="flex:1">' + (i === 0 ? 'Nơi ở / nơi làm lễ' : 'Địa chỉ ' + (i + 1)) +
+      '<input data-f="addr" value="' + esc(a) + '" placeholder="Số nhà, đường, phường/xã, tỉnh"></label>' + (i ? '<button type="button" class="x" data-del="addr" aria-label="Xóa địa chỉ" style="align-self:end">×</button>' : '') + '</div>').join('');
+  }
+  function daOptions(v) {
+    return '<option value="self">Bản thân người đọc</option>' + S.fam.map(m => '<option value="' + m.id + '"' + (m.id === v ? ' selected' : '') + '>' + esc((m.rel || 'Người thân') + ': ' + (m.name || '(chưa có tên)')) + '</option>').join('');
+  }
+  function renderDa() {
+    $('daRows').innerHTML = S.da.map((x, i) => '<div class="row" data-i="' + i + '"><div class="row-top"><b>DUYÊN ÂM ' + (i + 1) + '</b><button type="button" class="x" data-del="da" aria-label="Xóa">×</button></div>' +
+      '<div class="grid2"><label class="f">Duyên âm của<select data-f="who">' + daOptions(x.who) + '</select></label>' +
+      '<label class="f">Danh xưng duyên âm<input data-f="title" value="' + esc(x.title) + '" placeholder="VD: Nữ vương Atula"></label></div></div>').join('');
+  }
+  function autoLin() { if (!S.linTouched) { S.lin = BAI.autoLineages(collect(true)); renderLin(); } }
+  // Đọc dữ liệu từ ô nhập vào trạng thái
+  F.addEventListener('input', ev => {
+    const el = ev.target, f = el.dataset.f, row = el.closest('[data-i]');
+    if (f && row) {
+      const i = +row.dataset.i, box = row.parentElement.id;
+      if (box === 'famRows') {
+        const m = S.fam[i];
+        if (f === 'relSel') { const t = row.querySelector('[data-f=relTxt]'); t.hidden = el.value !== '__khac'; m.rel = el.value === '__khac' ? t.value.trim() : el.value; if (el.value === '__khac') t.focus(); }
+        else if (f === 'relTxt') m.rel = el.value.trim();
+        else if (f === 'dead' || f === 'kt') m[f] = el.checked;
+        else m[f] = el.value;
+        if (f !== 'birth' && f !== 'dead' && f !== 'kt') { autoLin(); if (S.da.length) renderDa(); }
+      } else if (box === 'linRows') { S.lin[i][f] = el.value; S.linTouched = true; }
+      else if (box === 'addrRows') S.addr[i] = el.value;
+      else if (box === 'daRows') S.da[i][f] = el.value;
+    } else if (el.name === 'ten') { autoLin(); histHint(); }
+    else if (el.name === 'birth') histHint();
+    else if (el.name === 'gender') renderQuick();
+    else if (el.name === 'year') { F.yearAL.value = BAI.canChiNam(el.value); }
+    saveLast();
+  });
+  $('quick').addEventListener('click', ev => { const b = ev.target.closest('[data-rel]'); if (!b) return; S.fam.push({ id: uid(), rel: b.dataset.rel, name: '', birth: '', dead: false, kt: false }); renderFam(); autoLin(); const rows = $('famRows').querySelectorAll('.row'); const last = rows[rows.length - 1]; last && last.querySelector('[data-f=name]').focus(); });
+  $('addFam').onclick = () => { S.fam.push({ id: uid(), rel: '', name: '', birth: '', dead: false, kt: false }); renderFam(); const rows = $('famRows').querySelectorAll('.row'); rows[rows.length - 1].querySelector('[data-f=name]').focus(); };
+  $('addLin').onclick = () => { S.lin.push({ ho: '', rep: '', role: '', cem: '' }); S.linTouched = true; renderLin(); };
+  $('reLin').onclick = () => { S.linTouched = false; autoLin(); saveLast(); toast('Đã điền lại dòng họ theo gia đình'); };
+  $('addAddr').onclick = () => { S.addr.push(''); renderAddr(); const r = $('addrRows').querySelectorAll('input'); r[r.length - 1].focus(); };
+  $('addDa').onclick = () => { S.da.push({ who: 'self', title: '' }); renderDa(); };
+  F.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-del]'); if (!b) return;
+    const i = +b.closest('[data-i]').dataset.i, k = b.dataset.del;
+    if (k === 'fam') { const id = S.fam[i].id; S.fam.splice(i, 1); S.da.forEach(x => { if (x.who === id) x.who = 'self'; }); renderFam(); autoLin(); renderDa(); }
+    else if (k === 'lin') { S.lin.splice(i, 1); S.linTouched = true; renderLin(); }
+    else if (k === 'addr') { S.addr.splice(i, 1); renderAddr(); }
+    else if (k === 'da') { S.da.splice(i, 1); renderDa(); }
+    saveLast();
+  });
+
+  // Gom thông tin thành dữ liệu cho bộ tạo bài (quan hệ trống → "Người thân" do BAI.norm xử lý)
+  function collect(forLin) {
+    const famIdx = {}; S.fam.forEach((m, i) => { famIdx[m.id] = i; });
+    return {
+      name: F.ten.value.trim(), birth: F.birth.value.trim(), gender: gender(),
+      family: S.fam.map(m => ({ rel: m.rel, name: m.name, birth: m.birth, dead: m.dead, kt: m.kt })),
+      lineages: forLin ? [] : S.lin.map(l => Object.assign({}, l)),
+      addresses: S.addr.slice(),
+      song: F.song.value, animals: F.animals.value,
+      duyenAm: S.da.map(x => ({ who: x.who === 'self' || famIdx[x.who] == null ? 'self' : famIdx[x.who], title: x.title })),
+      burner: { name: F.burnerName.value, addr: F.burnerAddr.value },
+      doSinh: F.doSinh.value, year: F.year.value.trim(), yearAL: F.yearAL.value.trim()
+    };
+  }
+  // Nạp dữ liệu (từ lịch sử hoặc lần nhập trước) vào biểu mẫu
+  function fill(d) {
+    d = d || {};
+    F.ten.value = d.name || ''; F.birth.value = d.birth || '';
+    const g = F.querySelector('input[name=gender][value="' + (d.gender === 'nu' ? 'nu' : 'nam') + '"]'); if (g) g.checked = true;
+    S.fam = (d.family || []).map(m => ({ id: uid(), rel: m.rel === 'Người thân' ? '' : (m.rel || ''), name: m.name || '', birth: m.birth || '', dead: !!m.dead, kt: !!m.kt }));
+    S.lin = (d.lineages || []).map(l => ({ ho: l.ho || '', rep: l.rep || '', role: l.role || '', cem: l.cem || '' }));
+    S.linTouched = S.lin.length > 0;
+    S.addr = (d.addresses && d.addresses.length ? d.addresses : ['']).slice();
+    S.da = (d.duyenAm || []).map(x => ({ who: x.who === 'self' || !S.fam[+x.who] ? 'self' : S.fam[+x.who].id, title: x.title || '' }));
+    F.song.value = d.song || ''; F.animals.value = d.animals || '';
+    F.burnerName.value = (d.burner || {}).name || ''; F.burnerAddr.value = (d.burner || {}).addr || '';
+    F.doSinh.value = Array.isArray(d.doSinh) ? d.doSinh.join('\n') : (d.doSinh || '');
+    const y = d.year || String(new Date().getFullYear()); F.year.value = y; F.yearAL.value = d.yearAL || BAI.canChiNam(y);
+    renderQuick(); renderFam(); if (!S.linTouched) S.lin = BAI.autoLineages(collect(true)); renderLin(); renderAddr(); renderDa(); histHint();
+  }
+  function saveLast() { try { localStorage.setItem(LAST, JSON.stringify(collect())); } catch (e) { } }
+  function keyOf(d) { return 'tp|' + fold(d.name).replace(/\s+/g, ' ') + '|' + String(d.birth || '').replace(/\D/g, ''); }
+  function histHint() {
+    const n = F.ten.value.trim(), el = $('histHint');
+    const h = n && S.hist.find(x => x.key === keyOf({ name: n, birth: F.birth.value }));
+    el.hidden = !h; if (h) el.innerHTML = '📌 Bộ bài của <b>' + esc(h.name) + '</b> đã có trong Lịch sử (tạo ngày ' + fd(h.createdAt) + '). Tạo lại sẽ <b>không trừ lượt</b> — thông tin mới sẽ được cập nhật.';
+  }
+
+  /* ---------- tạo bộ bài ---------- */
+  F.addEventListener('submit', ev => {
+    ev.preventDefault(); $('formErr').textContent = '';
+    const d = collect();
+    if (!d.name) { $('formErr').textContent = 'Vui lòng nhập họ và tên người đọc bài.'; F.ten.focus(); return; }
+    if (d.birth && !/^\d{1,2}\/\d{1,2}\/\d{4}$|^\d{4}$/.test(d.birth)) { $('formErr').textContent = 'Ngày sinh nên ghi dạng dd/mm/yyyy (hoặc chỉ năm sinh).'; F.birth.focus(); return; }
+    make(d);
+  });
+  function make(d) {
+    const btn = $('go'), old = btn.textContent; btn.disabled = true; btn.textContent = 'Đang tạo…';
+    api('POST', '/tp/doc', { key: keyOf(d), entry: d }).then(j => {
+      S.user = j.user; renderQuota();
+      toast(j.counted ? 'Đã dùng 1 lượt · còn ' + (j.user.tp.limit == null ? 'không giới hạn' : (j.user.tp.limit - j.user.tp.used) + ' lượt') : 'Bộ bài đã có trong lịch sử – không trừ lượt');
+      S.cur = d; showResult(d); loadHist();
+    }).catch(e => {
+      if (e.status === 401) { setToken(null); S.user = null; showGate('Phiên đăng nhập đã hết, vui lòng đăng nhập lại.'); return; }
+      $('formErr').textContent = e.message + (e.code === 'quota_tp' || e.code === 'expired' ? contact().replace(/<[^>]+>/g, '') : '');
+    }).then(() => { btn.disabled = false; btn.textContent = old; });
+  }
+  function showResult(d) {
+    const nm = slug(d.name);
+    $('result').innerHTML = '<div class="result"><div class="card-hd"><div><h2>Bộ bài của ' + esc(d.name) + '</h2><p class="hint">' + (d.family.length ? d.family.length + ' người thân · ' : '') + 'Bấm để tải file Word. Tải lại bao nhiêu lần cũng không trừ lượt.</p></div>' +
+      '<button type="button" class="btn ghost small" data-r="close">Đóng</button></div>' +
+      '<div class="dl-main"><button class="btn primary" data-r="all">⬇ Bài tổng hợp<small>1 file Word: hướng dẫn + đủ 11 bài + bảng kê</small></button>' +
+      '<button class="btn gold" data-r="ke">⬇ Bảng kê biếu tiền<small>Lễ vật trả nợ, biếu Quan Thần Linh, Bà Cô Tổ…</small></button>' +
+      '<button class="btn ghost" data-r="zip">⬇ Tất cả từng bài (.zip)<small>11 file Word riêng + hướng dẫn + bảng kê</small></button></div>' +
+      '<details><summary class="btn link">Tải riêng từng bài</summary><ul class="bai-list">' + BAI.LIST.map(b => '<li><span><span class="tag">Phần ' + b.phan + '</span>' + esc(b.ten) + '</span><button class="btn ghost small" data-one="' + b.id + '">Tải</button></li>').join('') + '</ul></details></div>';
+    $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('result').onclick = ev => {
+      const b = ev.target.closest('[data-r],[data-one]'); if (!b) return;
+      if (b.dataset.r === 'close') { $('result').innerHTML = ''; return; }
+      if (b.dataset.r === 'all') save(doc(BAI.tongHop(d), 'Bộ bài tu – ' + d.name), nm + '_BAI_TU_TONG_HOP.docx');
+      else if (b.dataset.r === 'ke') save(doc(BAI.ke(d), 'Bảng kê biếu tiền – ' + d.name), nm + '_BANG_KE_BIEU_TIEN.docx');
+      else if (b.dataset.r === 'zip') save(zipSet(d, nm), nm + '_BO_BAI_TU.zip');
+      else if (b.dataset.one) { const x = BAI.LIST.find(y => y.id === b.dataset.one); save(doc(BAI.one(x.id, d), x.ten + ' – ' + d.name), x.file + '_' + nm + '.docx'); }
+    };
+  }
+  function doc(blocks, title) { return new Blob([DOCX.build(blocks, { title, footer: 'Phước Lộc · Tạo Phước' })], { type: DOCX.MIME }); }
+  function zipSet(d, nm) {
+    const files = [{ name: '00_Huong_dan_quy_trinh.docx', data: DOCX.build(BAI.guide(d), { title: 'Hướng dẫn quy trình' }) }]
+      .concat(BAI.LIST.map(b => ({ name: b.file + '_' + nm + '.docx', data: DOCX.build(BAI.one(b.id, d), { title: b.ten }) })),
+        [{ name: '12_Bang_ke_bieu_tien_' + nm + '.docx', data: DOCX.build(BAI.ke(d), { title: 'Bảng kê biếu tiền' }) }]);
+    return new Blob([DOCX.zip(files)], { type: 'application/zip' });
+  }
+
+  /* ---------- lưu file (điện thoại, Zalo) ---------- */
+  const UA = navigator.userAgent || '';
+  const IN_APP = /Zalo|FBAN|FBAV|FB_IAB|Instagram|Line\/|MicroMessenger|TikTok|musical_ly|; wv\)/i.test(UA);
+  const IS_ZALO = /Zalo/i.test(UA);
+  const IS_IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  function save(blob, name) {
+    if (!IN_APP && !IS_IOS) { const url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); toast('Đã tải ' + name); return; }
+    sheet(blob, name);
+  }
+  function sheet(blob, name) {
+    const url = URL.createObjectURL(blob); let file = null; try { file = new File([blob], name, { type: blob.type }); } catch (e) { }
+    const canShare = !!(file && navigator.canShare && navigator.share && navigator.canShare({ files: [file] }));
+    const ov = document.createElement('div'); ov.className = 'ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true');
+    ov.innerHTML = '<div class="sheet"><div class="card-hd"><b style="overflow-wrap:anywhere">' + esc(name) + '</b><button type="button" class="btn ghost small" data-x>Đóng</button></div>' +
+      '<p class="hint">' + (canShare ? 'Bấm <b>Lưu / Chia sẻ</b> → chọn <b>Lưu vào Tệp</b> hoặc gửi qua Zalo; hoặc bấm <b>Tải file</b>.' : 'Bấm <b>Tải file</b> để lưu về máy, rồi mở bằng Word / WPS.') + '</p>' +
+      '<div class="act">' + (canShare ? '<button type="button" class="btn primary" data-share>Lưu / Chia sẻ</button>' : '') + '<a class="btn ' + (canShare ? 'ghost' : 'primary') + '" href="' + url + '" download="' + esc(name) + '" target="_blank" rel="noopener">Tải file</a></div>' +
+      (IN_APP ? '<p class="hint" style="font-size:12.5px">Nếu không lưu được trong ' + (IS_ZALO ? 'Zalo' : 'ứng dụng này') + ': bấm <b>•••</b> (góc trên phải) → <b>Mở bằng trình duyệt</b>, rồi tải lại.</p>' : '') + '</div>';
+    document.body.appendChild(ov);
+    const close = () => { ov.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500); };
+    ov.addEventListener('click', ev => { if (ev.target === ov || ev.target.closest('[data-x]')) close(); if (ev.target.closest('[data-share]')) navigator.share({ files: [file], title: name }).catch(() => { }); });
+  }
+  if (IN_APP) {
+    const bar = document.createElement('div'); bar.className = 'inapp';
+    bar.innerHTML = 'Bạn đang mở trong ' + (IS_ZALO ? 'Zalo' : 'ứng dụng') + '. Để tải file Word dễ nhất: bấm <b>•••</b> góc trên phải → <b>Mở bằng trình duyệt</b>. <button type="button" aria-label="Ẩn">✕</button>';
+    bar.querySelector('button').onclick = () => bar.remove();
+    document.body.insertBefore(bar, document.body.firstChild);
+  }
+
+  /* ---------- bài mẫu (không trừ lượt) ---------- */
+  const VIDU = { name: 'Lê Thị B', gender: 'nu', birth: '', family: [{ rel: 'Bố đẻ', name: 'Lê Văn D', dead: true }, { rel: 'Mẹ đẻ', name: 'Đào Thị C', kt: true }, { rel: 'Bố chồng', name: 'Nguyễn Văn E', dead: true }, { rel: 'Mẹ chồng', name: 'Trần Thị F' }, { rel: 'Chồng', name: 'Nguyễn Văn A', kt: true }, { rel: 'Con trai', name: 'Nguyễn Văn G' }, { rel: 'Con gái', name: 'Nguyễn Thị H' }],
+    addresses: ['Số ......, đường ......, phường ......, tỉnh ......'], duyenAm: [{ who: 5, title: 'Nữ vương Atula' }] };
+  VIDU.lineages = BAI.autoLineages(VIDU);
+  $('tab-mau').addEventListener('click', ev => {
+    const b = ev.target.closest('[data-mau]'); if (!b) return;
+    const k = b.dataset.mau;
+    if (k === 'guide') save(doc(BAI.guide({}), 'Hướng dẫn quy trình tu tập tạo phước'), 'HUONG_DAN_QUY_TRINH_TAO_PHUOC.docx');
+    else if (k === 'blank-all') save(doc(BAI.tongHop({}), 'Bộ bài tu mẫu'), 'BAI_TU_MAU_DE_TRONG.docx');
+    else if (k === 'blank-zip') save(zipSet({}, 'MAU'), 'BO_BAI_TU_MAU_DE_TRONG.zip');
+    else if (k === 'ex-all') save(doc(BAI.tongHop(VIDU), 'Bộ bài tu ví dụ'), 'VI_DU_LE_THI_B_BAI_TU_TONG_HOP.docx');
+    else if (k === 'ex-ke') save(doc(BAI.ke(VIDU), 'Bảng kê ví dụ'), 'VI_DU_LE_THI_B_BANG_KE_BIEU_TIEN.docx');
+  });
+
+  /* ---------- lịch sử ---------- */
+  function loadHist() {
+    if (!S.user) return;
+    api('GET', '/tp/history?limit=1000').then(j => { S.hist = j.items || []; renderHist(); histHint(); }).catch(e => { $('hist').innerHTML = '<p class="empty">' + esc(e.message) + '</p>'; });
+  }
+  function renderHist() {
+    const q = fold($('hq').value);
+    const list = S.hist.filter(h => !q || fold(h.name).indexOf(q) >= 0);
+    $('hist').innerHTML = list.length ? list.map(h => '<div class="hitem" data-k="' + esc(h.key) + '"><div><div class="nm">' + esc(h.name || '(không tên)') + '</div><div class="sub">' +
+      (h.data && h.data.birth ? 'Sinh ' + esc(h.data.birth) + ' · ' : '') + ((h.data && h.data.family || []).length) + ' người thân · tạo ' + fd(h.createdAt) + ' · mở gần nhất ' + fd(h.lastAt, true) + '</div></div>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn ghost small" data-h="open">Mở lại / sửa</button><button class="btn primary small" data-h="dl">Tải tổng hợp</button></div></div>').join('')
+      : '<p class="empty">' + (S.hist.length ? 'Không tìm thấy.' : 'Chưa tạo bộ bài nào.') + '</p>';
+  }
+  $('hq').addEventListener('input', renderHist);
+  $('hist').addEventListener('click', ev => {
+    const b = ev.target.closest('[data-h]'); if (!b) return;
+    const h = S.hist.find(x => x.key === b.closest('[data-k]').dataset.k); if (!h) return;
+    if (b.dataset.h === 'dl') { save(doc(BAI.tongHop(h.data), 'Bộ bài tu – ' + h.name), slug(h.name) + '_BAI_TU_TONG_HOP.docx'); api('POST', '/tp/doc', { key: h.key, entry: h.data }).catch(() => { }); return; }
+    fill(h.data); saveLast();
+    document.querySelector('.tabs [data-tab=tao]').click();
+    S.cur = h.data; showResult(h.data);
+    api('POST', '/tp/doc', { key: h.key, entry: h.data }).catch(() => { });
+  });
+
+  /* ---------- khởi động ---------- */
+  let last = null; try { last = JSON.parse(localStorage.getItem(LAST) || 'null'); } catch (e) { }
+  fill(last || {});
+  boot();
+})();
+</script>
+</body>
+</html>
