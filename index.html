@@ -2418,7 +2418,11 @@ details.acct-menu summary::-webkit-details-marker{display:none}
     }).join('');
   }
   function openEntry(e, then) {
-    var input = { name: e.name, gender: e.gender, calendar: e.calendar, day: e.day, month: e.month, year: e.year, leap: e.leap, hour: e.hour, minute: e.minute, viewYear: e.viewYear, options: e.options, info: e.info };
+    var opts = {}, k;
+    if (e.options) for (k in e.options) opts[k] = e.options[k];
+    // Giờ Tý muộn (23h–23h59): lá số cũ lưu trước khi áp quy tắc cũng được tính lại theo quy tắc cộng 1 ngày
+    if (+e.hour >= 23) opts.gioTyMuonSangNgay = true;
+    var input = { name: e.name, gender: e.gender, calendar: e.calendar, day: e.day, month: e.month, year: e.year, leap: e.leap, hour: e.hour, minute: e.minute, viewYear: e.viewYear, options: opts, info: e.info };
     writeInput(input);
     var chart;
     try { chart = build(input); } catch (err) { toast(err.message); return; }
