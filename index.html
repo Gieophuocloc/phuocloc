@@ -133,6 +133,31 @@ details.acct-menu summary::-webkit-details-marker{display:none}
 .sheet-box label.f{font-size:13.5px}
 .sheet-box .err{min-height:0}
 @media (max-width:600px){.acct-info{text-align:left}}
+/* Lịch sử tải lá số: trên điện thoại hiển thị mỗi lá số thành một thẻ thay vì bảng 6 cột */
+@media (max-width:640px){
+  .hist .tbl table{min-width:0}
+  .hist .tbl thead{display:none}
+  .hist .tbl table,.hist .tbl tbody,.hist .tbl tr,.hist .tbl td{display:block;width:100%}
+  .hist .tbl tr{padding:12px 14px;border-bottom:1px solid var(--line)}
+  .hist .tbl tr:last-child{border-bottom:0}
+  .hist .tbl td{border:0;padding:3px 0;white-space:normal}
+  .hist .tbl td.who .nm{font-size:15.5px}
+  .hist .tbl td[data-l]{position:relative;padding-left:112px;min-height:22px}
+  .hist .tbl td[data-l]::before{content:attr(data-l);position:absolute;left:0;top:5px;width:104px;font:600 10.5px/1.35 var(--f-ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+  .hist .tbl td.act{padding-top:10px}
+  .hist .tbl td.act .row-actions .btn{flex:1 1 auto}
+  .hist .tbl td.empty{padding:28px 16px;text-align:center}
+}
+/* Chạm vào lá số để phóng to toàn màn hình */
+.sheet canvas{cursor:zoom-in}
+.zoom-hint{margin:6px 0 0;font-size:12.5px;color:var(--ink-3);text-align:center}
+@media (min-width:901px){.zoom-hint{display:none}}
+.zoom-ov{position:fixed;inset:0;z-index:30;background:#111214;display:flex;flex-direction:column}
+.zoom-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;padding-top:max(10px,env(safe-area-inset-top));color:#ece8de;font:500 13.5px var(--f-ui);background:#111214;border-bottom:1px solid #2a2c31}
+.zoom-bar .btn{min-width:44px;min-height:40px;color:#ece8de;background:transparent;border-color:rgba(255,255,255,.35)}
+.zoom-bar .zb{display:flex;gap:6px}
+.zoom-sc{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:8px 8px 16px;padding-bottom:max(16px,env(safe-area-inset-bottom))}
+.zoom-sc canvas{display:block;margin:0 auto;background:#fff;border-radius:4px;-webkit-touch-callout:none;user-select:none}
 </style>
 <script src="config.js"></script>
 </head>
@@ -230,6 +255,7 @@ details.acct-menu summary::-webkit-details-marker{display:none}
         <button class="btn ghost" type="button" id="cpLink" title="Sao chép đường link mở đúng lá số này">Chép link lá số</button>
       </div>
       <div class="sheet"><canvas id="cv" width="1810" height="2560" aria-label="Hình lá số Tử Vi"></canvas></div>
+      <p class="zoom-hint" id="zoomHint">Chạm vào lá số để phóng to và xem rõ từng sao</p>
       <dl class="facts" id="facts"></dl>
     </section>
   </div>
@@ -244,7 +270,7 @@ details.acct-menu summary::-webkit-details-marker{display:none}
       </div>
     </div>
     <div class="search">
-      <input type="search" id="q" placeholder="Tìm theo tên, ngày sinh (VD 14/02/1985), năm hoặc can chi…" aria-label="Tìm lá số đã tải">
+      <input type="search" id="q" placeholder="Tìm theo tên, ngày sinh (VD 15/08/1990), năm hoặc can chi…" aria-label="Tìm lá số đã tải">
       <select id="sort" aria-label="Sắp xếp" style="flex:0 0 auto;width:auto"><option value="new">Mới tải nhất</option><option value="name">Tên A–Z</option><option value="birth">Ngày sinh</option></select>
     </div>
     <div class="tbl"><table>
@@ -2372,13 +2398,13 @@ details.acct-menu summary::-webkit-details-marker{display:none}
     hb.innerHTML = list.slice(0, 500).map(function (e) {
       var when = new Date(e.lastAt), dl = e.dl || {};
       return '<tr data-id="' + esc(e.id) + '">' +
-        '<td><div class="nm">' + esc(e.name || '(không tên)') + '</div><div class="sub">' + (e.gender === 'nu' ? 'Nữ' : 'Nam') + ' · ' + esc(e.canChi || '') + '</div></td>' +
-        '<td class="num">' + esc(e.solar) + ' <span class="sub">DL</span><div class="sub">' + esc(e.lunar) + ' ÂL</div></td>' +
-        '<td class="num">' + pad(e.hour) + ':' + pad(e.minute) + '</td>' +
-        '<td>' + esc(e.amDuong || '') + '<div class="sub">' + esc(e.banMenh || '') + ' · ' + esc(e.cuc || '') + '</div></td>' +
-        '<td class="num">' + (dl.mau ? '<span class="chip m">Màu ×' + dl.mau + '</span> ' : '') + (dl.bw ? '<span class="chip">ĐT ×' + dl.bw + '</span> ' : '') + (dl.png ? '<span class="chip">PNG ×' + dl.png + '</span> ' : '') + (dl.pdf ? '<span class="chip m">PDF ×' + dl.pdf + '</span>' : '') +
+        '<td class="who"><div class="nm">' + esc(e.name || '(không tên)') + '</div><div class="sub">' + (e.gender === 'nu' ? 'Nữ' : 'Nam') + ' · ' + esc(e.canChi || '') + '</div></td>' +
+        '<td class="num" data-l="Ngày sinh">' + esc(e.solar) + ' <span class="sub">DL</span><div class="sub">' + esc(e.lunar) + ' ÂL</div></td>' +
+        '<td class="num" data-l="Giờ sinh">' + pad(e.hour) + ':' + pad(e.minute) + '</td>' +
+        '<td data-l="Âm dương · Mệnh">' + esc(e.amDuong || '') + '<div class="sub">' + esc(e.banMenh || '') + ' · ' + esc(e.cuc || '') + '</div></td>' +
+        '<td class="num" data-l="Đã tải">' + (dl.mau ? '<span class="chip m">Màu ×' + dl.mau + '</span> ' : '') + (dl.bw ? '<span class="chip">ĐT ×' + dl.bw + '</span> ' : '') + (dl.png ? '<span class="chip">PNG ×' + dl.png + '</span> ' : '') + (dl.pdf ? '<span class="chip m">PDF ×' + dl.pdf + '</span>' : '') +
         '<div class="sub">' + (isNaN(when) ? '' : pad(when.getDate()) + '/' + pad(when.getMonth() + 1) + '/' + when.getFullYear() + ' ' + pad(when.getHours()) + ':' + pad(when.getMinutes())) + '</div></td>' +
-        '<td><div class="row-actions"><button class="btn ghost small" data-act="open">Xem</button><button class="btn ghost small" data-act="mau">Tải màu</button><button class="btn ghost small" data-act="bw">Tải ĐT</button><button class="btn ghost small" data-act="pdf">PDF</button>' +
+        '<td class="act"><div class="row-actions"><button class="btn ghost small" data-act="open">Xem</button><button class="btn ghost small" data-act="mau">Tải màu</button><button class="btn ghost small" data-act="bw">Tải ĐT</button><button class="btn ghost small" data-act="pdf">PDF</button>' +
         (state.src === 'local' ? '<button class="btn ghost small" data-act="del">Xóa</button>' : '') + '</div></td></tr>';
     }).join('');
   }
@@ -2678,6 +2704,62 @@ details.acct-menu summary::-webkit-details-marker{display:none}
   }
 })();
 
+</script>
+
+<script>
+/* ===== Phóng to lá số toàn màn hình (chủ yếu cho điện thoại) =====
+   Sao chép hình đang vẽ sang một canvas riêng để xem; không tạo file ảnh, nên không vượt qua hạn mức tải PNG. */
+(function () {
+  var cv = document.getElementById('cv'); if (!cv) return;
+  var ov = null, view = null, scroller = null, label = null, width = 0, pushed = false;
+  function minW() { return Math.max(320, window.innerWidth - 16); }
+  function clamp(w) { return Math.max(minW(), Math.min(cv.width, w)); }
+  function apply(w, keepCenter) {
+    var sc = scroller, cx = 0.5, cy = 0.5;
+    if (keepCenter && sc.scrollWidth) { cx = (sc.scrollLeft + sc.clientWidth / 2) / sc.scrollWidth; cy = (sc.scrollTop + sc.clientHeight / 2) / sc.scrollHeight; }
+    width = clamp(w); view.style.width = width + 'px'; view.style.height = Math.round(width * cv.height / cv.width) + 'px';
+    label.textContent = Math.round(width / minW() * 100) + '%';
+    if (keepCenter) { sc.scrollLeft = cx * sc.scrollWidth - sc.clientWidth / 2; sc.scrollTop = cy * sc.scrollHeight - sc.clientHeight / 2; }
+  }
+  function close(fromPop) {
+    if (!ov) return; ov.remove(); ov = null; document.documentElement.style.overflow = '';
+    document.removeEventListener('keydown', onKey);
+    if (pushed && !fromPop) { pushed = false; try { history.back(); } catch (e) { } } else pushed = false;
+    try { cv.focus({ preventScroll: true }); } catch (e) { }
+  }
+  function onKey(e) { if (e.key === 'Escape') close(); else if (e.key === '+' || e.key === '=') apply(width * 1.25, true); else if (e.key === '-') apply(width / 1.25, true); }
+  function open() {
+    if (ov) return;
+    ov = document.createElement('div'); ov.className = 'zoom-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Lá số phóng to');
+    ov.innerHTML = '<div class="zoom-bar"><span id="zoomLbl"></span><div class="zb">' +
+      '<button class="btn small" type="button" data-z="out" aria-label="Thu nhỏ">−</button>' +
+      '<button class="btn small" type="button" data-z="in" aria-label="Phóng to">+</button>' +
+      '<button class="btn small" type="button" data-z="close" aria-label="Đóng">✕ Đóng</button></div></div><div class="zoom-sc"></div>';
+    scroller = ov.querySelector('.zoom-sc'); label = ov.querySelector('#zoomLbl');
+    view = document.createElement('canvas'); view.width = cv.width; view.height = cv.height;
+    view.getContext('2d').drawImage(cv, 0, 0);
+    view.setAttribute('aria-label', cv.getAttribute('aria-label') || 'Lá số');
+    view.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    view.addEventListener('dblclick', function () { apply(width < cv.width * 0.75 ? width * 1.6 : minW(), true); });
+    scroller.appendChild(view);
+    ov.addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-z]'); if (!b) return;
+      var z = b.getAttribute('data-z');
+      if (z === 'close') close(); else if (z === 'in') apply(width * 1.25, true); else apply(width / 1.25, true);
+    });
+    document.body.appendChild(ov); document.documentElement.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKey);
+    apply(Math.max(minW(), 680), false);
+    scroller.scrollLeft = 0; scroller.scrollTop = 0;
+    try { history.pushState({ plZoom: 1 }, '', location.href); pushed = true; } catch (e) { pushed = false; }
+    ov.querySelector('[data-z="close"]').focus({ preventScroll: true });
+  }
+  window.addEventListener('popstate', function () { if (ov) close(true); });
+  cv.setAttribute('tabindex', '0'); cv.setAttribute('role', 'button');
+  cv.setAttribute('aria-label', (cv.getAttribute('aria-label') || 'Hình lá số Tử Vi') + ' – chạm để phóng to');
+  cv.addEventListener('click', open);
+  cv.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+})();
 </script>
 
 </body>
