@@ -1,0 +1,23 @@
+# Cấu hình Cloudflare Worker "phuocloc-api" (máy chủ tài khoản thành viên phuocloc.vn)
+# Khớp với cấu hình đang chạy trên Cloudflare ngày 17/10/2026.
+# KHÔNG ghi khóa bí mật vào file này — kho GitHub là công khai.
+# Khóa SETUP_KEY đã được lưu trên Cloudflare; muốn đổi thì chạy: npx wrangler secret put SETUP_KEY
+
+name = "phuocloc-api"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+workers_dev = true
+
+# Giữ lại các biến/bí mật đặt trên trang Cloudflare khi triển khai
+keep_vars = true
+
+[vars]
+ALLOWED_ORIGINS = "https://phuocloc.vn,https://www.phuocloc.vn,https://gieophuocloc.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "phuocloc"
+database_id = "76ad8f80-d501-44ba-a58e-5ba48983423f"
+
+[observability]
+enabled = true
