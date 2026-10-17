@@ -32,7 +32,7 @@ Thư viện ngoài chỉ nạp từ `cdnjs.cloudflare.com`; font chỉ từ Goog
 - Địa chỉ: `https://phuocloc-api.gieophuocloc.workers.dev`, mọi lệnh gọi qua tiền tố `/api`
 - Cơ sở dữ liệu **D1 `phuocloc`** (binding `DB`), 4 bảng: `users`, `sessions`, `charts`, `logs`. Chứa tài khoản khách thật: **không chạy lệnh ghi lên CSDL thật** khi chưa được duyệt; thay đổi cấu trúc chỉ qua file migration mới, chỉ thêm, không xóa.
 - Khóa bí mật `SETUP_KEY` lưu trên Cloudflare, không bao giờ ghi vào kho.
-- Triển khai: gộp vào `main` → Cloudflare Workers Builds tự triển khai thư mục `worker/` (khi đã bật, xem `worker/README.md`). Trước khi mở PR, chạy `cd worker && npm run check` và chạy thử cục bộ bằng `wrangler dev --local`.
+- Triển khai: gộp vào `main` → Cloudflare Workers Builds **tự triển khai** thư mục `worker/` (đã bật từ 17/10/2026). Vì vậy mọi thay đổi trong `worker/` được gộp là lên máy chủ thật ngay — phải chạy thử cục bộ kỹ trước. Preview builds cố ý TẮT (dùng chung CSDL thật). Trước khi mở PR, chạy `cd worker && npm run check` và chạy thử cục bộ bằng `wrangler dev --local`.
 - Endpoint:
   - Chung: `GET /ping`, `POST /setup`, `POST /login`, `POST /logout`, `GET /me`, `POST /password`, `POST /chart` · `/png` · `/pdf` (ghi nhận và trừ lượt; mở lại lá số cũ không trừ), `GET /history?limit=…`
   - Quản trị (admin, manager): `GET/POST /admin/users`, `PATCH/DELETE /admin/users/:id`, `GET /admin/users/:id/charts`, `GET /admin/logs?limit=…&userId=…`
