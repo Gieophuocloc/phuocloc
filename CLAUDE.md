@@ -17,7 +17,8 @@ Hướng dẫn cho Claude Code khi làm việc trong kho này. Đọc hết trư
 |---|---|
 | `index.html` | Trang chính: lịch âm dương, an sao, vẽ lá số, chấm điểm, luận giải, lịch sử lá số (~2.700 dòng) |
 | `tamkhong.html` | Lá Số / Bản đồ Tâm Không (thần số học), xuất ảnh và PDF bằng html2canvas + jsPDF |
-| `admin.html` | Trang quản trị tài khoản thành viên, hạn mức, nhật ký |
+| `taophuoc.html` | **Tạo Phước**: nhập người đọc + gia đình + dòng họ + địa chỉ, xuất bộ bài tu dạng Word (.docx) theo “Quy trình tu tập tạo phước cho người mới” (11 bài, bài tổng hợp, bảng kê biếu tiền, bài mẫu). Bộ tạo Word tự viết trong biến `DOCX` (không dùng thư viện ngoài). **Nội dung các bài (biến `BAI`) không nằm trong kho**: lưu ở bảng D1 `tp_assets` (dòng `name='bai'`), trang tải qua `GET /api/tp/engine` sau khi đăng nhập tài khoản có quyền Tạo Phước. Bản gốc để sửa nằm trong Project claude.ai “Phước Lộc Web” (`claude/tao-phuoc-bai.js`); sửa xong thì cập nhật dòng đó trong D1 (cần chủ dự án duyệt). Không đưa nội dung bài vào kho |
+| `admin.html` | Trang quản trị tài khoản thành viên, hạn mức, nhật ký; có mục riêng **Tử Vi & Tâm Không** và **Tạo Phước** |
 | `config.js` | Cấu hình chung: `window.PL_API` (địa chỉ Worker), `window.PL_CONTACT` (liên hệ Zalo) |
 | `CNAME` | Tên miền GitHub Pages — **không sửa, không xóa** |
 | `worker/` | Mã máy chủ tài khoản (Cloudflare Worker + D1), xem mục 3 |
@@ -30,14 +31,16 @@ Thư viện ngoài chỉ nạp từ `cdnjs.cloudflare.com`; font chỉ từ Goog
 
 - Mã nguồn: `worker/src/index.js`; cấu hình `worker/wrangler.toml`; cấu trúc CSDL `worker/schema.sql`. Đọc `worker/README.md` trước khi sửa.
 - Địa chỉ: `https://phuocloc-api.gieophuocloc.workers.dev`, mọi lệnh gọi qua tiền tố `/api`
-- Cơ sở dữ liệu **D1 `phuocloc`** (binding `DB`), 4 bảng: `users`, `sessions`, `charts`, `logs`. Chứa tài khoản khách thật: **không chạy lệnh ghi lên CSDL thật** khi chưa được duyệt; thay đổi cấu trúc chỉ qua file migration mới, chỉ thêm, không xóa.
+- Cơ sở dữ liệu **D1 `phuocloc`** (binding `DB`), 6 bảng: `users`, `sessions`, `charts`, `logs`, `tp_docs` (bộ bài Tạo Phước), `tp_assets` (nội dung bài tu) — hai bảng sau thêm bởi `migrations/0002_tao_phuoc.sql`. Chứa tài khoản khách thật: **không chạy lệnh ghi lên CSDL thật** khi chưa được duyệt; thay đổi cấu trúc chỉ qua file migration mới, chỉ thêm, không xóa.
 - Khóa bí mật `SETUP_KEY` lưu trên Cloudflare, không bao giờ ghi vào kho.
 - Triển khai: gộp vào `main` → Cloudflare Workers Builds **tự triển khai** thư mục `worker/` (đã bật từ 17/10/2026). Vì vậy mọi thay đổi trong `worker/` được gộp là lên máy chủ thật ngay — phải chạy thử cục bộ kỹ trước. Preview builds cố ý TẮT (dùng chung CSDL thật). Trước khi mở PR, chạy `cd worker && npm run check` và chạy thử cục bộ bằng `wrangler dev --local`.
 - Endpoint:
   - Chung: `GET /ping`, `POST /setup`, `POST /login`, `POST /logout`, `GET /me`, `POST /password`, `POST /chart` · `/png` · `/pdf` (ghi nhận và trừ lượt; mở lại lá số cũ không trừ), `GET /history?limit=…`
-  - Quản trị (admin, manager): `GET/POST /admin/users`, `PATCH/DELETE /admin/users/:id`, `GET /admin/users/:id/charts`, `GET /admin/logs?limit=…&userId=…`
+  - Tạo Phước: `POST /tp/doc` (mỗi người đọc = 1 bộ bài = 1 lượt; tạo/tải lại bộ cũ không trừ), `GET /tp/history`
+  - Quản trị (admin, manager): `GET/POST /admin/users`, `PATCH/DELETE /admin/users/:id`, `GET /admin/users/:id/charts`, `GET /admin/users/:id/tp`, `GET /admin/logs?limit=…&userId=…`
 - Một tính năng cần cả web và máy chủ thì sửa cả hai trong cùng một Pull Request, và đảm bảo bản web cũ vẫn chạy được với máy chủ mới (không đổi tên trường đang dùng).
 - Vai trò: `admin` (toàn quyền), `manager` (quản lý thành viên), `member` (bị giới hạn lượt lập/tải lá số và luận giải theo số lượng và thời hạn).
+- Quyền dịch vụ (cột `apps`): `tuvi` = Tử Vi + Tâm Không (mặc định mọi tài khoản cũ), `taophuoc` = Tạo Phước. Tài khoản chỉ có `taophuoc` bị Worker chặn lập lá số (`no_app`) và ngược lại. Admin có cả hai. Quản lý chỉ cấp/thu được dịch vụ mà mình có. Hạn sử dụng dùng chung; hạn mức riêng: `chart_limit`/`pdf_limit` cho Tử Vi, `tp_limit` cho Tạo Phước.
 - Nội dung chỉ dành cho admin (ví dụ bảng "Các chỉ số và cách tính") phải ẩn với `member`. Nhớ rằng ẩn ở giao diện không phải bảo mật thật — dữ liệu nhạy cảm cần chặn ở Worker.
 
 ## 4. Lưu trữ trên trình duyệt
@@ -47,6 +50,7 @@ Thư viện ngoài chỉ nạp từ `cdnjs.cloudflare.com`; font chỉ từ Goog
 | `phuocloc.token.v1` | Token đăng nhập (dùng chung cả 3 trang) |
 | `phuocloc.history.v1` | Lịch sử lá số cục bộ (tối đa 2.000 mục) |
 | `phuocloc.lastInput` | Thông tin nhập gần nhất |
+| `phuocloc.tp.lastInput` | Thông tin nhập gần nhất ở trang Tạo Phước |
 
 Không đổi tên khóa (sẽ làm mất dữ liệu của khách). Nếu buộc phải đổi cấu trúc, tăng hậu tố `.v2` và viết đoạn chuyển dữ liệu từ `.v1`. Luôn bọc đọc/ghi localStorage trong `try/catch`.
 
@@ -59,6 +63,7 @@ Không đổi tên khóa (sẽ làm mất dữ liệu của khách). Nếu buộ
   2. Kiểm tra với ít nhất 3 ngày sinh mẫu (có tháng nhuận, giờ Tý, năm chuyển giao) trước và sau khi sửa,
   3. Chờ chủ dự án duyệt.
 - Văn bản luận giải giữ giọng tích cực, khuyến thiện, hướng hành động (gieo phước, tu tâm) — không phán xét, không gây sợ hãi.
+- **Tạo Phước:** quan hệ gia đình để trống thì ghi “Người thân”. Câu chữ các bài phải giữ đúng file quy trình của chủ dự án; sửa nội dung bài cần chủ dự án duyệt.
 - Cuối luận giải 6 Chữ Vàng Tử Vi có trang **"Bản Đồ Nguồn Lực"** (Kích Hoạt Sức Mạnh Tử Vi, theo SOP Kích Hoạt 4 Tầng của TKS).
 
 ## 6. Thiết kế và thương hiệu
